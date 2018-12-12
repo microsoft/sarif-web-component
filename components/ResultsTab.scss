@@ -1,0 +1,60 @@
+// Copyright (c) Microsoft Corporation. All rights reserved.
+// Licensed under the MIT License.
+
+.resultsTab {
+	flex: 1 1;
+	padding: 0 28px 0;
+	overflow: auto;
+	display: flex; flex-direction: column;
+
+	.ms-GroupedList > .ms-List > .ms-List-surface > .ms-List-page > .ms-List-cell > .ms-GroupedList-group > .ms-GroupHeader > .ms-FocusZone {
+		height: unset; // Override hardcoded row height in GroupHeader.styles.ts
+	}
+
+	.resultsTitle {
+		height: 100px;
+		margin-bottom: 8px;
+		flex: 0 0 auto;
+		align-items: center;
+
+		display: flex;
+		.resultsTitleText {
+			flex: 1 1 auto;
+			& > div {
+				&:nth-child(1) {
+					font-size: 15px;
+					line-height: 20px;
+					color: rgba(0, 0, 0, 0.55);
+				}
+				&:nth-child(2) {
+					font-size: 28px;
+					font-weight: bold;
+					color: rgba(0, 0, 0, 0.9);
+				}
+			}
+		}
+
+		button { margin-top: 8px; }
+	}
+
+	.resultsTabs {
+		flex: 0 0 auto;
+		margin-bottom: 15px;
+		display: flex; align-items: center;
+		& > *:not(:first-child) { margin-left: 8px; }
+		& > span {
+			display: flex; align-items: center;
+			height: 32px;
+			white-space: pre;
+			margin: 0 8px;
+			&.selected { border-bottom: 2px solid #0078D4; }
+			i { margin-right: 0 }
+		}
+
+		.bubble {
+			background-color: #f2f2f2;
+			padding: 1px 7px 2px;
+			border-radius: 999px;
+		}
+	}
+}

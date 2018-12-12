@@ -1,0 +1,118 @@
+// Copyright (c) Microsoft Corporation. All rights reserved.
+// Licensed under the MIT License.
+
+.resultsPage {
+	flex: 1 1 auto; // Assuming flex col parent.
+
+	display: flex;
+	align-items: stretch;
+
+	.resultsPageLeft {
+		flex: 0 0 413px;
+		width: 413px; // Grid will drift wider if there's only flex-basis.
+
+		display: flex; flex-direction: column;
+
+		.resultsFullBack {
+			flex: 0 0 auto;
+			height: 48px;
+			cursor: default;
+			font-size: 17px;
+
+			padding-left: 10px;
+			display: flex; align-items: center;
+
+			&:hover {
+				background-color: #EFF6FC;
+			}
+
+			i {
+				font-size: 12px;
+				margin-right: 8px;
+			}
+		}
+
+		.resultsList {
+			padding: 8px 10px;
+			padding-bottom: 0;
+
+			// Office fabric bug where padding-left is hardcoded to 84px even if
+			// selectionMode=SelectionMode.single and the checkboxes are hidden.
+			.ms-GroupShowAll {
+				padding-left: 40px;
+			}
+		}
+	}
+
+	.resultsPageRight {
+		flex: 1 1 auto;
+		border-left: 1px solid hsla(0, 0, 77%, 0.3); // Figma is 0.15;
+
+		display: flex; flex-direction: column;
+
+		&.resultsDetails {
+			padding: 24px 36px;
+			flex: 1 1;
+			border-left: 1px solid hsla(0, 0, 77%, 0.3); // Figma is 0.15;
+			// box-shadow: 0 0 60px 30px rgba(0, 0, 0, 0.1);
+			// z-index: 1;
+			overflow-y: scroll;
+			overflow-x: hidden;
+
+			.resultsDetailsTitle {
+				flex: 0 0 auto; // overflow hidden causes this to go to 2px without flex.
+				font-size: 28px;
+				font-weight: bold;
+				color: #212121;
+				margin-bottom: 24px;
+				white-space: nowrap;
+				text-overflow: ellipsis;
+				overflow: hidden;
+
+				i {
+					font-size: 24px;
+					margin-right: 14px;
+					position: relative;
+					top: 3px; // Optical
+				}
+			}
+			.resultsDetailsSubtitle {
+				font-size: 17px;
+				font-weight: 550;
+				margin-bottom: 12px;
+				color: #212121;
+			}
+			.resultsDetailsValue {
+				font-color: #666;
+				margin-bottom: 24px;
+				color: #666;
+				font-size: 15px;
+				line-height: 18px;
+
+				i {
+					font-size: 18px; // For bug icon.
+					position: relative;
+					top: 3px; // Optical
+				}
+			}
+
+			opacity: 1;
+			&.entering {
+				transform: translateX(100px);
+				opacity: 0;
+			}
+			transition: 250ms opacity, 250ms transform;
+
+			// .resultsImagePlaceholder {
+			// 	width: 450px;
+			// 	height: 200px;
+			// 	background: white;
+			// 	box-shadow: 5px 5px 20px 0px rgba(0, 0, 0, 0.25);
+			// }
+			//
+			// img {
+			// 	box-shadow: 5px 5px 20px 0px rgba(0, 0, 0, 0.25);
+			// }
+		}
+	}
+}

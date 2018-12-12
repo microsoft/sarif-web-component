@@ -1,0 +1,106 @@
+// Copyright (c) Microsoft Corporation. All rights reserved.
+// Licensed under the MIT License.
+
+import * as React from 'react'
+import * as renderer from 'react-test-renderer'
+import * as ShallowRenderer from 'react-test-renderer/shallow'
+import {shallow, mount} from 'enzyme'
+import toJson from 'enzyme-to-json'
+import {ResultsPage_, ResultsList_, ResultsDropdown, ResultsFilterDropdown, ResultsPolicy} from './Results.tsx'
+jest.useFakeTimers()
+
+const selectedOptions = [{ text: 'aa' }, { text: 'bb' }]
+
+test('ResultsPage', () => {
+    const results = [{
+        rule: "bypass",
+        path: "html",
+        snippet: "<html>",
+        source: "Test automation",
+        severity: "Error",
+        build: "20180515.1",
+        bug: 106765,
+        hitcount: 18,
+        policy: "Accessibility",
+        bugstate: "",
+    }]
+    const dispatch = jest.fn()
+    const mounted = mount(<ResultsPage_ results={results} selKey={0} dispatch={dispatch} />)
+
+    mounted.instance().onClick()
+    expect(dispatch.mock.calls[0][0]).toEqual({ type: 'SET', isFull: false })
+    expect(mounted.findWhere(() => true)).toHaveLength(43)
+})
+
+test('ResultsList', () => {
+    const dispatch = jest.fn()
+    const wrapper = shallow(<ResultsList_ sortBy={['path', false]} dispatch={dispatch} />)
+
+    wrapper.instance().onCellClick({ stopPropagation: jest.fn() })
+    expect(dispatch.mock.calls[0][0]).toEqual({ type: 'SET', isFull: true })
+
+    wrapper.instance().onColumnClick(undefined, { key: 'snippet' })
+    expect(dispatch.mock.calls[1][0]).toEqual({ type: 'SET', sortBy: ['snippet', false] })
+
+    expect(wrapper.instance().onRenderTitle({ group: 'GroupName' , groupLevel: 1 })).toMatchSnapshot()
+    expect(toJson(wrapper)).toMatchSnapshot()
+})
+
+test('ResultsDropdown', () => {
+    const setSelectedKeys = jest.fn()
+    const wrapper = shallow(<ResultsDropdown
+        placeHolder="Group by"
+        options={[
+            { key: 'rule', text: 'Rule' },
+            { key: 'source', text: 'Source' },
+            { key: 'path', text: 'Location' },
+        ]}
+        getSelectedKeys={() => undefined}
+		setSelectedKeys={setSelectedKeys}
+    />)
+    wrapper.instance().onChanged({ key: 'path' })
+    expect(setSelectedKeys.mock.calls[0][0]).toEqual(['path'])
+    expect(wrapper.instance().onRenderTitle(selectedOptions)).toEqual(<React.Fragment>Group by: aa (+1)</React.Fragment>)
+    expect(toJson(wrapper)).toMatchSnapshot()
+})
+
+test('ResultsFilterDropdown', () => {
+    const results = [
+        { severity: 'Error' },
+        { severity: 'Error' },
+        { severity: 'Warning' },
+    ]
+    const dispatch = jest.fn()
+    const wrapper = shallow(<ResultsFilterDropdown column="Severity" results={results} dispatch={dispatch} />)
+    const mounted = mount(<ResultsFilterDropdown column="Severity" results={results} dispatch={dispatch} />)
+
+    mounted.instance().onChanged()
+    mounted.instance().dropDown.state.selectedIndices = [0] // Manually set the selection the first item in ['Error', 'Warning']
+    jest.runAllTimers()
+    expect(dispatch.mock.calls[0][0]).toEqual({ type: 'FILTER', column: 'Severity', values: ["Error"] })
+
+    expect(wrapper.instance().onRenderOption({ text: 'a', count: 0 })).toMatchSnapshot() // Roughly `a (0)` but with some aria wrapping.
+    expect(wrapper.instance().onRenderTitle(selectedOptions)).toBe('Severity: aa (+1)')
+    expect(toJson(wrapper)).toMatchSnapshot()
+
+    // To test filterTransforms
+    mount(<ResultsFilterDropdown column="Bug" results={[
+        { bug: 1 },
+        { bug: '2' },
+        {},
+    ]} dispatch={dispatch} />)
+    mount(<ResultsFilterDropdown column="Build" results={[
+        { build: '20180101.1' },
+        { build: '20180101.2' },
+        { build: '20180101.2' },
+    ]} dispatch={dispatch} />)
+})
+
+test('ResultsPolicy', () => {
+    expect(shallow(
+        <ResultsPolicy group={{ key: 'Accessibility', count: 100, countsBug: 50 }} />
+    ).findWhere(() => true).length).toMatchSnapshot()
+    expect(shallow(
+        <ResultsPolicy group={{ key: 'Security'     , count: 100, countsBug: 50 }} />
+    ).findWhere(() => true).length).toMatchSnapshot()
+})

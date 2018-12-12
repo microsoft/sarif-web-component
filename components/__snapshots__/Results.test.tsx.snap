@@ -1,0 +1,282 @@
+// Jest Snapshot v1, https://goo.gl/fbAQLP
+
+exports[`ResultsDropdown 1`] = `
+<StyledWithResponsiveMode
+  className="resultsDropdown"
+  dropdownWidth={200}
+  label="Group by"
+  onChanged={[Function]}
+  onRenderTitle={[Function]}
+  options={
+    Array [
+      Object {
+        "key": "rule",
+        "text": "Rule",
+      },
+      Object {
+        "key": "source",
+        "text": "Source",
+      },
+      Object {
+        "key": "path",
+        "text": "Location",
+      },
+    ]
+  }
+  placeHolder="Group by"
+/>
+`;
+
+exports[`ResultsFilterDropdown 1`] = `
+<React.Fragment>
+  a
+  <span
+    aria-label="Count 0"
+    style={
+      Object {
+        "marginLeft": 4,
+      }
+    }
+  >
+    (
+    0
+    )
+  </span>
+</React.Fragment>
+`;
+
+exports[`ResultsFilterDropdown 2`] = `
+<StyledWithResponsiveMode
+  className="resultsDropdown"
+  componentRef={[Function]}
+  dropdownWidth={200}
+  label="Severity"
+  multiSelect={true}
+  onChanged={[Function]}
+  onRenderOption={[Function]}
+  onRenderTitle={[Function]}
+  options={
+    Array [
+      Object {
+        "count": 2,
+        "key": "Error",
+        "text": "Error",
+      },
+      Object {
+        "count": 1,
+        "key": "Warning",
+        "text": "Warning",
+      },
+    ]
+  }
+  placeHolder="Severity"
+/>
+`;
+
+exports[`ResultsList 1`] = `
+<span
+  className="resultsGroupHeader"
+>
+   
+  <span
+    className="bubble"
+  />
+</span>
+`;
+
+exports[`ResultsList 2`] = `
+<div
+  className="resultsList"
+>
+  <div
+    className="resultsBar"
+  >
+    <StyledIconBase
+      iconName="Filter"
+    />
+    <input
+      placeholder="Filter by text (disabled for M1)"
+      type="text"
+    />
+    <ResultsFilterDropdown
+      column="State"
+      dispatch={
+        [MockFunction] {
+          "calls": Array [
+            Array [
+              Object {
+                "isFull": true,
+                "type": "SET",
+              },
+            ],
+            Array [
+              Object {
+                "sortBy": Array [
+                  "snippet",
+                  false,
+                ],
+                "type": "SET",
+              },
+            ],
+          ],
+          "results": Array [
+            Object {
+              "isThrow": false,
+              "value": undefined,
+            },
+            Object {
+              "isThrow": false,
+              "value": undefined,
+            },
+          ],
+        }
+      }
+    />
+    <ResultsFilterDropdown
+      column="Bug"
+      dispatch={
+        [MockFunction] {
+          "calls": Array [
+            Array [
+              Object {
+                "isFull": true,
+                "type": "SET",
+              },
+            ],
+            Array [
+              Object {
+                "sortBy": Array [
+                  "snippet",
+                  false,
+                ],
+                "type": "SET",
+              },
+            ],
+          ],
+          "results": Array [
+            Object {
+              "isThrow": false,
+              "value": undefined,
+            },
+            Object {
+              "isThrow": false,
+              "value": undefined,
+            },
+          ],
+        }
+      }
+    />
+    <ResultsFilterDropdown
+      column="Issue Type"
+      dispatch={
+        [MockFunction] {
+          "calls": Array [
+            Array [
+              Object {
+                "isFull": true,
+                "type": "SET",
+              },
+            ],
+            Array [
+              Object {
+                "sortBy": Array [
+                  "snippet",
+                  false,
+                ],
+                "type": "SET",
+              },
+            ],
+          ],
+          "results": Array [
+            Object {
+              "isThrow": false,
+              "value": undefined,
+            },
+            Object {
+              "isThrow": false,
+              "value": undefined,
+            },
+          ],
+        }
+      }
+    />
+    <CustomizedIconButton
+      ariaLabel="Clear Filter"
+      iconProps={
+        Object {
+          "iconName": "Clear",
+        }
+      }
+    />
+  </div>
+  <StyledWithViewportComponent
+    ariaLabelForSelectAllCheckbox="Toggle selection for all items"
+    columns={
+      Array [
+        Object {
+          "className": "resultsCell",
+          "isResizable": true,
+          "isSorted": false,
+          "isSortedDescending": false,
+          "key": "rule",
+          "maxWidth": 200,
+          "minWidth": 100,
+          "name": "Policy / Location / Rule",
+          "onColumnClick": [Function],
+          "onRender": [Function],
+        },
+        Object {
+          "className": "resultsCellDetails",
+          "isMultiline": true,
+          "isResizable": true,
+          "isSorted": false,
+          "isSortedDescending": false,
+          "key": "snippet",
+          "minWidth": 300,
+          "name": "Details",
+          "onColumnClick": [Function],
+          "onRender": [Function],
+        },
+        Object {
+          "isResizable": true,
+          "isSorted": false,
+          "isSortedDescending": false,
+          "key": "hitcount",
+          "minWidth": 80,
+          "name": "Hit Count",
+          "onColumnClick": [Function],
+          "onRender": [Function],
+        },
+      ]
+    }
+    compact={true}
+    constrainMode={0}
+    groupProps={
+      Object {
+        "getGroupItemLimit": [Function],
+        "headerProps": Object {
+          "onRenderTitle": [Function],
+        },
+        "showEmptyGroups": true,
+      }
+    }
+    isHeaderVisible={true}
+    onShouldVirtualize={[Function]}
+    selectionMode={2}
+    styles={
+      Object {
+        "root": Array [
+          "ms-DetailsList",
+          Object {
+            "fontSize": "14px",
+          },
+        ],
+      }
+    }
+  />
+</div>
+`;
+
+exports[`ResultsPolicy 1`] = `8`;
+
+exports[`ResultsPolicy 2`] = `8`;
