@@ -3,14 +3,17 @@
   "version": "0.1.0",
   "author": "Microsoft",
   "description": "Sarif Viewer",
+  "license": "MIT",
+  "repository": {
+    "type": "git",
+    "url": "https://github.com/Microsoft/sarif-web-component"
+  },
   "scripts": {
     "start": "webpack-dev-server --mode development",
     "d": "webpack --mode development",
     "p": "webpack --mode production",
     "w": "webpack --mode development --watch",
-    "deploy": "webpack --mode production && cp bundle.js ~/OneDrive\\ -\\ Microsoft/disco",
-    "test": "jest --watchAll",
-    "profile": "webpack --profile --json > stats.json && webpack-bundle-analyzer stats.json"
+    "test": "jest --watchAll"
   },
   "devDependencies": {
     "@types/jest": "^23.3.1",
