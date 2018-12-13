@@ -1,5 +1,23 @@
 
-# Contributing
+# SARIF Web Component
+
+A React-based component for viewing [SARIF](http://sarifweb.azurewebsites.net/) files. [Try it out](https://sarifviewer.azurewebsites.net/).
+
+## Usage
+
+```
+npm install @microsoft/sarif-web-component
+```
+
+```js
+import * as React from 'react'
+import * as ReactDOM from 'react-dom'
+import {ResultsViewer} from 'sarifviewer/Index.tsx'
+
+ReactDOM.render(<ResultsViewer sarif={yourSarifString} />, document.body.firstChild)
+```
+
+## Contributing
 
 This project welcomes contributions and suggestions.  Most contributions require you to agree to a
 Contributor License Agreement (CLA) declaring that you have the right to, and actually do, grant us
