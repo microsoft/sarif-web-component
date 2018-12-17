@@ -24,7 +24,7 @@ import {ResultsList} from './ResultsList.tsx'
 	render() {
 		const {isFull} = this.store
 		return !isFull
-			? <div style={{ padding: 15 }} className="resultsAny">
+			? <div className="resultsAny">
 				<ResultsList store={this.store} sarif={this.props.sarif} />
 			</div>
 			: <ResultsPage store={this.store}>
