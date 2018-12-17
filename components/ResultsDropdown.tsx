@@ -18,11 +18,11 @@ export class ResultsDropdown extends React.Component<IResultsDropdownProps> {
 		const {placeHolder, options, getSelectedKeys} = this.props
 		return <Dropdown className="resultsDropdown"
 			label={placeHolder}
-			placeHolder={placeHolder}
+			placeholder={placeHolder}
 			options={options}
 			selectedKeys      ={getSelectedKeys()}
 			defaultSelectedKey={getSelectedKeys()}
-			onChanged={this.onChanged}
+			onChange={this.onChanged}
 			dropdownWidth={200}
 			onRenderTitle={this.onRenderTitle}
 		/>

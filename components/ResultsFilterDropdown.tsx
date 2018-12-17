@@ -36,10 +36,10 @@ interface IResultsFilterDropdownOption extends IDropdownOption {
 		return <Dropdown multiSelect className="resultsDropdown"
 			componentRef={(dd: any) => this.dropDown = dd}
 			label={column}
-			placeHolder={column}
+			placeholder={column}
 			options={this.options(results, column, x => x)}
 			dropdownWidth={200}
-			onChanged={this.onChanged}
+			onChange={this.onChanged}
 			onRenderOption={this.onRenderOption}
 			onRenderTitle={this.onRenderTitle}
 		/>
