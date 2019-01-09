@@ -94,12 +94,18 @@ export function parse(file) {
 			const message = r.message && r.message.text || typeof r.message === 'string' && r.message || ''
 			let phyLoc =  loc0 && loc0.physicalLocation
 
+			let analysisTarget = // Scans of binary files are often missing physicalLocation.
+				r.analysisTarget
+				&& r.analysisTarget.uri
+				&& last(r.analysisTarget.uri.split('/'))
+			
 			let uri = loc0.physicalLocation
 				&& loc0.physicalLocation.fileLocation
 				&& loc0.physicalLocation.fileLocation.uri
 				&& loc0.physicalLocation.fileLocation.uriBaseId
 				&& run.originalUriBaseIds // Temp
 				&& run.originalUriBaseIds[loc0.physicalLocation.fileLocation.uriBaseId] + loc0.physicalLocation.fileLocation.uri
+				|| analysisTarget
 				|| ''
 
 			return [
@@ -109,7 +115,7 @@ export function parse(file) {
 				source,
 				severity,
 				uri,
-				last(fpath(r.locations[0]).split('/')),
+				last(fpath(r.locations[0]).split('/')) || analysisTarget,
 				message,
 				phyLoc, // aka snippet
 				new Details(source, message, phyLoc),
