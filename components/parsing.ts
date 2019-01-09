@@ -84,7 +84,7 @@ export function parse(file) {
 				|| loc0.physicalLocation && loc0.physicalLocation.uri
 				|| loc0.fullyQualifiedLogicalName
 				|| ''
-		const results = run.results.filter(r => r.locations).slice(0, 10).map(r => {
+		const results = run.results.filter(r => r.locations).map(r => {
 			const ruleObj = rules[r.ruleId]
 			const severity = r.level && `${r.level[0].toUpperCase()}${r.level.slice(1)}` || '(Unknown)' // Need a non empty string for counts
 			const build = ['20180509.1', '20180515.1', '20180101.1'][randomInt(0, 3)]
