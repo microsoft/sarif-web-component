@@ -50,6 +50,7 @@ class ResultsStore {
 	@observable selKey = undefined
 	@observable isFull = false
 	@observable isFilterHidden = false
+	@observable prefix = null
 	
 	// sampleText
 	//   |

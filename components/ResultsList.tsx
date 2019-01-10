@@ -33,8 +33,9 @@ type IResult = any
 
 @observer class ResultsBar extends React.Component<any> {
 	render() {
-		const {isFull, isFilterHidden, filterText} = this.props.store
+		const {isFull, isFilterHidden, filterText, prefix} = this.props.store
 		return !isFilterHidden && <div className="resultsBar">
+			{!isFull && prefix && <span style={{ borderRight: '1px solid #efefef', flex: '0 0 auto' }}>{prefix}</span>}
 			<Icon iconName="Filter" />
 			<input type="text" spellCheck={false}
 				value={filterText} onChange={e => this.props.store.filterText = e.target.value}
