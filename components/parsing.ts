@@ -34,7 +34,6 @@ const rowsToResults = (row: [any]) => {
 	'rule ruleDesc ruleObj source issuetype uri path message snippet details build bug'.split(' ').forEach((col: string, i: number) => (result as any)[col] = row[i])
 
 	result.policy = sourceToPolicy(result.source)
-	result.issuetype = ['Blocking', 'Non-blocking'][randomInt(0, 2)]
 
 	return result
 }
