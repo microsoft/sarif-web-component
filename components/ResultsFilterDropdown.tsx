@@ -5,6 +5,7 @@ import './ResultsDropdown.scss'
 import autobind from 'autobind-decorator'
 
 import * as React from 'react'
+import {untracked} from 'mobx'
 import {observer} from 'mobx-react'
 import {Dropdown, IDropdownOption} from 'office-ui-fabric-react/lib/Dropdown'
 
@@ -33,11 +34,13 @@ interface IResultsFilterDropdownOption extends IDropdownOption {
 	render() {
 		const {column} = this.props
 		const {results} = this.props.store
+		const filter = untracked(() => this.props.store.filter)
 		return <Dropdown multiSelect className="resultsDropdown"
 			componentRef={(dd: any) => this.dropDown = dd}
 			label={column}
 			placeholder={column}
 			options={this.options(results, column, x => x)}
+			defaultSelectedKeys={filter[column]}
 			dropdownWidth={200}
 			onChange={this.onChanged}
 			onRenderOption={this.onRenderOption}
