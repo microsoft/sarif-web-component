@@ -5,7 +5,7 @@ import './ResultsDropdown.scss'
 import autobind from 'autobind-decorator'
 
 import * as React from 'react'
-import {observer} from "mobx-react"
+import {observer} from 'mobx-react'
 import {Dropdown, IDropdownOption} from 'office-ui-fabric-react/lib/Dropdown'
 
 type IResult = any
