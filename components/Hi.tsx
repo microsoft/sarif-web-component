@@ -4,6 +4,7 @@
 import * as React from 'react'
 
 export function Hi({ term, children }) {
+    if (!children) return null
     term = term && term.replace(/[\-\[\]\/\{\}\(\)\+\?\.\\\^\$\|]/g, "\\$&").replace(/\*/g, ".*")
     return (!term || term.length <= 1)
         ? children
