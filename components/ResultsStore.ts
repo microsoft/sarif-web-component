@@ -67,7 +67,7 @@ class ResultsStore {
 	
 	needSyncSel = false
 	@observable.shallow results = []
-	@observable.shallow filter = {}
+	@observable.shallow filter = { 'Issue Type': ['Error'] }
 	@observable filterText = ''
 	
 	@observable.shallow resultsFiltered = []
