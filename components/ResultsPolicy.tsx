@@ -28,7 +28,6 @@ export class ResultsPolicy extends React.Component<IResultsPolicyProps> {
 			: 'Checks for security vulnerabilities'
 
 		return <div className="resultsPolicy">
-			<Icon iconName="StatusErrorFull" style={{ fontSize: 32, color: '#E81123', paddingTop: 4, marginRight: 16 }} />
 			<div className="resultsPolicyTitle">
 				<div>
 					<div>{group.key}</div>
