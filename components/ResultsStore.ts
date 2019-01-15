@@ -68,8 +68,12 @@ class ResultsStore {
 	
 	needSyncSel = false
 	@observable.shallow results = []
-	@observable.shallow filter = { 'Issue Type': ['Error'] }
+	@observable.shallow filter = {}
 	@observable filterText = ''
+	
+	_resetFilter = autorun(() =>
+		this.filter = this.results.some(r => r.issuetype === 'Error') ? { 'Issue Type': ['Error'] } : {}
+	)
 	
 	@observable.shallow resultsFiltered = []
 	_resultsFiltered = autorun(() => {
