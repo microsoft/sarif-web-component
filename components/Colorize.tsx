@@ -29,6 +29,8 @@ export class Colorize extends React.Component<any> {
 		if (!region) return null
 
 		let snippet = region && region.snippet && region.snippet.text || ''
+		if (!snippet) return null
+				
 		const lines = snippet.split('\n')
 
 		const uri = phyLoc.fileLocation.uri
