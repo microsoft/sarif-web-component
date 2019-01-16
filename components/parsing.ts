@@ -90,7 +90,11 @@ export function parse(file) {
 			const bug = randomInt(0, 2) ? randomInt(106000, 106999) : undefined
 
 			const loc0 = r.locations[0]
-			const message = r.message && r.message.text || typeof r.message === 'string' && r.message || ''
+			const message = r.message && r.message.text
+				|| typeof r.message === 'string' && r.message
+				|| r.message && r.message.messageId && ruleObj && ruleObj.messageStrings[r.message.messageId]
+				|| r.formattedRuleMessage && r.formattedRuleMessage.formatId // Temporary compat.
+				|| ''
 			let phyLoc =  loc0 && loc0.physicalLocation
 
 			const analysisTarget = r => // Scans of binary files are often missing physicalLocation.
