@@ -99,9 +99,9 @@ declare module "office-ui-fabric-react/lib/components/GroupedList/GroupedList.ty
 				minWidth: 100, maxWidth: 200, className: 'resultsCell',
 				onRender: (item: IResult, i: number, col: IColumn) => <>
 					{icons[item.issuetype] || icons['Unknown']}
-					<a href="#" onClick={ev => this.onCellClick(ev, item.key)}>
-						<Hi term={filterText}>{item[col.key]}</Hi>
-					</a>
+						<a href="#" onClick={ev => this.onCellClick(ev, item.key)}>
+							<Hi term={filterText}>{item[col.key]}</Hi>
+						</a>
 					</>,
 			},
 			...(isFull ? [] : [
