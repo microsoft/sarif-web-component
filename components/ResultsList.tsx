@@ -84,15 +84,25 @@ declare module "office-ui-fabric-react/lib/components/GroupedList/GroupedList.ty
 		const {sarif} = this.props
 		const {isFull, sampleText, groupBy, sortBy: [sortByCol, isDesc], resultsSorted, groups, selKey, selection} = this.props.store
 		const filterText = untracked(() => this.props.store.filterText)
+		
+		const icons = {
+			'Error':   <Icon iconName="StatusErrorFull"  style={{ color: '#E81123', marginRight: 8 }} />,
+			'Warning': <Icon iconName="AlertSolid"       style={{ color: '#FF8C00', marginRight: 8 }} />,
+			'Pass':    <Icon iconName="SkypeCircleCheck" style={{ color: '#107C10', marginRight: 8 }} />,
+			'Unknown': <Icon iconName="InfoSolid"        style={{ color: '#FF8C00', marginRight: 8 }} />,
+		}
+		
 		const columns: IColumn[] = [
 			{
 				key:  groupBy === 'ruleObj' ? 'path' : 'rule',
 				name: groupBy === 'ruleObj' ? 'Path' : 'Rule',
 				minWidth: 100, maxWidth: 200, className: 'resultsCell',
-				onRender: (item: IResult, i: number, col: IColumn) =>
+				onRender: (item: IResult, i: number, col: IColumn) => <>
+					{icons[item.issuetype] || icons['Unknown']}
 					<a href="#" onClick={ev => this.onCellClick(ev, item.key)}>
 						<Hi term={filterText}>{item[col.key]}</Hi>
-					</a>,
+					</a>
+					</>,
 			},
 			...(isFull ? [] : [
 				{ minWidth: 300, key: 'details',  name: 'Details', isMultiline: true, className: 'resultsCellDetails',
