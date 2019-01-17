@@ -18,7 +18,7 @@ import {ResultsList} from './ResultsList.tsx'
 	}
 	UNSAFE_componentWillReceiveProps(nextProps) {
 		this.store.needSyncSel = true
-		this.store.results = nextProps.sarif === '' ? [] : parse(nextProps.sarif)
+		this.store.results = nextProps.sarif && parse(nextProps.sarif) || []
 		this.store.prefix = nextProps.prefix
 		return null
 	}
