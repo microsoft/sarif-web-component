@@ -63,8 +63,8 @@ export function parse(file) {
 	const randomInt = function(min, max) { // [min, max)
 		return Math.floor(Math.random() * (max - min)) + min
 	}
-
 	const last = list => list[list.length - 1]
+	
 	const sarif = typeof file === 'string' ? JSON.parse(file) : file
 
 	const results = [].concat(...sarif.runs.filter(run => run.results).map(run => {
