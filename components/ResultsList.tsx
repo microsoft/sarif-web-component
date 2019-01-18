@@ -82,8 +82,12 @@ declare module "office-ui-fabric-react/lib/components/GroupedList/GroupedList.ty
 	/>)
 	render() {
 		const {sarif} = this.props
-		const {isFull, groupBy, sortBy: [sortByCol, isDesc], resultsSorted, groups, selKey, selection} = this.props.store
+		const {isFull, results, groupBy, sortBy: [sortByCol, isDesc], resultsSorted, groups, selKey, selection} = this.props.store
 		const filterText = untracked(() => this.props.store.filterText)
+		
+		if (results && !results.length) {
+			return <div style={{ textAlign: 'center', fontSize: 25, color: 'hsl(0, 0%, 70%)', marginTop: 150 }}>No results</div>
+		}
 		
 		const icons = {
 			'Error':   <Icon iconName="StatusErrorFull"  style={{ color: '#E81123', marginRight: 8 }} />,
@@ -134,29 +138,27 @@ declare module "office-ui-fabric-react/lib/components/GroupedList/GroupedList.ty
 		}))
 
 		groups.forEach(group => group.children.forEach(subGroup => subGroup.level = isFull ? 1 : 0))
-
+		
 		return <div className="resultsList">
 			<ResultsBar store={this.props.store} />
-			{resultsSorted.length
-				? isFull
-					? <this.DetailsListWithCustomizations
+			{isFull
+				? <this.DetailsListWithCustomizations
+					items={resultsSorted}
+					groups={groups}
+					columns={columns}
+					isFull={isFull}
+					selection={selection}
+					setKey={sarif} />
+				: groups.map(group => <div className="resultsDomain" key={group.key}>
+					<ResultsPolicy group={group as any} isTriageEnabled={!!selKey} forceUpdate={() => this.forceUpdate()} />
+					{!group.isCollapsed && <this.DetailsListWithCustomizations
 						items={resultsSorted}
-						groups={groups}
+						groups={group.children}
 						columns={columns}
 						isFull={isFull}
 						selection={selection}
-						setKey={sarif} />
-					: groups.map(group => <div className="resultsDomain" key={group.key}>
-						<ResultsPolicy group={group as any} isTriageEnabled={!!selKey} forceUpdate={() => this.forceUpdate()} />
-						{!group.isCollapsed && <this.DetailsListWithCustomizations
-							items={resultsSorted}
-							groups={group.children}
-							columns={columns}
-							isFull={isFull}
-							selection={selection}
-							setKey={sarif} />}
-					</div>)
-				: <div style={{ textAlign: 'center', fontSize: 25, color: 'hsl(0, 0%, 70%)', marginTop: 150 }}>No results</div>}
+						setKey={sarif} />}
+				</div>)}
 		</div>
 	}
 	@autobind private onCellClick(ev: any, selKey: number) { // MouseEvent was not working.

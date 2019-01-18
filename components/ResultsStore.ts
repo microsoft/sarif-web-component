@@ -66,17 +66,22 @@ class ResultsStore {
 	// resultsSorted
 	
 	needSyncSel = false
-	@observable.shallow results = []
+	@observable.shallow results = undefined // undef = indeterminte, [] = zero results, [...] = some results
 	@observable.shallow filter = {}
 	@observable filterText = ''
 	
-	_resetFilter = autorun(() =>
-		this.filter = this.results.some(r => r.issuetype === 'Error') ? { 'Issue Type': ['Error'] } : {}
-	)
+	_resetFilter = autorun(() => {
+		const {results} = this
+		if (!results) return
+		this.filter = results.some(r => r.issuetype === 'Error') ? { 'Issue Type': ['Error'] } : {}
+	})
 	
 	@observable.shallow resultsFiltered = []
 	_resultsFiltered = autorun(() => {
-		const {filter, filterText, results} = this
+		const {results} = this
+		if (!results) return
+		
+		const {filter, filterText} = this
 		this.resultsFiltered = results.filter((r: any) => { // IResult
 			// A matching result matches all conditions (AND), not just some (OR).
 			for (const column in filter) {

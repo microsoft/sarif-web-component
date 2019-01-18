@@ -19,7 +19,7 @@ import {ResultsList} from './ResultsList.tsx'
 	UNSAFE_componentWillReceiveProps(nextProps) {
 		this.store.needSyncSel = true
 		this.store.prefix = nextProps.prefix
-		;(async () => this.store.results = nextProps.sarif && await parse(nextProps.sarif) || [])()
+		;(async () => this.store.results = nextProps.sarif && await parse(nextProps.sarif))()
 		return null
 	}
 	render() {
