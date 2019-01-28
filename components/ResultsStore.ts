@@ -66,7 +66,7 @@ class ResultsStore {
 	// resultsSorted
 	
 	needSyncSel = false
-	@observable.shallow results = undefined // undef = indeterminte, [] = zero results, [...] = some results
+	@observable.ref results = undefined // undef = indeterminte, [] = zero results, [...] = some results
 	@observable.shallow filter = {}
 	@observable filterText = ''
 	
