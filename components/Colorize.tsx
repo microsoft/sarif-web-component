@@ -33,10 +33,6 @@ export class Colorize extends React.Component<any> {
 				
 		const lines = snippet.split('\n')
 
-		const uri = phyLoc.fileLocation.uri
-		const ext = uri.match(/\.(\w+)$/)
-		let lang = ext && ext[1] || uri.startsWith('http') && 'html' || ''
-
 		if (snippet.trim() === '{') snippet = '' // Hack for FxCop.
 
 		if (lines.length >= 3) {
@@ -73,6 +69,11 @@ export class Colorize extends React.Component<any> {
 		if (term && typeof snippet === 'string') {
 			snippet = <Hi term={term}>{snippet}</Hi>
 		}
+
+		// This block only for lang
+		const uri = phyLoc.fileLocation.uri
+		const ext = uri.match(/\.(\w+)$/)
+		let lang = ext && ext[1] || uri.startsWith('http') && 'html' || ''
 
 		return <pre key={Date.now()}>
 			<code className={lang} ref="code">{snippet}</code>
