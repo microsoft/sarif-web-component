@@ -56,8 +56,8 @@ export class Colorize extends React.Component<any> {
 
 				let lines = markered.split('\n')
 				const spc = Math.min(...lines
-					.filter(line => line.trimLeft().length)
-					.map(line => line.length - line.trimLeft().length)
+					.filter(line => (line as any).trimStart().length) // TS2339: Property 'trimStart' does not exist on type 'string'.
+					.map(line => line.length - (line as any).trimStart().length) // ^
 				)
 				lines = lines.map((l, i) => l.slice(spc))
 				markered = lines.join('\n')
