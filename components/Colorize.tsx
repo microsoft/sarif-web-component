@@ -25,11 +25,24 @@ export class Colorize extends React.Component<any> {
 		const {phyLoc} = this.props
 		if (!phyLoc) return null
 
-		const region = phyLoc.region // FxCop1.sarif has phyLoc but no region.
-		if (!region) return null
-
+		/*
+		Cases:
+				phyLoc
+			OR			
+				phyLoc.region
+				  startLine, etc...
+				  snippet.text
+			OR
+				phyLoc.region
+				  startLine, etc...
+				phyLoc.contextRegion
+				  startLine, etc...
+				  snippet.text
+		*/
+		
+		const region = phyLoc.region 
 		let snippet = region && region.snippet && region.snippet.text || ''
-		if (!snippet) return null
+		if (!snippet && !phyLoc.contextRegion) return null // FxCop1.sarif has phyLoc but no region.
 				
 		const lines = snippet.split('\n')
 
