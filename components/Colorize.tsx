@@ -47,21 +47,21 @@ export class Colorize extends React.Component<any> {
 				if (term) {
 					snippet = crst
 				} else {
-				const marker = '\u200B'
-				let markered = [crst.slice(0, a), crst.slice(a, b), crst.slice(b)].join(marker).replace(/\r/g, '')
+					const marker = '\u200B'
+					let markered = [crst.slice(0, a), crst.slice(a, b), crst.slice(b)].join(marker).replace(/\r/g, '')
 
-				let lines = markered.split('\n')
-				const spc = Math.min(...lines
-					.filter(line => (line as any).trimStart().length) // TS2339: Property 'trimStart' does not exist on type 'string'.
-					.map(line => line.length - (line as any).trimStart().length) // ^
-				)
-				lines = lines.map((l, i) => l.slice(spc))
-				markered = lines.join('\n')
+					let lines = markered.split('\n')
+					const spc = Math.min(...lines
+						.filter(line => (line as any).trimStart().length) // TS2339: Property 'trimStart' does not exist on type 'string'.
+						.map(line => line.length - (line as any).trimStart().length) // ^
+					)
+					lines = lines.map((l, i) => l.slice(spc))
+					markered = lines.join('\n')
 
-				const [pre, hi, post] = markered.split(marker)
-				snippet = <>
-					{pre}<span style={{ backgroundColor: 'yellow' }}>{hi}</span>{post}
-				</>
+					const [pre, hi, post] = markered.split(marker)
+					snippet = <>
+						{pre}<span style={{ backgroundColor: 'yellow' }}>{hi}</span>{post}
+					</>
 				}
 			}
 		}
