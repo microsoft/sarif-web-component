@@ -69,7 +69,18 @@ export async function parse(file) {
 	const sarif = typeof file === 'string' ? JSON.parse(file) : file
 
 	const results = [].concat(...sarif.runs.filter(run => run.results).map(run => {
-		const rules = run.resources && run.resources.rules || {}
+		const rules = (() => {
+			if (!run.resources) return {}
+			const {rules} = run.resources
+			if (!rules) return {}
+			if (Array.isArray(rules)) {
+				const rulesObj = {}
+				rules.forEach(rule => rulesObj[rule.id] = rule)
+				return rulesObj
+			}
+			return rules
+		})()
+		
 		for (const ruleId in rules) {
 			const rule = rules[ruleId]
 			rule.toString = () => ruleId
