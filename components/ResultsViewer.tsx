@@ -25,7 +25,7 @@ import {ResultsList} from './ResultsList.tsx'
 	render() {
 		const {isFull} = this.store
 		return !isFull
-			? <div className="resultsAny">
+			? <div className="resultsAny" data-is-scrollable>
 				<ResultsList store={this.store} sarif={this.props.sarif} />
 			</div>
 			: <ResultsPage store={this.store}>
