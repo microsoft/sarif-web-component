@@ -86,7 +86,10 @@ declare module "office-ui-fabric-react/lib/components/GroupedList/GroupedList.ty
 		const filterText = untracked(() => this.props.store.filterText)
 		
 		if (results && !results.length) {
-			return <div style={{ textAlign: 'center', fontSize: 25, color: 'hsl(0, 0%, 70%)', marginTop: 150 }}>No results</div>
+			return <div className="resultsList">
+				<ResultsBar store={this.props.store} />
+				<div style={{ textAlign: 'center', fontSize: 25, color: 'hsl(0, 0%, 70%)', marginTop: 150 }}>No results</div>
+			</div>
 		}
 		
 		const icons = {
