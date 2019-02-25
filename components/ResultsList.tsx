@@ -116,11 +116,14 @@ declare module "office-ui-fabric-react/lib/components/GroupedList/GroupedList.ty
 				{ minWidth: 300, key: 'details',  name: 'Details', isMultiline: true, className: 'resultsCellDetails',
 					onRender: (item: IResult, i: number, col: IColumn) => {
 						const details = item['details']
-						const message = details.message && (filterText
-							? <Hi term={filterText}>{details.message}</Hi>
-							: details.message
+						const message = (() => {
+							const {message} = details
+							if (!message) return undefined
+							if (filterText) return <Hi term={filterText}>{message}</Hi>
+							return details.message
 								.split(/(?<!\w)'(.+?)'/g)
-								.map((item, i) => i % 2 === 0 ? item : <code key={i}>{item}</code>) )
+								.map((item, i) => i % 2 === 0 ? item : <code key={i}>{item}</code>)
+						})()
 						const snippet = <Colorize phyLoc={details.snippet} term={filterText} />
 						if (message && snippet) {
 							return <div className="resultsCellCombo">
