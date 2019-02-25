@@ -41,6 +41,7 @@ type IResult = any
 				value={filterText} onChange={e => this.props.store.filterText = e.target.value}
 				placeholder="Filter by text" />
 			{!isFull && <>
+				<ResultsFilterDropdown store={this.props.store} column="Baseline State" />
 				<ResultsFilterDropdown store={this.props.store} column="Issue Type" />
 				<IconButton
 					ariaLabel="Clear Filter"

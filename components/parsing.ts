@@ -31,7 +31,7 @@ const randomInt = function(min: number, max: number) { // [min, max)
 
 const rowsToResults = (row: [any]) => {
 	const result: any = {}
-	'rule ruleDesc ruleObj source issuetype uri path message snippet details build bug'.split(' ').forEach((col: string, i: number) => (result as any)[col] = row[i])
+	'rule ruleDesc ruleObj source issuetype baselinestate uri path message snippet details build bug'.split(' ').forEach((col: string, i: number) => (result as any)[col] = row[i])
 
 	result.policy = sourceToPolicy(result.source)
 
@@ -130,6 +130,7 @@ export async function parse(file) {
 				ruleObj || 'No RuleId', // No ruleId means no obj, so using placeholder.
 				source,
 				severity,
+				r.baselineState,
 				uri,
 				last(fpath(loc0).split('/')) || analysisTarget(r) || analysisTarget(loc0), // Sarif 1.0 temporary compat.
 				message,
