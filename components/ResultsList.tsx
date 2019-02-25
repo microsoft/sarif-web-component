@@ -120,7 +120,7 @@ declare module "office-ui-fabric-react/lib/components/GroupedList/GroupedList.ty
 							const {message} = details
 							if (!message) return undefined
 							if (filterText) return <Hi term={filterText}>{message}</Hi>
-							return details.message
+							return message
 								.split(/(?<!\w)'(.+?)'/g)
 								.map((item, i) => i % 2 === 0 ? item : <code key={i}>{item}</code>)
 						})()
