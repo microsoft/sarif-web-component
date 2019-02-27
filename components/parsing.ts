@@ -70,8 +70,12 @@ export async function parse(file) {
 
 	const results = [].concat(...sarif.runs.filter(run => run.results).map(run => {
 		const rules = (() => {
-			if (!run.resources) return {}
-			const {rules} = run.resources
+			const rules = run.tool
+					&& run.tool.driver
+					&& run.tool.driver.ruleDescriptors
+				|| run.resources
+					&& run.resources.rules
+				|| run.rules
 			if (!rules) return {}
 			if (Array.isArray(rules)) {
 				const rulesObj = {}
@@ -87,10 +91,11 @@ export async function parse(file) {
 			rule.desc = rule && rule.fullDescription && rule.fullDescription.text || ''
 		}
 		
-		const source = run.tool.name
+		const source = (run.tool.driver || run.tool).name
 		const fpath = source === 'Chisel'
 			? loc0 => loc0.fullyQualifiedLogicalName
 			: loc0 => loc0.resultFile && loc0.resultFile.uri
+				|| loc0.physicalLocation && loc0.physicalLocation.artifactLocation && loc0.physicalLocation.artifactLocation.uri
 				|| loc0.physicalLocation && loc0.physicalLocation.fileLocation && loc0.physicalLocation.fileLocation.uri
 				|| loc0.physicalLocation && loc0.physicalLocation.uri
 				|| loc0.fullyQualifiedLogicalName
@@ -110,17 +115,27 @@ export async function parse(file) {
 				|| ''
 			let phyLoc =  loc0 && loc0.physicalLocation
 
+			const findUri = ploc => {
+				if (!ploc) return
+				const floc = ploc.artifactLocation || ploc.fileLocation // fileLocation is v1
+				if (!floc) return
+				let {uri, uriBaseId} = floc
+				if (uriBaseId) {
+					const baseUriObj = run.originalUriBaseIds && run.originalUriBaseIds[uriBaseId]
+					if (baseUriObj) {
+						const baseUri = baseUriObj.uri || baseUriObj
+						uri = baseUri + uri
+					}
+				}
+				return uri
+			}
+
 			const analysisTarget = r => // Scans of binary files are often missing physicalLocation.
 				r.analysisTarget
 				&& r.analysisTarget.uri
 				&& last(r.analysisTarget.uri.split('/'))
 			
-			let uri = loc0.physicalLocation
-				&& loc0.physicalLocation.fileLocation
-				&& loc0.physicalLocation.fileLocation.uri
-				&& loc0.physicalLocation.fileLocation.uriBaseId
-				&& run.originalUriBaseIds // Temp
-				&& run.originalUriBaseIds[loc0.physicalLocation.fileLocation.uriBaseId] + loc0.physicalLocation.fileLocation.uri
+			let uri = findUri(phyLoc)
 				|| analysisTarget(r)
 				|| analysisTarget(loc0) // Sarif 1.0 temporary compat.
 				|| ''
