@@ -105,7 +105,7 @@ class ResultsStore {
 	
 	@observable groupBy = 'ruleObj'
 	@computed get groups(): any[] {
-		return generateGroups(this.resultsFiltered, ['policy', this.groupBy])
+		return generateGroups(this.resultsFiltered, ['source', this.groupBy])
 	}
 
 	@observable.shallow sortBy: [string, boolean] = ['details', false]
