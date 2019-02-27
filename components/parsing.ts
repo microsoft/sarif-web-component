@@ -98,6 +98,7 @@ export async function parse(file) {
 		const results = run.results.filter(r => r.locations).map(r => {
 			const ruleObj = rules[r.ruleId]
 			const severity = r.level && `${r.level[0].toUpperCase()}${r.level.slice(1)}` || 'Warning' // Need a non empty string for counts
+			const baseline = r.baselineState && `${r.baselineState[0].toUpperCase()}${r.baselineState.slice(1)}`
 			const build = ['20180509.1', '20180515.1', '20180101.1'][randomInt(0, 3)]
 			const bug = randomInt(0, 2) ? randomInt(106000, 106999) : undefined
 
@@ -130,7 +131,7 @@ export async function parse(file) {
 				ruleObj || 'No RuleId', // No ruleId means no obj, so using placeholder.
 				source,
 				severity,
-				r.baselineState,
+				baseline,
 				uri,
 				last(fpath(loc0).split('/')) || analysisTarget(r) || analysisTarget(loc0), // Sarif 1.0 temporary compat.
 				message,
