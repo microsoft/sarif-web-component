@@ -134,6 +134,7 @@ declare module "office-ui-fabric-react/lib/components/GroupedList/GroupedList.ty
 						return snippet || message
 					},
 				},
+				{ key: 'baselinestate',  name: 'Baseline', minWidth: 100, maxWidth: 200, className: 'resultsCell' }
 			])
 		].map((col: any) => ({
 			...col,
