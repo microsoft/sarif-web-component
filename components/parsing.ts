@@ -97,7 +97,7 @@ export async function parse(file) {
 				|| ''
 		const results = run.results.filter(r => r.locations).map(r => {
 			const ruleObj = rules[r.ruleId]
-			const severity = r.level && `${r.level[0].toUpperCase()}${r.level.slice(1)}` || '(Unknown)' // Need a non empty string for counts
+			const severity = r.level && `${r.level[0].toUpperCase()}${r.level.slice(1)}` || 'Warning' // Need a non empty string for counts
 			const build = ['20180509.1', '20180515.1', '20180101.1'][randomInt(0, 3)]
 			const bug = randomInt(0, 2) ? randomInt(106000, 106999) : undefined
 
