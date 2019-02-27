@@ -23,10 +23,6 @@ interface IResultsPolicyProps {
 export class ResultsPolicy extends React.Component<IResultsPolicyProps> {
 	render() {
 		const {group, isTriageEnabled, forceUpdate} = this.props
-		const description = group.key === 'Accessibility'
-			? 'Checks for non-accessible elements'
-			: 'Checks for security vulnerabilities'
-
 		return <div className="resultsPolicy">
 			<div className="resultsPolicyTitle">
 				<div>
@@ -41,7 +37,7 @@ export class ResultsPolicy extends React.Component<IResultsPolicyProps> {
 							forceUpdate && forceUpdate()
 						}} />
 				</div>
-				<div>{description}</div>
+				{/* <div>{description}</div> */}
 			</div>
 			<DefaultButton
 				text="Triage"
