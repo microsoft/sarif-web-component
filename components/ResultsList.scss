@@ -90,7 +90,7 @@ a {
 				& > :nth-child(2) {
 					margin-top: 8px;
 					margin-bottom: 8px;
-					overflow-y: scroll;
+					overflow-y: auto;
 					overflow-x: hidden;
 				}
 			}
