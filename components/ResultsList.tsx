@@ -120,8 +120,10 @@ declare module "office-ui-fabric-react/lib/components/GroupedList/GroupedList.ty
 							const {message} = details
 							if (!message) return undefined
 							if (filterText) return <Hi term={filterText}>{message}</Hi>
+							if (/Edge/.test(navigator.userAgent)) return message // Edge can't parse negative lookbehind.
+							
 							return message
-								.split(/(?<!\w)'(.+?)'/g)
+								.split(new RegExp("(?<!\\w)'(.+?)'", 'g')) // // Edge can't parse negative lookbehind.
 								.map((item, i) => i % 2 === 0 ? item : <code key={i}>{item}</code>)
 						})()
 						const snippet = <Colorize phyLoc={details.snippet} term={filterText} />
