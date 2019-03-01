@@ -92,6 +92,9 @@ a {
 					margin-bottom: 8px;
 					overflow-y: auto;
 					overflow-x: hidden;
+					
+					// Not for table body scrolling. To constrain when .resultsGroupHeader is too long.
+					& > div { max-width: 100%; }
 				}
 			}
 		}
@@ -104,13 +107,21 @@ a {
 
 	.resultsGroupHeader {
 		font-weight: 600;
-		white-space: nowrap;
-		text-overflow: ellipsis;
-		overflow: hidden;
 		padding-left: 4px; // To align with item rows.
+		display: flex;
+		overflow: hidden; // Contrain to parent bounds.
+		
+		.resultsGroupHeaderText {
+			flex: 1 1 auto;
+			white-space: nowrap;
+			text-overflow: ellipsis;
+			overflow: hidden;
+		}
+		.resultsGroupHeaderCount { flex: 0 0 auto; }
 	}
 
 	.ms-DetailsRow, .ms-GroupHeader {
+		margin-right: 24px;
 		&:hover {
 			background: transparent; // Normally #f8f8f8
 		}
@@ -151,7 +162,7 @@ a {
 		.ms-DetailsRow-cellCheck { display: none !important; }
 	}
 
-	.bubble {
+	.resultsGroupHeaderCount {
 		margin-left: 8px;
 		font-size: 12px;
 		font-weight: initial;

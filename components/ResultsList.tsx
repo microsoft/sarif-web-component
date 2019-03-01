@@ -182,8 +182,8 @@ declare module "office-ui-fabric-react/lib/components/GroupedList/GroupedList.ty
 		return (children && !isFull)
 			? <ResultsPolicy group={group as any} /> // Tried casting to IResultsGroup
 			: <span className="resultsGroupHeader">
-				<Hi term={filterText}>{keyObj && keyObj.desc || key}</Hi>
-				<span className="bubble">{count}</span>
+				<span className="resultsGroupHeaderText"><Hi term={filterText}>{keyObj && keyObj.desc || key}</Hi></span>
+				<span className="resultsGroupHeaderCount">{count}</span>
 			</span>
 	}
 }
