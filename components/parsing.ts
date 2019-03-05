@@ -41,7 +41,7 @@ const rowsToResults = (row: [any]) => {
 class Details {
 	readonly message
 	readonly snippet
-	constructor(source, message, phyLoc) {
+	constructor(source, message, phyLoc, readonly relatedLocations) {
 		const isAccessibility = sourceToPolicy(source) === 'Accessibility'
 		this.message = isAccessibility ? undefined : message
 		this.snippet = phyLoc
@@ -151,7 +151,7 @@ export async function parse(file) {
 				last(fpath(loc0).split('/')) || analysisTarget(r) || analysisTarget(loc0), // Sarif 1.0 temporary compat.
 				message,
 				phyLoc, // aka snippet
-				new Details(source, message, phyLoc),
+				new Details(source, message, phyLoc, r.relatedLocations),
 				build,
 				bug,
 			]

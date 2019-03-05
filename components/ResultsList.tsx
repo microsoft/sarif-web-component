@@ -117,9 +117,24 @@ declare module "office-ui-fabric-react/lib/components/GroupedList/GroupedList.ty
 					onRender: (item: IResult, i: number, col: IColumn) => {
 						const details = item['details']
 						const message = (() => {
-							const {message} = details
+							const {message, relatedLocations} = details
 							if (!message) return undefined
 							if (filterText) return <Hi term={filterText}>{message}</Hi>
+							
+							const rxLink = /\[([^\]]*)\]\((\d+)\)/ // Replace [text](relatedIndex) with <a href />
+							if (message.match(rxLink)) {
+								try {
+								return message
+									.split(/(\[[^\]]*\]\(\d+\))/g)
+									.map((item, i) => {
+										if (i % 2 === 0) return item
+										const [_, text, id] = item.match(rxLink)
+										const fileOrArtifact = (phy) => phy.fileLocation || phy.artifactLocation
+										return <a key={i} href={fileOrArtifact(relatedLocations[`${+id - 1}`].physicalLocation).uri}>{text}</a>
+									})
+								} catch(e) { console.log(e) }
+							}
+							
 							if (/Edge/.test(navigator.userAgent)) return message // Edge can't parse negative lookbehind.
 							
 							return message
