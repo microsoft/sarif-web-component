@@ -42,13 +42,13 @@ interface IResultsFilterDropdownOption extends IDropdownOption {
 			options={this.options(results, column, x => x)}
 			defaultSelectedKeys={filter[column]}
 			dropdownWidth={200}
-			onChange={this.onChanged}
+			onChange={this.onChange}
 			onRenderOption={this.onRenderOption}
 			onRenderTitle={this.onRenderTitle}
 			isDisabled={results && !results.length}
 		/>
 	}
-	@autobind private onChanged() {
+	@autobind private onChange() {
 		const {column} = this.props
 		setTimeout(() => { // Wait for selectedIndices to update.
 			const dd = this.dropDown

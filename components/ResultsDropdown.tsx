@@ -22,12 +22,12 @@ export class ResultsDropdown extends React.Component<IResultsDropdownProps> {
 			options={options}
 			selectedKeys      ={getSelectedKeys()}
 			defaultSelectedKey={getSelectedKeys()}
-			onChange={this.onChanged}
+			onChange={this.onChange}
 			dropdownWidth={200}
 			onRenderTitle={this.onRenderTitle}
 		/>
 	}
-	@autobind private onChanged(option: IDropdownOption) {
+	@autobind private onChange(option: IDropdownOption) {
 		const {setSelectedKeys} = this.props
 		setSelectedKeys([option.key])
 	}
