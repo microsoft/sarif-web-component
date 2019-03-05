@@ -7,7 +7,7 @@ const randomInt = function(min: number, max: number) { // [min, max)
 
 const rowsToResults = (row: [any]) => {
 	const result: any = {}
-	'rule ruleDesc ruleObj source level baselinestate uri path details'.split(' ').forEach((col: string, i: number) => (result as any)[col] = row[i])
+	'rule ruleObj source level baselinestate uri path details'.split(' ').forEach((col: string, i: number) => (result as any)[col] = row[i])
 	return result
 }
 
@@ -110,7 +110,6 @@ export async function parse(file) {
 
 			return [
 				r.ruleId || 'No RuleId', // Lack of a ruleId is legal.
-				ruleObj && ruleObj.desc,
 				ruleObj || 'No RuleId', // No ruleId means no obj, so using placeholder.
 				source,
 				level,
