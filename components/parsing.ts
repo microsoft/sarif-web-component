@@ -7,7 +7,7 @@ const randomInt = function(min: number, max: number) { // [min, max)
 
 const rowsToResults = (row: [any]) => {
 	const result: any = {}
-	'rule ruleDesc ruleObj source issuetype baselinestate uri path message snippet details build bug'.split(' ').forEach((col: string, i: number) => (result as any)[col] = row[i])
+	'rule ruleDesc ruleObj source issuetype baselinestate uri path message snippet details'.split(' ').forEach((col: string, i: number) => (result as any)[col] = row[i])
 	return result
 }
 
@@ -74,8 +74,6 @@ export async function parse(file) {
 			const ruleObj = rules[r.ruleId]
 			const severity = r.level && `${r.level[0].toUpperCase()}${r.level.slice(1)}` || 'Warning' // Need a non empty string for counts
 			const baseline = r.baselineState && `${r.baselineState[0].toUpperCase()}${r.baselineState.slice(1)}`
-			const build = ['20180509.1', '20180515.1', '20180101.1'][randomInt(0, 3)]
-			const bug = randomInt(0, 2) ? randomInt(106000, 106999) : undefined
 
 			const loc0 = r.locations[0]
 			const message = r.message && r.message.text
@@ -122,8 +120,6 @@ export async function parse(file) {
 				message,
 				phyLoc, // aka snippet
 				new Details(message, phyLoc, r.relatedLocations),
-				build,
-				bug,
 			]
 		}).map(rowsToResults)
 
