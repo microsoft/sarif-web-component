@@ -1,30 +1,6 @@
 // Copyright (c) Microsoft Corporation. All rights reserved.
 // Licensed under the MIT License.
 
-function sourceToPolicy(source: string) {
-	switch (source) {
-		case 'Chisel':
-		case 'Keros For Desktop':
-		case 'Test automation':
-			return 'Accessibility'
-		case 'AndroidStudio':
-		case 'BinSkim':
-		case 'Clang':
-		case 'CppCheck':
-		case 'Fortify':
-		case 'FxCop':
-		case 'ModernCop':
-		case 'PREfast':
-		case 'Pylint':
-		case 'Microsoft (R) Visual C# Compiler':
-		case 'Semmle':
-		case 'StaticDriverVerifier':
-		case 'TSLint':
-			return 'Security'
-		default: return `General (${source})`
-	}
-}
-
 const randomInt = function(min: number, max: number) { // [min, max)
 	return Math.floor(Math.random() * (max - min)) + min
 }
@@ -32,18 +8,12 @@ const randomInt = function(min: number, max: number) { // [min, max)
 const rowsToResults = (row: [any]) => {
 	const result: any = {}
 	'rule ruleDesc ruleObj source issuetype baselinestate uri path message snippet details build bug'.split(' ').forEach((col: string, i: number) => (result as any)[col] = row[i])
-
-	result.policy = sourceToPolicy(result.source)
-
 	return result
 }
 
 class Details {
-	readonly message
 	readonly snippet
-	constructor(source, message, phyLoc, readonly relatedLocations) {
-		const isAccessibility = sourceToPolicy(source) === 'Accessibility'
-		this.message = isAccessibility ? undefined : message
+	constructor(readonly message, phyLoc, readonly relatedLocations) {
 		this.snippet = phyLoc
 	}
 	toString() {
@@ -151,7 +121,7 @@ export async function parse(file) {
 				last(fpath(loc0).split('/')) || analysisTarget(r) || analysisTarget(loc0), // Sarif 1.0 temporary compat.
 				message,
 				phyLoc, // aka snippet
-				new Details(source, message, phyLoc, r.relatedLocations),
+				new Details(message, phyLoc, r.relatedLocations),
 				build,
 				bug,
 			]

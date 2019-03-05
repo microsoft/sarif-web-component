@@ -95,7 +95,6 @@ class ResultsStore {
 				const ciIncludes = (a, b) => !a || a.toLowerCase().includes(b.toLowerCase())					
 				if (!( ciIncludes(r.ruleDesc, filterText)
 					|| ciIncludes(r.path    , filterText)
-					|| r.policy !== 'Accessibility' && ciIncludes(r.message , filterText)
 					|| ciIncludes(r.details.toString(), filterText)
 				)) return false
 			}
