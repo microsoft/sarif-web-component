@@ -45,7 +45,7 @@ interface IResultsFilterDropdownOption extends IDropdownOption {
 			onChange={this.onChange}
 			onRenderOption={this.onRenderOption}
 			onRenderTitle={this.onRenderTitle}
-			isDisabled={results && !results.length}
+			disabled={results && !results.length}
 		/>
 	}
 	@autobind private onChange() {
