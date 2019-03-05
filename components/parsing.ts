@@ -7,12 +7,12 @@ const randomInt = function(min: number, max: number) { // [min, max)
 
 const rowsToResults = (row: [any]) => {
 	const result: any = {}
-	'rule ruleDesc ruleObj source issuetype baselinestate uri path message snippet details'.split(' ').forEach((col: string, i: number) => (result as any)[col] = row[i])
+	'rule ruleDesc ruleObj source issuetype baselinestate uri path details'.split(' ').forEach((col: string, i: number) => (result as any)[col] = row[i])
 	return result
 }
 
 class Details {
-	readonly snippet
+	readonly snippet // aka phyLoc
 	constructor(readonly message, phyLoc, readonly relatedLocations) {
 		this.snippet = phyLoc
 	}
@@ -117,8 +117,6 @@ export async function parse(file) {
 				baseline,
 				uri,
 				last(fpath(loc0).split('/')) || analysisTarget(r) || analysisTarget(loc0), // Sarif 1.0 temporary compat.
-				message,
-				phyLoc, // aka snippet
 				new Details(message, phyLoc, r.relatedLocations),
 			]
 		}).map(rowsToResults)

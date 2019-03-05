@@ -29,7 +29,7 @@ import {Colorize} from './Colorize.tsx'
 					<div className="resultsDetailsValue">{result.ruleDesc || result.rule}</div>
 
 					<div className="resultsDetailsSubtitle">Message</div>
-					<div className="resultsDetailsValue">{result['message']}</div>
+					<div className="resultsDetailsValue">{result.details.message}</div>
 
 					<div className="resultsDetailsSubtitle">Snippet</div>
 					<div className="resultsDetailsValue"><Colorize phyLoc={result['snippet']} /></div>
