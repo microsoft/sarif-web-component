@@ -73,7 +73,7 @@ class ResultsStore {
 	_resetFilter = autorun(() => {
 		const {results} = this
 		if (!results) return
-		this.filter = results.some(r => r.issuetype === 'Error') ? { 'Issue Type': ['Error'] } : {}
+		this.filter = {} // results.some(r => r.issuetype === 'Error') ? { 'Issue Type': ['Error'] } : {}
 	})
 	
 	@observable.shallow resultsFiltered = []
