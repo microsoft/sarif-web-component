@@ -7,7 +7,7 @@ const randomInt = function(min: number, max: number) { // [min, max)
 
 const rowsToResults = (row: [any]) => {
 	const result: any = {}
-	'rule ruleDesc ruleObj source issuetype baselinestate uri path details'.split(' ').forEach((col: string, i: number) => (result as any)[col] = row[i])
+	'rule ruleDesc ruleObj source level baselinestate uri path details'.split(' ').forEach((col: string, i: number) => (result as any)[col] = row[i])
 	return result
 }
 
@@ -72,7 +72,7 @@ export async function parse(file) {
 				|| ''
 		const results = run.results.filter(r => r.locations).map(r => {
 			const ruleObj = rules[r.ruleId]
-			const severity = r.level && `${r.level[0].toUpperCase()}${r.level.slice(1)}` || 'Warning' // Need a non empty string for counts
+			const level = r.level && `${r.level[0].toUpperCase()}${r.level.slice(1)}` || 'Warning' // Need a non empty string for counts
 			const baseline = r.baselineState && `${r.baselineState[0].toUpperCase()}${r.baselineState.slice(1)}`
 
 			const loc0 = r.locations[0]
@@ -113,7 +113,7 @@ export async function parse(file) {
 				ruleObj && ruleObj.desc,
 				ruleObj || 'No RuleId', // No ruleId means no obj, so using placeholder.
 				source,
-				severity,
+				level,
 				baseline,
 				uri,
 				last(fpath(loc0).split('/')) || analysisTarget(r) || analysisTarget(loc0), // Sarif 1.0 temporary compat.

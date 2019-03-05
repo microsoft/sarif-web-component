@@ -42,7 +42,7 @@ type IResult = any
 				placeholder="Filter by text" />
 			{!isFull && <>
 				<ResultsFilterDropdown store={this.props.store} column="Baseline State" />
-				<ResultsFilterDropdown store={this.props.store} column="Issue Type" />
+				<ResultsFilterDropdown store={this.props.store} column="Level" />
 				<IconButton
 					ariaLabel="Clear Filter"
 					iconProps={{ iconName: 'Clear' }}
@@ -106,7 +106,7 @@ declare module "office-ui-fabric-react/lib/components/GroupedList/GroupedList.ty
 				name: groupBy === 'ruleObj' ? 'Path' : 'Rule',
 				minWidth: 100, maxWidth: 200, className: 'resultsCell',
 				onRender: (item: IResult, i: number, col: IColumn) => <>
-					{icons[item.issuetype] || icons['Unknown']}
+					{icons[item.level] || icons['Unknown']}
 						<a href={`${item.uri}#L${item.details.snippet && item.details.snippet.region && item.details.snippet.region.startLine}`} target="_blank">
 							<Hi term={filterText}>{item[col.key]}</Hi>
 						</a>
