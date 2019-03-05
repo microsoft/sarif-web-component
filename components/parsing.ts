@@ -63,11 +63,11 @@ export async function parse(file) {
 		
 		const source = (run.tool.driver || run.tool).name
 		const fpath = loc0 => loc0.resultFile && loc0.resultFile.uri
-				|| loc0.physicalLocation && loc0.physicalLocation.artifactLocation && loc0.physicalLocation.artifactLocation.uri
-				|| loc0.physicalLocation && loc0.physicalLocation.fileLocation && loc0.physicalLocation.fileLocation.uri
-				|| loc0.physicalLocation && loc0.physicalLocation.uri
-				|| loc0.fullyQualifiedLogicalName
-				|| ''
+			|| loc0.physicalLocation && loc0.physicalLocation.artifactLocation && loc0.physicalLocation.artifactLocation.uri
+			|| loc0.physicalLocation && loc0.physicalLocation.fileLocation && loc0.physicalLocation.fileLocation.uri
+			|| loc0.physicalLocation && loc0.physicalLocation.uri
+			|| loc0.fullyQualifiedLogicalName
+			|| ''
 		const results = run.results.filter(r => r.locations).map(r => {
 			const ruleObj = rules[r.ruleId]
 			const level = r.level && `${r.level[0].toUpperCase()}${r.level.slice(1)}` || 'Warning' // Need a non empty string for counts
