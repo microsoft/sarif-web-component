@@ -62,9 +62,7 @@ export async function parse(file) {
 		}
 		
 		const source = (run.tool.driver || run.tool).name
-		const fpath = source === 'Chisel'
-			? loc0 => loc0.fullyQualifiedLogicalName
-			: loc0 => loc0.resultFile && loc0.resultFile.uri
+		const fpath = loc0 => loc0.resultFile && loc0.resultFile.uri
 				|| loc0.physicalLocation && loc0.physicalLocation.artifactLocation && loc0.physicalLocation.artifactLocation.uri
 				|| loc0.physicalLocation && loc0.physicalLocation.fileLocation && loc0.physicalLocation.fileLocation.uri
 				|| loc0.physicalLocation && loc0.physicalLocation.uri
