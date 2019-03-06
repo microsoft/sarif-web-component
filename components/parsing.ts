@@ -7,7 +7,7 @@ const randomInt = function(min: number, max: number) { // [min, max)
 
 const rowsToResults = (row: [any]) => {
 	const result: any = {}
-	'rule ruleObj source level baselinestate uri path details'.split(' ').forEach((col: string, i: number) => (result as any)[col] = row[i])
+	'rule ruleObj source level baselinestate uri path details raw'.split(' ').forEach((col: string, i: number) => (result as any)[col] = row[i])
 	return result
 }
 
@@ -109,6 +109,7 @@ export async function parse(file) {
 	/* uri */	findUri(phyLoc)              || analysisTarget(r) || analysisTarget(loc0)  /* Sarif 1.0 temporary compat. */ || '', // Should be empty?
 	/* path */	last(fpath(loc0).split('/')) || analysisTarget(r) || analysisTarget(loc0), // Sarif 1.0 temporary compat.
 				new Details(message, phyLoc, r.relatedLocations),
+				r,
 			]
 		}).map(rowsToResults)
 
