@@ -106,8 +106,8 @@ export async function parse(file) {
 				source,
 				level,
 				baseline,
-	/* uri */	findUri(phyLoc)              || analysisTarget(r) || analysisTarget(loc0)  /* Sarif 1.0 temporary compat. */ || '', // Should be empty?
-	/* path */	last(fpath(loc0).split('/')) || analysisTarget(r) || analysisTarget(loc0), // Sarif 1.0 temporary compat.
+	/* uri */	findUri(phyLoc)              || analysisTarget(r) || '', // Should be empty?
+	/* path */	last(fpath(loc0).split('/')) || analysisTarget(r),
 				new Details(message, phyLoc, r.relatedLocations),
 				r,
 			]
