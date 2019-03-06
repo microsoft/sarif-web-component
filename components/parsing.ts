@@ -1,10 +1,6 @@
 // Copyright (c) Microsoft Corporation. All rights reserved.
 // Licensed under the MIT License.
 
-const randomInt = function(min: number, max: number) { // [min, max)
-	return Math.floor(Math.random() * (max - min)) + min
-}
-
 const rowsToResults = (row: [any]) => {
 	const result: any = {}
 	'rule ruleObj source level baselinestate uri path details raw'.split(' ').forEach((col: string, i: number) => (result as any)[col] = row[i])
@@ -30,10 +26,6 @@ class Details {
 }
 
 export async function parse(file) {
-	const randomInt = function(min, max) { // [min, max)
-		return Math.floor(Math.random() * (max - min)) + min
-	}
-	
 	file = await file
 	const sarif = typeof file === 'string' ? JSON.parse(file) : file
 
