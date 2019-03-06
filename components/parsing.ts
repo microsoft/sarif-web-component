@@ -61,12 +61,6 @@ export async function parse(file) {
 			rule.desc = rule && rule.fullDescription && rule.fullDescription.text || ''
 		}
 		
-		const source = (run.tool.driver || run.tool).name
-		const fpath = loc0 => 
-			   loc0.physicalLocation && loc0.physicalLocation.artifactLocation && loc0.physicalLocation.artifactLocation.uri
-			|| loc0.physicalLocation && loc0.physicalLocation.fileLocation && loc0.physicalLocation.fileLocation.uri
-			|| loc0.fullyQualifiedLogicalName
-			|| ''
 		const results = run.results.filter(r => r.locations).map(r => {
 			const ruleObj = rules[r.ruleId]
 			const level = r.level && `${r.level[0].toUpperCase()}${r.level.slice(1)}` || 'Warning' // Need a non empty string for counts
@@ -94,6 +88,11 @@ export async function parse(file) {
 				}
 				return uri
 			}
+			const fpath = loc0 => 
+				   loc0.physicalLocation && loc0.physicalLocation.artifactLocation && loc0.physicalLocation.artifactLocation.uri
+				|| loc0.physicalLocation && loc0.physicalLocation.fileLocation && loc0.physicalLocation.fileLocation.uri
+				|| loc0.fullyQualifiedLogicalName
+				|| ''
 
 			const analysisTarget = r => // Scans of binary files are often missing physicalLocation.
 				r.analysisTarget
