@@ -99,11 +99,6 @@ export async function parse(file) {
 				r.analysisTarget
 				&& r.analysisTarget.uri
 				&& last(r.analysisTarget.uri.split('/'))
-			
-			let uri = findUri(phyLoc)
-				|| analysisTarget(r)
-				|| analysisTarget(loc0) // Sarif 1.0 temporary compat.
-				|| ''
 
 			return [
 				r.ruleId || 'No RuleId', // Lack of a ruleId is legal.
@@ -111,8 +106,8 @@ export async function parse(file) {
 				source,
 				level,
 				baseline,
-				uri,
-				last(fpath(loc0).split('/')) || analysisTarget(r) || analysisTarget(loc0), // Sarif 1.0 temporary compat.
+	/* uri */	findUri(phyLoc)              || analysisTarget(r) || analysisTarget(loc0)  /* Sarif 1.0 temporary compat. */ || '', // Should be empty?
+	/* path */	last(fpath(loc0).split('/')) || analysisTarget(r) || analysisTarget(loc0), // Sarif 1.0 temporary compat.
 				new Details(message, phyLoc, r.relatedLocations),
 			]
 		}).map(rowsToResults)
