@@ -88,10 +88,6 @@ export async function parse(file) {
 				}
 				return uri
 			}
-			const fpath = loc0 => 
-				   loc0.physicalLocation && loc0.physicalLocation.artifactLocation && loc0.physicalLocation.artifactLocation.uri
-				|| loc0.physicalLocation && loc0.physicalLocation.fileLocation && loc0.physicalLocation.fileLocation.uri
-				|| ''
 
 			const analysisTarget = r => // Scans of binary files are often missing physicalLocation.
 				r.analysisTarget
@@ -105,7 +101,7 @@ export async function parse(file) {
 				level,
 				baseline,
 	/* uri */	findUri(phyLoc)              || analysisTarget(r) || '', // Should be empty?
-	/* path */	last(fpath(loc0).split('/')) || analysisTarget(r),
+	/* path */	last((findUri(phyLoc) || '').split('/')) || analysisTarget(r),
 				new Details(message, phyLoc, r.relatedLocations),
 				r,
 			]
