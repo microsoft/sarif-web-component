@@ -91,7 +91,6 @@ export async function parse(file) {
 			const fpath = loc0 => 
 				   loc0.physicalLocation && loc0.physicalLocation.artifactLocation && loc0.physicalLocation.artifactLocation.uri
 				|| loc0.physicalLocation && loc0.physicalLocation.fileLocation && loc0.physicalLocation.fileLocation.uri
-				|| loc0.fullyQualifiedLogicalName
 				|| ''
 
 			const analysisTarget = r => // Scans of binary files are often missing physicalLocation.
