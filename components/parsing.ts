@@ -33,7 +33,6 @@ export async function parse(file) {
 	const randomInt = function(min, max) { // [min, max)
 		return Math.floor(Math.random() * (max - min)) + min
 	}
-	const last = list => list[list.length - 1]
 	
 	file = await file
 	const sarif = typeof file === 'string' ? JSON.parse(file) : file
@@ -92,7 +91,7 @@ export async function parse(file) {
 			const analysisTarget = r => // Scans of binary files are often missing physicalLocation.
 				r.analysisTarget
 				&& r.analysisTarget.uri
-				&& last(r.analysisTarget.uri.split('/'))
+				&& r.analysisTarget.uri.split('/').pop()
 
 			return [
 				r.ruleId || 'No RuleId', // Lack of a ruleId is legal.
@@ -100,8 +99,8 @@ export async function parse(file) {
 				source,
 				level,
 				baseline,
-	/* uri */	findUri(phyLoc)              || analysisTarget(r) || '', // Should be empty?
-	/* path */	last((findUri(phyLoc) || '').split('/')) || analysisTarget(r),
+	/* uri */	 findUri(phyLoc)                         || analysisTarget(r) || '', // Should be empty?
+	/* path */	(findUri(phyLoc) || '').split('/').pop() || analysisTarget(r),
 				new Details(message, phyLoc, r.relatedLocations),
 				r,
 			]
