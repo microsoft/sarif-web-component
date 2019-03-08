@@ -39,18 +39,6 @@ export class ResultsPolicy extends React.Component<IResultsPolicyProps> {
 				</div>
 				{/* <div>{description}</div> */}
 			</div>
-			<DefaultButton
-				text="Triage"
-				disabled={!isTriageEnabled}
-				menuProps={{
-					items: [
-						{ key: 'c1', text: 'Create one bug for all issues', },
-						{ key: 'c2', text: 'Create one bug for each issue', },
-						{ key: 'm' , text: 'Mark as non-blocking', }
-					],
-					directionalHint: DirectionalHint.bottomRightEdge,
-				}}
-				/>
 		</div>
 	}
 }
