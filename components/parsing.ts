@@ -54,8 +54,10 @@ export async function parse(file) {
 		
 		const results = run.results.filter(r => r.locations).map(r => {
 			const ruleObj = rules[r.ruleId]
-			const level = r.level && `${r.level[0].toUpperCase()}${r.level.slice(1)}` || 'Warning' // Need a non empty string for counts
-			const baseline = r.baselineState && `${r.baselineState[0].toUpperCase()}${r.baselineState.slice(1)}`
+			
+			const capitalize = str => `${str[0].toUpperCase()}${str.slice(1)}`
+			const level = r.level && capitalize(r.level) || 'Warning' // Need a non empty string for counts
+			const baseline = r.baselineState && capitalize(r.baselineState)
 
 			const loc0 = r.locations[0]
 			const message = r.message && r.message.text
