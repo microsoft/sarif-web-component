@@ -89,7 +89,7 @@ export async function parse(file) {
 
 			return [
 				r.ruleId || 'No RuleId', // Lack of a ruleId is legal.
-				ruleObj || 'No RuleId', // No ruleId means no obj, so using placeholder.
+				ruleObj || { toString: () => r.ruleId }, // Minimal interface required to be a sortable column/key.
 				source,
 				level,
 				baseline,
