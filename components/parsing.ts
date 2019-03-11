@@ -49,7 +49,10 @@ export async function parse(file) {
 		for (const ruleId in rules) {
 			const rule = rules[ruleId]
 			rule.toString = () => ruleId
-			rule.desc = rule && rule.fullDescription && rule.fullDescription.text || ''
+			rule.desc = [
+				ruleId,
+				rule.fullDescription && rule.fullDescription.text
+			].filter(i => i).join(': ')
 		}
 		
 		const results = run.results.filter(r => r.locations).map(r => {
