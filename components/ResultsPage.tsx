@@ -26,7 +26,7 @@ import {Colorize} from './Colorize.tsx'
 					<div className="resultsDetailsTitle">{result.path}</div>
 
 					<div className="resultsDetailsSubtitle">Rule</div>
-					<div className="resultsDetailsValue">{result.ruleOb.desc || result.rule}</div>
+					<div className="resultsDetailsValue">{result.ruleObj.desc || result.rule}</div>
 
 					<div className="resultsDetailsSubtitle">Message</div>
 					<div className="resultsDetailsValue">{result.details.message}</div>
