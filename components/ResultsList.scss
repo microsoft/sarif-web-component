@@ -29,11 +29,14 @@ a {
 	flex: 1 1 auto; // Assuming flex col parent.
 	display: flex; flex-direction: column; align-items: stretch;
 
-	.resultsBar {
-		flex: 0 0 auto;
+	%shadow {
 		background: white;
 		box-shadow: 0 4px 8px 1px rgba(0, 0, 0, 0.08);
 		box-shadow: 0 0   4px 1px rgba(0, 0, 0, 0.1);
+	}
+
+	.resultsBar { @extend %shadow;
+		flex: 0 0 auto;
 		color: #666;
 		height: 48px;
 		margin-bottom: 16px;
@@ -59,11 +62,8 @@ a {
 		}
 	}
 
-	.resultsDomain {
+	.resultsDomain { @extend %shadow;
 		margin-bottom: 16px;
-		background: white;
-		box-shadow: 0 4px 8px 1px rgba(0, 0, 0, 0.08);
-		box-shadow: 0 0   4px 1px rgba(0, 0, 0, 0.1);
 		// box-shadow: 0 2px 6px 2px rgba(0, 0, 0, .05); DevOps standard is a too light.
 
 		.ms-Viewport {
