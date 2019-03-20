@@ -5,7 +5,7 @@ import './ResultsDropdown.scss'
 import autobind from 'autobind-decorator'
 
 import * as React from 'react'
-import {untracked} from 'mobx'
+import {observable, computed, untracked, toJS} from 'mobx'
 import {observer} from 'mobx-react'
 import {Dropdown, IDropdownOption} from 'office-ui-fabric-react/lib/Dropdown'
 
@@ -21,26 +21,29 @@ interface IResultsFilterDropdownOption extends IDropdownOption {
 @observer export class ResultsFilterDropdown extends React.Component<any> {
 	// 1) Take a results list and generate it's own options.
 	// 2) Keeps selected state.
-	private dropDown: { state: { selectedIndices: number[] }, props: { options: IDropdownOption[] } }  = null
-	options = (results: IResult[], column: string, f: Function) => {
-		results = results || []
-		column = column.toLowerCase().replace(/ /g, '')
-		const counts: Map<string, number> = {}
-		results
-			.map(r => f(r[column]))
-			.forEach(item => counts[item] = counts[item] && counts[item] + 1 || 1)
-		return Object.keys(counts).sort().map(name => ({ key: name, text: name, count: counts[name] }))
+	@observable selectedKeys = [] // Instance must be maintained.
+	@computed get options() {
+		const column = this.props.column
+		const results = this.props.store.results || []
+		const counts = new Map()
+		results.forEach(row => {
+			const cell = row[column.toLowerCase().replace(/ /g, '')]
+			counts.set(cell, (counts.get(cell) || 1) + 1)
+		})
+		const filters = untracked(() => this.props.store.filter)
+		if (!filters[column]) setTimeout(() => {
+			filters[column] = this.selectedKeys // 'Register' selectedKeys with the store.
+		})
+		return [...counts.keys()].map(cell => ({ key: cell, text: cell, count: counts.get(cell) }))
 	}
 	render() {
 		const {column} = this.props
 		const {results} = this.props.store
-		const filter = untracked(() => this.props.store.filter)
 		return <Dropdown multiSelect className="resultsDropdown"
-			componentRef={(dd: any) => this.dropDown = dd}
 			label={column}
 			placeholder={column}
-			options={this.options(results, column, x => x)}
-			defaultSelectedKeys={filter[column]}
+			options={this.options}
+			selectedKeys={toJS(this.selectedKeys)} // Change detects based on array identity. toJS() creates a new array.
 			dropdownWidth={200}
 			onChange={this.onChange}
 			onRenderOption={this.onRenderOption}
@@ -48,12 +51,13 @@ interface IResultsFilterDropdownOption extends IDropdownOption {
 			disabled={results && !results.length}
 		/>
 	}
-	@autobind private onChange() {
-		const {column} = this.props
-		setTimeout(() => { // Wait for selectedIndices to update.
-			const dd = this.dropDown
-			this.props.store.filter[column] = dd.state.selectedIndices.map(i => dd.props.options[i].key)
-		})
+	@autobind private onChange(ev, item) {
+		if (item.selected) {
+			this.selectedKeys.push(item.key)
+		} else {
+			const i = this.selectedKeys.indexOf(item.key)
+			if (i >= 0) this.selectedKeys.splice(i, 1)
+		}
 	}
 	@autobind private onRenderOption(option: IResultsFilterDropdownOption) {
 		 return <>
