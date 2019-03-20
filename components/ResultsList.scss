@@ -214,6 +214,13 @@ pre { @extend %resultsCode; // <pre> is only emitted by SyntaxHighlighter
 	padding: 6px 8px;
 	overflow: hidden;
 	text-overflow: ellipsis;
+	display: flex;
+
+	code:nth-child(1) {
+		width: 48px;
+		color: hsl(0, 0%, 60%);
+		flex: 0 0 auto;
+	}
 
 	code {
 		word-break: break-all;
