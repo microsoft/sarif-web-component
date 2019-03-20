@@ -61,7 +61,7 @@ declare module "office-ui-fabric-react/lib/components/GroupedList/GroupedList.ty
 	}
 }
 @observer export class ResultsList extends React.Component<any> {
-	DetailsListWithCustomizations = (({ items, groups, columns, isFull, selection, setKey }) => <DetailsList
+	DetailsListWithCustomizations = (({ items, groups, columns, isFull, selection }) => <DetailsList
 		items={items}
 		groups={groups}
 		groupProps={{
@@ -79,10 +79,8 @@ declare module "office-ui-fabric-react/lib/components/GroupedList/GroupedList.ty
 		selectionMode={isFull ? SelectionMode.single : SelectionMode.multiple}
 		selection={selection}
 		styles={{ root: ['ms-DetailsList', { fontSize: '14px' }] }}
-		setKey={setKey}
 	/>)
 	render() {
-		const {sarif} = this.props
 		const {isFull, results, groupBy, sortBy: [sortByCol, isDesc], resultsSorted, groups, selKey, selection} = this.props.store
 		const filterText = untracked(() => this.props.store.filterText)
 		
@@ -175,8 +173,7 @@ declare module "office-ui-fabric-react/lib/components/GroupedList/GroupedList.ty
 					groups={groups}
 					columns={columns}
 					isFull={isFull}
-					selection={selection}
-					setKey={sarif} />
+					selection={selection} />
 				: groups.map(group => <div className="resultsDomain" key={group.key}>
 					<ResultsPolicy group={group as any} isTriageEnabled={!!selKey} forceUpdate={() => this.forceUpdate()} />
 					{!group.isCollapsed && <this.DetailsListWithCustomizations
@@ -184,8 +181,7 @@ declare module "office-ui-fabric-react/lib/components/GroupedList/GroupedList.ty
 						groups={group.children}
 						columns={columns}
 						isFull={isFull}
-						selection={selection}
-						setKey={sarif} />}
+						selection={selection} />}
 				</div>)}
 		</div>
 	}

@@ -26,10 +26,10 @@ import {ResultsList} from './ResultsList.tsx'
 		const {isFull} = this.store
 		return !isFull
 			? <div className="resultsAny" data-is-scrollable>
-				<ResultsList store={this.store} sarif={this.props.sarif} />
+				<ResultsList store={this.store} />
 			</div>
 			: <ResultsPage store={this.store}>
-				<ResultsList store={this.store} sarif={this.props.sarif} />
+				<ResultsList store={this.store} />
 			</ResultsPage>
 	}
 }
