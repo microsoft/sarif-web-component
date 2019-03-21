@@ -39,10 +39,10 @@ test('sorts', () => {
 		{ policy: 'Acc', rule: 'r1', path: 'c' },
 		{ policy: 'Acc', rule: 'r2', path: 'b' },
 		{ policy: 'Acc', rule: 'r2', path: 'a' },
-		{ policy: 'Sec', rule: 'r3', path: 2    },
-		{ policy: 'Sec', rule: 'r3', path: null },
-		{ policy: 'Sec', rule: 'r3', path: 1    },
-		{ policy: 'Sec', rule: 'r3', path: null },
+		{ policy: 'Sec', rule: 'r3', path: 2   },
+		{ policy: 'Sec', rule: 'r3', path: null},
+		{ policy: 'Sec', rule: 'r3', path: 1   },
+		{ policy: 'Sec', rule: 'r3', path: null},
 	]
 	const groups = generateGroups(results, ['policy', 'rule'])
 	sortItems(groups, (i: { path: string }) => i.path, false)
@@ -51,10 +51,10 @@ test('sorts', () => {
 		{ policy: 'Acc', rule: 'r1', path: 'd' },
 		{ policy: 'Acc', rule: 'r2', path: 'a' },
 		{ policy: 'Acc', rule: 'r2', path: 'b' },
-		{ policy: 'Sec', rule: 'r3', path: null },
-		{ policy: 'Sec', rule: 'r3', path: null },
-		{ policy: 'Sec', rule: 'r3', path: 1 },
-		{ policy: 'Sec', rule: 'r3', path: 2 },
+		{ policy: 'Sec', rule: 'r3', path: null},
+		{ policy: 'Sec', rule: 'r3', path: null},
+		{ policy: 'Sec', rule: 'r3', path: 1   },
+		{ policy: 'Sec', rule: 'r3', path: 2   },
 	])
 	sortItems(groups, (i: { path: string }) => i.path, true)
 	expect(generateItems(groups)).toMatchObject([
@@ -62,9 +62,9 @@ test('sorts', () => {
 		{ policy: 'Acc', rule: 'r1', path: 'c' },
 		{ policy: 'Acc', rule: 'r2', path: 'b' },
 		{ policy: 'Acc', rule: 'r2', path: 'a' },
-		{ policy: 'Sec', rule: 'r3', path: 2 },
-		{ policy: 'Sec', rule: 'r3', path: 1 },
-		{ policy: 'Sec', rule: 'r3', path: null },
-		{ policy: 'Sec', rule: 'r3', path: null },
+		{ policy: 'Sec', rule: 'r3', path: 2   },
+		{ policy: 'Sec', rule: 'r3', path: 1   },
+		{ policy: 'Sec', rule: 'r3', path: null},
+		{ policy: 'Sec', rule: 'r3', path: null},
 	])
 })
