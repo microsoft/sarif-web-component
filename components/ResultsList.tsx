@@ -33,7 +33,7 @@ type IResult = any
 
 @observer class ResultsBar extends React.Component<any> {
 	render() {
-		const {isFull, isFilterHidden, filterText, prefix} = this.props.store
+		const {isFull, isFilterHidden, filter, filterText, prefix} = this.props.store
 		return !isFilterHidden && <div className="resultsBar">
 			{!isFull && prefix && <span style={{ borderRight: '1px solid #efefef', flex: '0 0 auto' }}>{prefix}</span>}
 			<Icon iconName="Filter" />
@@ -41,8 +41,7 @@ type IResult = any
 				value={filterText} onChange={e => this.props.store.filterText = e.target.value}
 				placeholder="Filter by text" />
 			{!isFull && <>
-				<ResultsFilterDropdown store={this.props.store} column="Baseline State" />
-				<ResultsFilterDropdown store={this.props.store} column="Level" />
+				{Object.keys(filter).map(column => <ResultsFilterDropdown key={column} store={this.props.store} column={column} />)}
 				<IconButton
 					ariaLabel="Clear Filter"
 					iconProps={{ iconName: 'Clear' }}
@@ -52,6 +51,7 @@ type IResult = any
 	}
 	@autobind private onClearClick(ev: any) {
 		this.props.store.filterText = '' // Not working for the dropdowns as they own their own data.
+		this.props.store.resetFilter()
 	}
 }
 

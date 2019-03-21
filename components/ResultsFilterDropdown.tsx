@@ -21,7 +21,6 @@ interface IResultsFilterDropdownOption extends IDropdownOption {
 @observer export class ResultsFilterDropdown extends React.Component<any> {
 	// 1) Take a results list and generate it's own options.
 	// 2) Keeps selected state.
-	@observable selectedKeys = [] // Instance must be maintained.
 	@computed get options() {
 		const column = this.props.column
 		const results = this.props.store.results || []
@@ -30,20 +29,16 @@ interface IResultsFilterDropdownOption extends IDropdownOption {
 			const cell = row[column.toLowerCase().replace(/ /g, '')]
 			counts.set(cell, (counts.get(cell) || 1) + 1)
 		})
-		const filters = untracked(() => this.props.store.filter)
-		if (!filters[column]) setTimeout(() => {
-			filters[column] = this.selectedKeys // 'Register' selectedKeys with the store.
-		})
 		return [...counts.keys()].map(cell => ({ key: cell, text: cell, count: counts.get(cell) }))
 	}
 	render() {
 		const {column} = this.props
-		const {results} = this.props.store
+		const {results, filter} = this.props.store
 		return <Dropdown multiSelect className="resultsDropdown"
 			label={column}
 			placeholder={column}
 			options={this.options}
-			selectedKeys={toJS(this.selectedKeys)} // Change detects based on array identity. toJS() creates a new array.
+			selectedKeys={toJS(filter[column])} // Change detects based on array identity. toJS() creates a new array.
 			dropdownWidth={200}
 			onChange={this.onChange}
 			onRenderOption={this.onRenderOption}
@@ -52,11 +47,13 @@ interface IResultsFilterDropdownOption extends IDropdownOption {
 		/>
 	}
 	@autobind private onChange(ev, item) {
+		const {store, column} = this.props
+		const selectedKeys = store.filter[column]
 		if (item.selected) {
-			this.selectedKeys.push(item.key)
+			selectedKeys.push(item.key)
 		} else {
-			const i = this.selectedKeys.indexOf(item.key)
-			if (i >= 0) this.selectedKeys.splice(i, 1)
+			const i = selectedKeys.indexOf(item.key)
+			if (i >= 0) selectedKeys.splice(i, 1)
 		}
 	}
 	@autobind private onRenderOption(option: IResultsFilterDropdownOption) {

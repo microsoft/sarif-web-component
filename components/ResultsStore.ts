@@ -67,14 +67,17 @@ class ResultsStore {
 	
 	needSyncSel = false
 	@observable.ref results = undefined // undef = indeterminte, [] = zero results, [...] = some results
-	@observable.shallow filter = {}
+	@observable filter = {}
 	@observable filterText = ''
 	
 	_resetFilter = autorun(() => {
 		const {results} = this
 		if (!results) return
-		this.filter = {} // results.some(r => r.issuetype === 'Error') ? { 'Issue Type': ['Error'] } : {}
+		this.resetFilter()
 	})
+	resetFilter() {
+		this.filter = { 'Baseline State': [], 'Level': [] }
+	}
 	
 	@observable.shallow resultsFiltered = []
 	_resultsFiltered = autorun(() => {
