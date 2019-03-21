@@ -3,7 +3,7 @@
 
 import autobind from 'autobind-decorator'
 import {observable, computed, autorun, untracked, toJS} from "mobx"
-import {generateGroups, sortItems, generateItems} from './grouping.ts'
+import {generateGroups, sortItems, generateItems} from './grouping'
 import {Selection} from 'office-ui-fabric-react/lib/Selection'
 
 function debounce(ms) {

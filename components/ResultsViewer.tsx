@@ -4,8 +4,8 @@
 import * as React from 'react'
 import * as ReactDOM from "react-dom"
 import {observer} from "mobx-react"
-import {parse} from './parsing.ts'
-import {ResultsStore} from './ResultsStore.ts'
+import {parse} from './parsing'
+import {ResultsStore} from './ResultsStore'
 import {ResultsPage} from './ResultsPage.tsx'
 import {ResultsList} from './ResultsList.tsx'
 
