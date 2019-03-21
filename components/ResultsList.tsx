@@ -108,8 +108,8 @@ declare module "office-ui-fabric-react/lib/components/GroupedList/GroupedList.ty
 				onRender: (item: IResult, i: number, col: IColumn) => <>
 					{icons[item.level] || icons['Unknown']}
 						{item.uri.endsWith('.dll')
-							? <Hi term={filterText}>{item[col.key]}</Hi>
-							: <a href={`${item.uri}#L${item.details.snippet && item.details.snippet.region && item.details.snippet.region.startLine}`} target="_blank" title={JSON.stringify(item.raw, null, '    ')}>
+							? <span title={item.uri}><Hi term={filterText}>{item[col.key]}</Hi></span>
+							: <a href={`${item.uri}#L${item.details.snippet && item.details.snippet.region && item.details.snippet.region.startLine}`} target="_blank" title={item.uri}>
 								<Hi term={filterText}>{item[col.key]}</Hi>
 							</a>
 						}
