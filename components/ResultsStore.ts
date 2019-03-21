@@ -92,11 +92,11 @@ class ResultsStore {
 			}
 			if (filterText) {
 				// At least one field matching sufficient.
-				const ciIncludes = (a, b) => !a || a.toLowerCase().includes(b.toLowerCase())					
-				if (!( ciIncludes(r.ruleObj && r.ruleObj.desc || '', filterText)
-					|| ciIncludes(r.path    , filterText)
-					|| ciIncludes(r.details.toString(), filterText)
-				)) return false
+				const ciIncludes = (a, b) => a && a.toLowerCase().includes(b.toLowerCase())
+				const rowIncludesTerm = ciIncludes(r.ruleObj && r.ruleObj.desc || '', filterText)
+									 || ciIncludes(r.path                           , filterText)
+									 || ciIncludes(r.details.toString()             , filterText)
+				if (!rowIncludesTerm) return false
 			}
 			return true
 		})
