@@ -27,6 +27,7 @@ class Details {
 
 export async function parse(file) {
 	file = await file
+	if (file === '') return [] // In cases such as the default/empty file.
 	const sarif = typeof file === 'string' ? JSON.parse(file) : file
 
 	const results = [].concat(...sarif.runs.filter(run => run.results).map(run => {
