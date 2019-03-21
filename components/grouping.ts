@@ -51,14 +51,17 @@ function sortObjects(list: any[], f: (item: any) => any, isDesc: boolean): any[]
 		a = f(a)
 		b = f(b)
 
+		// Objects must implement toString() to be sorted.
+		// Typeof null === 'object' so remember to pre-check.
+		if (a && typeof a === 'object') a = a.toString()
+		if (b && typeof b === 'object') b = b.toString()
+
 		// Workaround for null and undefined bug numbers.
 		if (!a && typeof b === 'number') a = 0
 		if (!b && typeof a === 'number') b = 0
+		if (!a && typeof b === 'string') a = ''
+		if (!b && typeof a === 'string') b = ''
 		
-		// Objects must implement toString() to be sorted.
-		if (typeof a === 'object') a = a.toString()
-		if (typeof b === 'object') b = b.toString()
-
 		const comparer = typeof a === 'string'
 			? (a: string, b: string) => a.localeCompare(b)
 			: (a: any, b: any) => a - b
