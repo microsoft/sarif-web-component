@@ -3,7 +3,7 @@
 
 import './ResultsList.scss'
 import * as React from 'react'
-import {untracked} from "mobx"
+import {untracked, trace} from "mobx"
 import {observer} from "mobx-react"
 import autobind from 'autobind-decorator'
 
