@@ -50,6 +50,7 @@ export class Colorize extends React.Component<any> {
 		
 		const region = phyLoc.region 
 		let snippet = region && region.snippet && region.snippet.text || ''
+		snippet = snippet.replace(/\r/g, '') // Important for crst.indexOf(snippet).
 		if (!snippet && !phyLoc.contextRegion) return null // FxCop1.sarif has phyLoc but no region.
 				
 		const lines = snippet.split('\n')
