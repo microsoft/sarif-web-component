@@ -7,6 +7,14 @@ import * as highlight from 'highlight.js'
 require('!style-loader!css-loader!highlight.js/styles/default.css')
 import {Hi} from './Hi.tsx'
 
+const unindent = lines => {
+	const spc = Math.min(...lines
+		.filter(line => (line as any).trimLeft().length)
+		.map(line => line.length - (line as any).trimLeft().length)
+	)
+	return lines.map(l => l.slice(spc))
+}
+
 export class Colorize extends React.Component<any> {
 	componentDidMount () {
 		const code = findDOMNode(this.refs.code)
@@ -49,7 +57,8 @@ export class Colorize extends React.Component<any> {
 		if (snippet.trim() === '{') snippet = '' // Hack for FxCop.
 
 		if (lines.length >= 3) {
-			snippet = [...lines.slice(0, 3), `// ${lines.length - 3} lines truncated`].join('\n')
+			const unindended = unindent(lines.slice(0, 3))
+			snippet = [...unindended, `// ${lines.length - 3} lines truncated`].join('\n')
 		} else {
 			const contextRegion = phyLoc.contextRegion
 			if (contextRegion) {
@@ -62,15 +71,7 @@ export class Colorize extends React.Component<any> {
 				} else {
 					const marker = '\u200B'
 					let markered = [crst.slice(0, a), crst.slice(a, b), crst.slice(b)].join(marker).replace(/\r/g, '')
-
-					let lines = markered.split('\n')
-					const spc = Math.min(...lines
-						.filter(line => (line as any).trimLeft().length)
-						.map(line => line.length - (line as any).trimLeft().length)
-					)
-					lines = lines.map((l, i) => l.slice(spc))
-					markered = lines.join('\n')
-
+					markered = unindent(markered.split('\n')).join('\n')
 					const [pre, hi, post] = markered.split(marker)
 					snippet = <>
 						{pre}<span style={{ backgroundColor: 'yellow' }}>{hi}</span>{post}
