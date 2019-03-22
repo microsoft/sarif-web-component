@@ -56,6 +56,8 @@ export async function parse(file) {
 			].filter(i => i).join(': ')
 		}
 		
+		let source = (run.tool.driver || run.tool).name //  + ' ' + sarif.version
+		if (source === 'Microsoft.CodeAnalysis.Sarif.PatternMatcher') source = 'CredScan on Push' // Temporary.
 		const results = run.results.filter(r => r.locations).map(r => {
 			const ruleObj = rules[r.ruleId]
 			
