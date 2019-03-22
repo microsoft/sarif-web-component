@@ -56,10 +56,12 @@ export class Colorize extends React.Component<any> {
 
 		if (snippet.trim() === '{') snippet = '' // Hack for FxCop.
 
-		if (lines.length >= 3) {
-			const unindended = unindent(lines.slice(0, 3))
-			const lastLineIndent = /^\s*/.exec(unindended[2])[0]
-			snippet = [...unindended, `${lastLineIndent}// ${lines.length - 3} lines truncated`].join('\n')
+		const maxLines = 6
+		if (lines.length > maxLines) {
+			const showOnly = maxLines - 2 // Avoid awkward 1 or 2 lines truncated.
+			const unindended = unindent(lines.slice(0, showOnly))
+			const lastLineIndent = /^\s*/.exec(unindended[showOnly - 1])[0]
+			snippet = [...unindended, `${lastLineIndent}// ${lines.length - showOnly} lines truncated`].join('\n')
 		} else {
 			const contextRegion = phyLoc.contextRegion
 			if (contextRegion) {
