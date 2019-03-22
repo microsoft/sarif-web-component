@@ -99,7 +99,7 @@ export class Colorize extends React.Component<any> {
 		const ext = uri && uri.match(/\.(\w+)$/)
 		let lang = ext && ext[1] || uri && uri.startsWith('http') && 'html' || ''
 
-		return <pre key={Date.now()}>
+		return <pre key={Date.now()} onDoubleClick={() => console.log(phyLoc)}>
 			<code><br />{region.startLine}<br />{region.startLine + 1}</code>
 			<code className={lang} ref="code">{snippet}</code>
 		</pre>
