@@ -63,9 +63,15 @@ export class Colorize extends React.Component<any> {
 		} else {
 			const contextRegion = phyLoc.contextRegion
 			if (contextRegion) {
-				const a = region.charOffset - contextRegion.charOffset
-				const b = (a + region.charLength) - contextRegion.charLength
+				let a = region.charOffset - contextRegion.charOffset
+				let b = (a + region.charLength) - contextRegion.charLength
 				const crst = contextRegion.snippet.text
+				
+				if (isNaN(a)) { // Accomodate malformed regions with no charOffset.
+					const leadingSpaceCount = /^ */.exec(snippet)[0].length
+					a = crst.indexOf(snippet) + leadingSpaceCount
+					b = a + (snippet.length - leadingSpaceCount)
+				}
 
 				if (term) {
 					snippet = crst
