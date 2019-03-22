@@ -89,7 +89,7 @@ export class Colorize extends React.Component<any> {
 		let lang = ext && ext[1] || uri && uri.startsWith('http') && 'html' || ''
 
 		return <pre key={Date.now()}>
-			<code><br />{region.startLine}</code>
+			<code><br />{region.startLine}<br />{region.startLine + 1}</code>
 			<code className={lang} ref="code">{snippet}</code>
 		</pre>
 	}
