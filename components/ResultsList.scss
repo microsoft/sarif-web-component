@@ -217,7 +217,7 @@ pre { @extend %resultsCode; // <pre> is only emitted by SyntaxHighlighter
 	display: flex;
 
 	code:nth-child(1) {
-		width: 48px;
+		width: 36px;
 		color: hsl(0, 0%, 60%);
 		flex: 0 0 auto;
 	}
