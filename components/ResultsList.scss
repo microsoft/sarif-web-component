@@ -171,6 +171,10 @@ a {
 		padding: 1px 7px 2px;
 		border-radius: 999px;
 	}
+	
+	.ms-GroupShowAll {
+		padding-left: 36px + 4px; // Override fabric hardcoded 84px left which only aligns when the checkboxes are show.
+	}
 }
 
 // Keep in the dom for aria, display: none for design.

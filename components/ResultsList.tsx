@@ -76,7 +76,7 @@ declare module "office-ui-fabric-react/lib/components/GroupedList/GroupedList.ty
 		ariaLabelForSelectAllCheckbox={"Toggle selection for all items"}
 		isHeaderVisible={!isFull}
 		onShouldVirtualize={() => items.length > 100}
-		selectionMode={isFull ? SelectionMode.single : SelectionMode.multiple}
+		selectionMode={SelectionMode.none}
 		selection={selection}
 		styles={{ root: ['ms-DetailsList', { fontSize: '14px' }] }}
 	/>)
