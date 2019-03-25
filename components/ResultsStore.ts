@@ -2,7 +2,7 @@
 // Licensed under the MIT License.
 
 import autobind from 'autobind-decorator'
-import {observable, computed, autorun, untracked, toJS} from "mobx"
+import {observable, computed, autorun, untracked, toJS, trace} from "mobx"
 import {generateGroups, sortItems, generateItems} from './grouping'
 import {Selection} from 'office-ui-fabric-react/lib/Selection'
 
