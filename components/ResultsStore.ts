@@ -73,10 +73,10 @@ class ResultsStore {
 	_resetFilter = autorun(() => {
 		const {results} = this
 		if (!results) return
-		this.resetFilter()
+		this.filter = { 'Baseline State': ['Absent', 'New', 'Updated',], 'Level': ['Error', 'Warning'] }
 	})
-	resetFilter() {
-		this.filter = { 'Baseline State': [], 'Level': [] }
+	clearFilter() {
+		this.filter = { 'Baseline State': ['Absent', 'New', 'Unchanged', 'Updated'], 'Level': ['Error', 'Warning'] }
 	}
 	
 	@observable.shallow resultsFiltered = []
@@ -89,8 +89,7 @@ class ResultsStore {
 			// A matching result matches all conditions (AND), not just some (OR).
 			for (const column in filter) {
 				const field = r[column.toLowerCase().replace(/ /g, '')]
-				const filterValues = filter[column]
-				const matches = !filterValues || !filterValues.length || filterValues.includes(field)
+				const matches = filter[column].includes(field)
 				if (!matches) return false
 			}
 			if (filterText) {

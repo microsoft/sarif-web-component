@@ -9,6 +9,7 @@ import autobind from 'autobind-decorator'
 
 import {DetailsList, ConstrainMode, IColumn} from 'office-ui-fabric-react/lib/DetailsList'
 import {IGroupDividerProps} from 'office-ui-fabric-react/lib/components/GroupedList/index'
+import {PrimaryButton} from 'office-ui-fabric-react/lib/Button'
 import {SelectionMode} from 'office-ui-fabric-react/lib/utilities/selection/index'
 import {ISelection} from 'office-ui-fabric-react/lib/Selection'
 import {IconButton} from 'office-ui-fabric-react/lib/Button'
@@ -51,7 +52,7 @@ type IResult = any
 	}
 	@autobind private onClearClick(ev: any) {
 		this.props.store.filterText = '' // Not working for the dropdowns as they own their own data.
-		this.props.store.resetFilter()
+		this.props.store.clearFilter()
 	}
 }
 
@@ -93,6 +94,20 @@ declare module "office-ui-fabric-react/lib/components/GroupedList/GroupedList.ty
 			</div>
 		}
 		
+		if (results && !resultsSorted.length) {
+			const {store} = this.props
+			const {filter} = store
+			return <div className="resultsList">
+				<ResultsBar store={this.props.store} />
+				<div style={{ textAlign: 'center', fontSize: 25, color: 'hsl(0, 0%, 70%)', marginTop: 150 }}>
+					No matching results
+					{!filter['Baseline State'].includes('Unchanged') && <div style={{ fontSize: 14, marginTop: 24 }}>
+						<PrimaryButton text="Clear filter" onClick={() => store.clearFilter()} />
+					</div>}
+				</div>
+			</div>
+		}
+				
 		const icons = {
 			'Error':   <Icon iconName="StatusErrorFull"  style={{ color: '#E81123', marginRight: 8 }} />,
 			'Warning': <Icon iconName="AlertSolid"       style={{ color: '#FF8C00', marginRight: 8 }} />,
