@@ -7,7 +7,7 @@ import {observer} from "mobx-react"
 import {parse} from './parsing'
 import {ResultsStore} from './ResultsStore'
 import {ResultsPage} from './ResultsPage.tsx'
-import {ResultsList} from './ResultsList.tsx'
+import {ResultsBar, ResultsList} from './ResultsList.tsx'
 
 @observer export class ResultsViewer extends React.Component<any, any> {
 	state = {} // Suppress: Did not properly initialize state during construction. Expected state to be an object, but it was undefined.
@@ -28,10 +28,16 @@ import {ResultsList} from './ResultsList.tsx'
 		const {isFull} = this.store
 		return !isFull
 			? <div className="resultsAny" data-is-scrollable>
-				<ResultsList store={this.store} />
+				<div className="resultsList">
+					<ResultsBar store={this.store} />
+					<ResultsList store={this.store} />
+				</div>
 			</div>
 			: <ResultsPage store={this.store}>
-				<ResultsList store={this.store} />
+				<div className="resultsList">
+					<ResultsBar store={this.store} />
+					<ResultsList store={this.store} />
+				</div>
 			</ResultsPage>
 	}
 }

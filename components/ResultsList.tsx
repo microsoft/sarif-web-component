@@ -32,7 +32,7 @@ loadTheme({
 
 type IResult = any
 
-@observer class ResultsBar extends React.Component<any> {
+@observer export class ResultsBar extends React.Component<any> {
 	render() {
 		const {isFull, isFilterHidden, filter, filterText, prefix} = this.props.store
 		return !isFilterHidden && <div className="resultsBar">
@@ -88,23 +88,17 @@ declare module "office-ui-fabric-react/lib/components/GroupedList/GroupedList.ty
 		const filterText = untracked(() => this.props.store.filterText)
 		
 		if (results && !results.length) {
-			return <div className="resultsList">
-				<ResultsBar store={this.props.store} />
-				<div style={{ textAlign: 'center', fontSize: 25, color: 'hsl(0, 0%, 70%)', marginTop: 150 }}>No results</div>
-			</div>
+			return <div style={{ textAlign: 'center', fontSize: 25, color: 'hsl(0, 0%, 70%)', marginTop: 150 }}>No results</div>
 		}
 		
 		if (results && !resultsSorted.length) {
 			const {store} = this.props
 			const {filter} = store
-			return <div className="resultsList">
-				<ResultsBar store={this.props.store} />
-				<div style={{ textAlign: 'center', fontSize: 25, color: 'hsl(0, 0%, 70%)', marginTop: 150 }}>
+			return <div style={{ textAlign: 'center', fontSize: 25, color: 'hsl(0, 0%, 70%)', marginTop: 150 }}>
 					No matching results
 					{!filter['Baseline State'].includes('Unchanged') && <div style={{ fontSize: 14, marginTop: 24 }}>
 						<PrimaryButton text="Clear filter" onClick={() => store.clearFilter()} />
 					</div>}
-				</div>
 			</div>
 		}
 				
@@ -182,9 +176,7 @@ declare module "office-ui-fabric-react/lib/components/GroupedList/GroupedList.ty
 
 		groups.forEach(group => group.children.forEach(subGroup => subGroup.level = isFull ? 1 : 0))
 		
-		return <div className="resultsList">
-			<ResultsBar store={this.props.store} />
-			{isFull
+		return isFull
 				? <this.DetailsListWithCustomizations
 					items={resultsSorted}
 					groups={groups}
@@ -199,8 +191,7 @@ declare module "office-ui-fabric-react/lib/components/GroupedList/GroupedList.ty
 						columns={columns}
 						isFull={isFull}
 						selection={selection} />}
-				</div>)}
-		</div>
+				</div>)
 	}
 	@autobind private onColumnClick(ev: Event, updatedCol: IColumn) {
 		const [sortByCol, isDesc] = this.props.store.sortBy		
