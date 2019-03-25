@@ -92,10 +92,9 @@ declare module "office-ui-fabric-react/lib/components/GroupedList/GroupedList.ty
 		
 		if (results && !resultsSorted.length) {
 			const {store} = this.props
-			const {filter} = store
 			return <div style={{ textAlign: 'center', fontSize: 25, color: 'hsl(0, 0%, 70%)', marginTop: 150 }}>
 				No matching results
-				{!filter['Baseline State'].includes('Unchanged') && <div style={{ fontSize: 14, marginTop: 24 }}>
+				{!store.filter['Baseline State'].includes('Unchanged') && <div style={{ fontSize: 14, marginTop: 24 }}>
 					<PrimaryButton text="Clear filter" onClick={() => store.clearFilter()} />
 				</div>}
 			</div>
