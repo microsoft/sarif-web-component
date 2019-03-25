@@ -95,10 +95,10 @@ declare module "office-ui-fabric-react/lib/components/GroupedList/GroupedList.ty
 			const {store} = this.props
 			const {filter} = store
 			return <div style={{ textAlign: 'center', fontSize: 25, color: 'hsl(0, 0%, 70%)', marginTop: 150 }}>
-					No matching results
-					{!filter['Baseline State'].includes('Unchanged') && <div style={{ fontSize: 14, marginTop: 24 }}>
-						<PrimaryButton text="Clear filter" onClick={() => store.clearFilter()} />
-					</div>}
+				No matching results
+				{!filter['Baseline State'].includes('Unchanged') && <div style={{ fontSize: 14, marginTop: 24 }}>
+					<PrimaryButton text="Clear filter" onClick={() => store.clearFilter()} />
+				</div>}
 			</div>
 		}
 				
@@ -177,21 +177,21 @@ declare module "office-ui-fabric-react/lib/components/GroupedList/GroupedList.ty
 		groups.forEach(group => group.children.forEach(subGroup => subGroup.level = isFull ? 1 : 0))
 		
 		return isFull
-				? <this.DetailsListWithCustomizations
+			? <this.DetailsListWithCustomizations
+				items={resultsSorted}
+				groups={groups}
+				columns={columns}
+				isFull={isFull}
+				selection={selection} />
+			: groups.map(group => <div className="resultsDomain" key={group.key}>
+				<ResultsPolicy group={group as any} isTriageEnabled={!!selKey} forceUpdate={() => this.forceUpdate()} />
+				{!group.isCollapsed && <this.DetailsListWithCustomizations
 					items={resultsSorted}
-					groups={groups}
+					groups={group.children}
 					columns={columns}
 					isFull={isFull}
-					selection={selection} />
-				: groups.map(group => <div className="resultsDomain" key={group.key}>
-					<ResultsPolicy group={group as any} isTriageEnabled={!!selKey} forceUpdate={() => this.forceUpdate()} />
-					{!group.isCollapsed && <this.DetailsListWithCustomizations
-						items={resultsSorted}
-						groups={group.children}
-						columns={columns}
-						isFull={isFull}
-						selection={selection} />}
-				</div>)
+					selection={selection} />}
+			</div>)
 	}
 	@autobind private onColumnClick(ev: Event, updatedCol: IColumn) {
 		const [sortByCol, isDesc] = this.props.store.sortBy		
