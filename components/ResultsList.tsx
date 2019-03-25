@@ -83,7 +83,6 @@ declare module "office-ui-fabric-react/lib/components/GroupedList/GroupedList.ty
 	/>)
 	render() {
 		const {isFull, groupBy, sortBy: [sortByCol, isDesc], resultsSorted, groups, selKey, selection} = this.props.store
-		// const results = this.props.store.results
 		const results = untracked(() => this.props.store.results)
 		const filterText = untracked(() => this.props.store.filterText)
 		
