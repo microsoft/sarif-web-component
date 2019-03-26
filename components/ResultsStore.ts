@@ -17,37 +17,8 @@ function debounce(ms) {
 	}
 }
 
-// Routing Tests:
-// - List
-//   change selection does not update URL (thus refresh stays in same mode)
-//   clicking [Path >] updates URL and switches page
-// - Page
-//   change selection *does* update URL (use arrows keys also)
-//   refresh maintains URL and selection (check url /0 also)
-//   [< Build] button clears URL and takes you back
-// - Browser Back takes you between selections and page
-// - Switch sample clears selection (and take you back to list)
-// - Filter maintains selection as long as possible
-function bindHistory(store) {
-	function urlToSelKey() {
-		const path = document.location.pathname.slice(1)
-		const selKey = !!path.length && +path
-		store.selKey = Number.isInteger(selKey) ? selKey : undefined
-		store.isFull = store.selKey != undefined // selKey may be 0.
-	}
-	addEventListener('popstate', urlToSelKey)
-	urlToSelKey()
-	
-	// Must run after the first urlToSelKey()
-	store._selKeyToUrl = autorun(() => {
-		const {selKey} = this
-		history.pushState(undefined, undefined, `/${selKey !== undefined ? selKey : ''}`)
-	})
-}
-
 class ResultsStore {
 	@observable selKey = undefined
-	@observable isFull = false
 	@observable isFilterHidden = false
 	@observable prefix = null
 	
@@ -117,27 +88,7 @@ class ResultsStore {
 		return generateItems(groups)
     }
 	
-	// After every sample change, after resultsSorted is ready, remember to rehydrate setKeySelected().
-	// Don't rehydrate on other resultsSorted updates such as when filtering.
-	_syncSel = autorun(() => {
-		this.resultsSorted // Just to subscribe
-		if (this.selection && this.needSyncSel) { // selction is null on boot.
-			untracked(() => {
-				// Preemptively setItems to enable setKeySelected.
-				this.selection.setItems(this.resultsSorted, false /* shouldClear */)
-				this.selection.setKeySelected(this.selKey + '', true, true)
-			})
-			this.needSyncSel = false
-		}
-	})
-	
-	selection = new Selection({
-		onSelectionChanged: () => {
-			if (!this.isFull) return
-			const sel = this.selection.getSelection() as any[] // Normally just IObjectWithKey[]
-			this.selKey = sel[0] && sel[0].key
-		}
-	})
+	selection = new Selection()
 }
 
 export { ResultsStore }

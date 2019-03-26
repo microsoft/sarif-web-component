@@ -34,20 +34,18 @@ type IResult = any
 
 @observer export class ResultsBar extends React.Component<any> {
 	render() {
-		const {isFull, isFilterHidden, filter, filterText, prefix} = this.props.store
+		const {isFilterHidden, filter, filterText, prefix} = this.props.store
 		return !isFilterHidden && <div className="resultsBar">
-			{!isFull && prefix && <span style={{ borderRight: '1px solid #efefef', flex: '0 0 auto' }}>{prefix}</span>}
+			{prefix && <span style={{ borderRight: '1px solid #efefef', flex: '0 0 auto' }}>{prefix}</span>}
 			<Icon iconName="Filter" />
 			<input type="text" spellCheck={false}
 				value={filterText} onChange={e => this.props.store.filterText = e.target.value}
 				placeholder="Filter by text" />
-			{!isFull && <>
-				{Object.keys(filter).map(column => <ResultsFilterDropdown key={column} store={this.props.store} column={column} />)}
-				<IconButton
-					ariaLabel="Clear Filter"
-					iconProps={{ iconName: 'Clear' }}
-					onClick={this.onClearClick} />
-			</>}
+			{Object.keys(filter).map(column => <ResultsFilterDropdown key={column} store={this.props.store} column={column} />)}
+			<IconButton
+				ariaLabel="Clear Filter"
+				iconProps={{ iconName: 'Clear' }}
+				onClick={this.onClearClick} />
 		</div>
 	}
 	@autobind private onClearClick(ev: any) {
@@ -62,27 +60,8 @@ declare module "office-ui-fabric-react/lib/components/GroupedList/GroupedList.ty
 	}
 }
 @observer export class ResultsList extends React.Component<any> {
-	DetailsListWithCustomizations = (({ items, groups, columns, isFull, selection }) => <DetailsList
-		items={items}
-		groups={groups}
-		groupProps={{
-			showEmptyGroups: true,
-			headerProps: { onRenderTitle: this.onRenderTitle },
-			getGroupItemLimit: group => group.isShowingAll ? Infinity : 3,
-			isAllGroupsCollapsed: true, // Future: crawl tree and look at isCollapsed state.
-		}}
-		constrainMode={ConstrainMode.unconstrained}
-		compact={true}
-		columns={columns}
-		ariaLabelForSelectAllCheckbox={"Toggle selection for all items"}
-		isHeaderVisible={!isFull}
-		onShouldVirtualize={() => items.length > 100}
-		selectionMode={SelectionMode.none}
-		selection={selection}
-		styles={{ root: ['ms-DetailsList', { fontSize: '14px' }] }}
-	/>)
 	render() {
-		const {isFull, groupBy, sortBy: [sortByCol, isDesc], resultsSorted, groups, selKey, selection} = this.props.store
+		const {groupBy, sortBy: [sortByCol, isDesc], resultsSorted, groups, selKey, selection} = this.props.store
 		const results = untracked(() => this.props.store.results)
 		const filterText = untracked(() => this.props.store.filterText)
 		
@@ -122,47 +101,45 @@ declare module "office-ui-fabric-react/lib/components/GroupedList/GroupedList.ty
 						}
 					</>,
 			},
-			...(isFull ? [] : [
-				{ minWidth: 300, key: 'details',  name: 'Details', isMultiline: true, className: 'resultsCellDetails',
-					onRender: (item: IResult, i: number, col: IColumn) => {
-						const details = item['details']
-						const message = (() => {
-							const {message, relatedLocations} = details
-							if (!message) return undefined
-							if (filterText) return <Hi term={filterText}>{message}</Hi>
-							
-							const rxLink = /\[([^\]]*)\]\((\d+)\)/ // Replace [text](relatedIndex) with <a href />
-							if (message.match(rxLink)) {
-								try {
-								return message
-									.split(/(\[[^\]]*\]\(\d+\))/g)
-									.map((item, i) => {
-										if (i % 2 === 0) return item
-										const [_, text, id] = item.match(rxLink)
-										const fileOrArtifact = (phy) => phy.fileLocation || phy.artifactLocation
-										return <a key={i} href={fileOrArtifact(relatedLocations[`${+id - 1}`].physicalLocation).uri}>{text}</a>
-									})
-								} catch(e) { console.log(e) }
-							}
-							
-							if (/Edge/.test(navigator.userAgent)) return message // Edge can't parse negative lookbehind.
-							
+			{ minWidth: 300, key: 'details',  name: 'Details', isMultiline: true, className: 'resultsCellDetails',
+				onRender: (item: IResult, i: number, col: IColumn) => {
+					const details = item['details']
+					const message = (() => {
+						const {message, relatedLocations} = details
+						if (!message) return undefined
+						if (filterText) return <Hi term={filterText}>{message}</Hi>
+						
+						const rxLink = /\[([^\]]*)\]\((\d+)\)/ // Replace [text](relatedIndex) with <a href />
+						if (message.match(rxLink)) {
+							try {
 							return message
-								.split(new RegExp("(?<!\\w)'(.+?)'", 'g')) // // Edge can't parse negative lookbehind.
-								.map((item, i) => i % 2 === 0 ? item : <code key={i}>{item}</code>)
-						})()
-						const snippet = <Colorize phyLoc={details.snippet} term={filterText} />
-						if (message && snippet) {
-							return <div className="resultsCellCombo">
-								<div>{message}</div>
-								{snippet}
-							</div>
+								.split(/(\[[^\]]*\]\(\d+\))/g)
+								.map((item, i) => {
+									if (i % 2 === 0) return item
+									const [_, text, id] = item.match(rxLink)
+									const fileOrArtifact = (phy) => phy.fileLocation || phy.artifactLocation
+									return <a key={i} href={fileOrArtifact(relatedLocations[`${+id - 1}`].physicalLocation).uri}>{text}</a>
+								})
+							} catch(e) { console.log(e) }
 						}
-						return snippet || message
-					},
+						
+						if (/Edge/.test(navigator.userAgent)) return message // Edge can't parse negative lookbehind.
+						
+						return message
+							.split(new RegExp("(?<!\\w)'(.+?)'", 'g')) // // Edge can't parse negative lookbehind.
+							.map((item, i) => i % 2 === 0 ? item : <code key={i}>{item}</code>)
+					})()
+					const snippet = <Colorize phyLoc={details.snippet} term={filterText} />
+					if (message && snippet) {
+						return <div className="resultsCellCombo">
+							<div>{message}</div>
+							{snippet}
+						</div>
+					}
+					return snippet || message
 				},
-				{ key: 'baselinestate',  name: 'Baseline', minWidth: 100, maxWidth: 200, className: 'resultsCell' }
-			])
+			},
+			{ key: 'baselinestate',  name: 'Baseline', minWidth: 100, maxWidth: 200, className: 'resultsCell' }
 		].map((col: any) => ({
 			...col,
 			onRender: col.onRender || ((item: IResult) => item[col.key]),
@@ -172,34 +149,38 @@ declare module "office-ui-fabric-react/lib/components/GroupedList/GroupedList.ty
 			onColumnClick: this.onColumnClick,
 		}))
 
-		groups.forEach(group => group.children.forEach(subGroup => subGroup.level = isFull ? 1 : 0))
+		groups.forEach(group => group.children.forEach(subGroup => subGroup.level = 0)) // Affects the indent of the Show All link.
 		
-		return isFull
-			? <this.DetailsListWithCustomizations
+		return groups.map(group => <div className="resultsDomain" key={group.key}>
+			<ResultsPolicy group={group as any} isTriageEnabled={!!selKey} forceUpdate={() => this.forceUpdate()} />
+			{!group.isCollapsed && <DetailsList
 				items={resultsSorted}
-				groups={groups}
+				groups={group.children}
+				groupProps={{
+					showEmptyGroups: true,
+					headerProps: { onRenderTitle: this.onRenderTitle },
+					getGroupItemLimit: group => group.isShowingAll ? Infinity : 3,
+					isAllGroupsCollapsed: true, // Future: crawl tree and look at isCollapsed state.
+				}}
+				constrainMode={ConstrainMode.unconstrained}
+				compact={true}
 				columns={columns}
-				isFull={isFull}
-				selection={selection} />
-			: groups.map(group => <div className="resultsDomain" key={group.key}>
-				<ResultsPolicy group={group as any} isTriageEnabled={!!selKey} forceUpdate={() => this.forceUpdate()} />
-				{!group.isCollapsed && <this.DetailsListWithCustomizations
-					items={resultsSorted}
-					groups={group.children}
-					columns={columns}
-					isFull={isFull}
-					selection={selection} />}
-			</div>)
+				ariaLabelForSelectAllCheckbox={"Toggle selection for all items"}
+				onShouldVirtualize={() => resultsSorted.length > 100}
+				selectionMode={SelectionMode.none}
+				selection={selection}
+				styles={{ root: ['ms-DetailsList', { fontSize: '14px' }] }}
+			/>}
+		</div>)
 	}
 	@autobind private onColumnClick(ev: Event, updatedCol: IColumn) {
 		const [sortByCol, isDesc] = this.props.store.sortBy		
 		this.props.store.sortBy = [updatedCol.key, sortByCol === updatedCol.key && !isDesc]
 	}
 	@autobind private onRenderTitle(props: IGroupDividerProps): JSX.Element {
-		const {isFull} = this.props.store
 		const filterText = untracked(() => this.props.store.filterText)
 		const {group, group: {key, keyObj, children, count}} = props
-		return (children && !isFull)
+		return children
 			? <ResultsPolicy group={group as any} /> // Tried casting to IResultsGroup
 			: <span className="resultsGroupHeader">
 				<span className="resultsGroupHeaderText"><Hi term={filterText}>{keyObj && keyObj.desc || key}</Hi></span>

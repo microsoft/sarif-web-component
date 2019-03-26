@@ -6,7 +6,6 @@ import * as ReactDOM from "react-dom"
 import {observer} from "mobx-react"
 import {parse} from './parsing'
 import {ResultsStore} from './ResultsStore'
-import {ResultsPage} from './ResultsPage.tsx'
 import {ResultsBar, ResultsList} from './ResultsList.tsx'
 
 @observer export class ResultsViewer extends React.Component<any, any> {
@@ -25,19 +24,11 @@ import {ResultsBar, ResultsList} from './ResultsList.tsx'
 		return null
 	}
 	render() {
-		const {isFull} = this.store
-		return !isFull
-			? <div className="resultsAny" data-is-scrollable>
-				<div className="resultsList">
-					<ResultsBar store={this.store} />
-					<ResultsList store={this.store} />
-				</div>
+		return <div className="resultsAny" data-is-scrollable>
+			<div className="resultsList">
+				<ResultsBar store={this.store} />
+				<ResultsList store={this.store} />
 			</div>
-			: <ResultsPage store={this.store}>
-				<div className="resultsList">
-					<ResultsBar store={this.store} />
-					<ResultsList store={this.store} />
-				</div>
-			</ResultsPage>
+		</div>
 	}
 }
