@@ -118,7 +118,7 @@ declare module "office-ui-fabric-react/lib/components/GroupedList/GroupedList.ty
 									if (i % 2 === 0) return item
 									const [_, text, id] = item.match(rxLink)
 									const fileOrArtifact = (phy) => phy.fileLocation || phy.artifactLocation
-									return <a key={i} href={fileOrArtifact(relatedLocations[`${+id - 1}`].physicalLocation).uri}>{text}</a>
+									return <a key={i} href={fileOrArtifact(relatedLocations[`${+id - 1}`].physicalLocation).uri} target="_blank">{text}</a>
 								})
 							} catch(e) { console.log(e) }
 						}
