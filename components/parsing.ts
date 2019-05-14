@@ -63,7 +63,7 @@ export async function parse(file) {
 			
 			const capitalize = str => `${str[0].toUpperCase()}${str.slice(1)}`
 			const level = r.level && capitalize(r.level) || 'Warning' // Need a non empty string for counts
-			const baseline = r.baselineState && capitalize(r.baselineState)
+			const baseline = r.baselineState && capitalize(r.baselineState) || 'New'
 
 			const loc0 = r.locations[0]
 			const message = r.message && r.message.text
