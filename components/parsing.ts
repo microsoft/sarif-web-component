@@ -93,14 +93,16 @@ export async function parse(file) {
 				&& r.analysisTarget.uri
 				&& r.analysisTarget.uri.split('/').pop()
 
+			const uri = findUri(phyLoc) || analysisTarget(r) || ''
+
 			return [
 				r.ruleId || 'No RuleId', // Lack of a ruleId is legal.
 				ruleObj || { toString: () => r.ruleId }, // Minimal interface required to be a sortable column/key.
 				source,
 				level,
 				baseline,
-	/* uri */	 findUri(phyLoc)                         || analysisTarget(r) || '', // Should be empty?
-	/* path */	(findUri(phyLoc) || '').split('/').pop() || analysisTarget(r),
+				uri,
+	/* path */	uri.split('/').pop(),
 				new Details(message, phyLoc, r.relatedLocations),
 				r,
 			]
