@@ -5,7 +5,7 @@ import * as React from 'react'
 import { findDOMNode } from 'react-dom'
 import * as highlight from 'highlight.js'
 require('!style-loader!css-loader!highlight.js/styles/default.css')
-import {Hi} from './Hi.tsx'
+import {Hi} from './Hi'
 
 const unindent = lines => {
 	const spc = Math.min(...lines
