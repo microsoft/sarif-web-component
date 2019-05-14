@@ -86,6 +86,8 @@ declare module "office-ui-fabric-react/lib/components/GroupedList/GroupedList.ty
 			'Unknown': <Icon iconName="InfoSolid"        style={{ color: '#FF8C00', marginRight: 8 }} />,
 		}
 		
+		const hashLine = phyLoc => phyLoc && phyLoc.region && phyLoc.region.startLine ? `#L${phyLoc.region.startLine}` : ''
+		
 		const columns: IColumn[] = [
 			{
 				key:  groupBy === 'ruleObj' ? 'path' : 'rule',
@@ -95,7 +97,7 @@ declare module "office-ui-fabric-react/lib/components/GroupedList/GroupedList.ty
 					{icons[item.level] || icons['Unknown']}
 						{item.uri.endsWith('.dll')
 							? <span title={item.uri}><Hi term={filterText}>{item[col.key]}</Hi></span>
-							: <a href={`${item.uri}#L${item.details.snippet && item.details.snippet.region && item.details.snippet.region.startLine}`} target="_blank" title={item.uri}>
+							: <a href={item.uri + hashLine(item.details.snippet)} target="_blank" title={item.uri}>
 								<Hi term={filterText}>{item[col.key]}</Hi>
 							</a>
 						}
@@ -118,7 +120,8 @@ declare module "office-ui-fabric-react/lib/components/GroupedList/GroupedList.ty
 									if (i % 2 === 0) return item
 									const [_, text, id] = item.match(rxLink)
 									const fileOrArtifact = (phy) => phy.fileLocation || phy.artifactLocation
-									return <a key={i} href={fileOrArtifact(relatedLocations[`${+id - 1}`].physicalLocation).uri} target="_blank">{text}</a>
+									const phyLoc = relatedLocations[`${+id - 1}`].physicalLocation
+									return <a key={i} href={fileOrArtifact(phyLoc).uri + hashLine(phyLoc)} target="_blank">{text}</a>
 								})
 							} catch(e) { console.log(e) }
 						}
