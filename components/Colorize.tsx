@@ -3,6 +3,8 @@
 
 import * as React from 'react'
 import { findDOMNode } from 'react-dom'
+import {observable} from "mobx"
+import {observer} from "mobx-react"
 import * as highlight from 'highlight.js'
 require('!style-loader!css-loader!highlight.js/styles/default.css')
 import {Hi} from './Hi'
@@ -15,7 +17,9 @@ const unindent = lines => {
 	return lines.map(l => l.slice(spc))
 }
 
-export class Colorize extends React.Component<any> {
+@observer export class Colorize extends React.Component<any> {
+	@observable showAll = false
+	
 	componentDidMount () {
 		const code = findDOMNode(this.refs.code)
 		code && highlight.highlightBlock(code)
@@ -58,11 +62,11 @@ export class Colorize extends React.Component<any> {
 		if (snippet.trim() === '{') snippet = '' // Hack for FxCop.
 
 		const maxLines = 6
-		if (lines.length > maxLines) {
+		if (!this.showAll && lines.length > maxLines) {
 			const showOnly = maxLines - 2 // Avoid awkward 1 or 2 lines truncated.
 			const unindended = unindent(lines.slice(0, showOnly))
 			const lastLineIndent = /^\s*/.exec(unindended[showOnly - 1])[0]
-			snippet = [...unindended, `${lastLineIndent}// ${lines.length - showOnly} lines truncated`].join('\n')
+			snippet = [...unindended, `${lastLineIndent}// ${lines.length - showOnly} lines truncated. Click to show.`].join('\n')
 		} else {
 			const contextRegion = phyLoc.contextRegion
 			if (contextRegion) {
@@ -99,8 +103,8 @@ export class Colorize extends React.Component<any> {
 		const ext = uri && uri.match(/\.(\w+)$/)
 		let lang = ext && ext[1] || uri && uri.startsWith('http') && 'html' || ''
 
-		return <pre key={Date.now()} onDoubleClick={() => console.log(phyLoc)}>
-			<code><br />{region.startLine}<br />{region.startLine + 1}</code>
+		return <pre key={Date.now()} onClick={() => this.showAll = true} onDoubleClick={() => console.log(phyLoc)}>
+			{region.startLine && <code><br />{region.startLine}<br />{region.startLine + 1}</code>}
 			<code className={lang} ref="code">{snippet}</code>
 		</pre>
 	}
