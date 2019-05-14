@@ -91,7 +91,7 @@ export async function parse(file) {
 			const analysisTarget = r => // Scans of binary files are often missing physicalLocation.
 				r.analysisTarget
 				&& r.analysisTarget.uri
-				&& r.analysisTarget.uri.split('/').pop()
+				// FxCop doesn't often have PhyLoc and file are typically DLLs.
 
 			const uri = findUri(phyLoc) || analysisTarget(r) || ''
 
