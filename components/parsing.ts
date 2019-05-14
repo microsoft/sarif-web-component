@@ -12,7 +12,7 @@ class Details {
 	constructor(readonly message, phyLoc, readonly relatedLocations) {
 		this.snippet = phyLoc
 	}
-	toString() {
+	toString() { // For sorting
 		const snippet = this.snippet
 			&& this.snippet.contextRegion
 			&& this.snippet.contextRegion.snippet.text
