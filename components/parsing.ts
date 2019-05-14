@@ -31,35 +31,21 @@ export async function parse(file) {
 	const sarif = typeof file === 'string' ? JSON.parse(file) : file
 
 	const results = [].concat(...sarif.runs.filter(run => run.results).map(run => {
-		const rules = (() => {
-			const rules = run.tool
-					&& run.tool.driver
-					&& run.tool.driver.ruleDescriptors
-				|| run.resources
-					&& run.resources.rules
-				|| run.rules
-			if (!rules) return {}
-			if (Array.isArray(rules)) {
-				const rulesObj = {}
-				rules.forEach(rule => rulesObj[rule.id] = rule)
-				return rulesObj
-			}
-			return rules
-		})()
+		const rulesList = run.tool.driver.rules || []
+		const rulesMap = new Map<string, any>(rulesList.map(rule => [rule.id, rule]))
 		
-		for (const ruleId in rules) {
-			const rule = rules[ruleId]
-			rule.toString = () => ruleId
+		rulesList.forEach(rule => {
+			rule.toString = () => rule.id
 			rule.desc = [
-				ruleId,
+				rule.id,
 				rule.fullDescription && rule.fullDescription.text
 			].filter(i => i).join(': ')
-		}
+		})
 		
 		let source = (run.tool.driver || run.tool).name //  + ' ' + sarif.version
 		if (source === 'Microsoft.CodeAnalysis.Sarif.PatternMatcher') source = 'CredScan on Push' // Temporary.
 		const results = run.results.filter(r => r.locations).map(r => {
-			const ruleObj = rules[r.ruleId]
+			const ruleObj = rulesMap.get(r.ruleId)
 			
 			const capitalize = str => `${str[0].toUpperCase()}${str.slice(1)}`
 			const level = r.level && capitalize(r.level) || 'Warning' // Need a non empty string for counts
