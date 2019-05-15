@@ -24,7 +24,7 @@ export async function parse(file) {
 	if (file === '') return [] // In cases such as the default/empty file.
 	const sarif = typeof file === 'string' ? JSON.parse(file) : file
 
-	const results = [].concat(...sarif.runs.filter(run => run.results).map(run => {
+	const flattenedRunResults = [].concat(...sarif.runs.filter(run => run.results).map(run => {
 		const rulesList = run.tool.driver.rules || []
 		const rulesMap = new Map<string, any>(rulesList.map(rule => [rule.id, rule]))
 		
@@ -36,7 +36,7 @@ export async function parse(file) {
 			].filter(i => i).join(': ')
 		})
 		
-		const results = run.results.map(r => {
+		return run.results.map(r => {
 			const capitalize = str => `${str[0].toUpperCase()}${str.slice(1)}`
 
 			const loc0 = r.locations[0]
@@ -57,11 +57,8 @@ export async function parse(file) {
 				raw: r,
 			}
 		})
-
-		return results
 	}))
 
-	results.map((result, i) => result.key = i) // Key is also used by Office Fabric Selection.
-
-	return results
+	flattenedRunResults.forEach((result, i) => result.key = i) // Key is also used by Office Fabric Selection.
+	return flattenedRunResults
 }
