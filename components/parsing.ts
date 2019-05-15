@@ -33,7 +33,7 @@ export async function parse(file) {
 			rule.desc = [
 				rule.id,
 				rule.fullDescription && rule.fullDescription.text
-			].filter(i => i).join(': ')
+			].filter(i => i).join(': ') // Cached for searchability.
 		})
 		
 		return run.results.map(r => {
