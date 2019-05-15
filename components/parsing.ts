@@ -43,7 +43,6 @@ export async function parse(file) {
 			const capitalize = str => `${str[0].toUpperCase()}${str.slice(1)}`
 
 			const loc0 = r.locations[0]
-				
 			let phyLoc =  loc0 && loc0.physicalLocation
 
 			const findUri = ploc => {
@@ -57,12 +56,8 @@ export async function parse(file) {
 				}
 				return uri
 			}
-
-			const analysisTarget = r => // Scans of binary files are often missing physicalLocation.
-				r.analysisTarget
-				&& r.analysisTarget.uri
-				// FxCop doesn't often have PhyLoc and file are typically DLLs.
-
+			// FxCop is often missing physicalLocation and files are typically DLLs.
+			const analysisTarget = r => r.analysisTarget && r.analysisTarget.uri
 			const uri = findUri(phyLoc) || analysisTarget(r) || ''
 
 			return {
