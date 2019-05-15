@@ -38,7 +38,7 @@ export async function parse(file) {
 		
 		let toolDriver = run.tool.driver.name
 		if (toolDriver === 'Microsoft.CodeAnalysis.Sarif.PatternMatcher') toolDriver = 'CredScan on Push' // Temporary.
-		const results = run.results.filter(r => r.locations).map(r => {
+		const results = run.results.map(r => {
 			const ruleObj = rulesMap.get(r.ruleId)
 			const capitalize = str => `${str[0].toUpperCase()}${str.slice(1)}`
 
