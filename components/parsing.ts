@@ -36,8 +36,6 @@ export async function parse(file) {
 			].filter(i => i).join(': ')
 		})
 		
-		let toolDriver = run.tool.driver.name
-		if (toolDriver === 'Microsoft.CodeAnalysis.Sarif.PatternMatcher') toolDriver = 'CredScan on Push' // Temporary.
 		const results = run.results.map(r => {
 			const capitalize = str => `${str[0].toUpperCase()}${str.slice(1)}`
 
@@ -50,7 +48,7 @@ export async function parse(file) {
 			return {
 				rule: r.ruleId || 'No RuleId', // Lack of a ruleId is legal.
 				ruleObj: rulesMap.get(r.ruleId) || { toString: () => r.ruleId }, // Minimal interface required to be a sortable column/key.
-				source: toolDriver,
+				source: run.tool.driver.name.replace(/^Microsoft.CodeAnalysis.Sarif.PatternMatcher$/, 'CredScan on Push'),
 				level: r.level && capitalize(r.level) || 'Warning', // Need a non empty string for counts
 				baselinestate: r.baselineState && capitalize(r.baselineState) || 'New',
 				uri,
