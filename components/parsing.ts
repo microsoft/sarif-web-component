@@ -48,7 +48,7 @@ export async function parse(file) {
 			return {
 				rule: r.ruleId || 'No RuleId', // Lack of a ruleId is legal.
 				ruleObj: rulesMap.get(r.ruleId) || { toString: () => r.ruleId }, // Minimal interface required to be a sortable column/key.
-				source: run.tool.driver.name.replace(/^Microsoft.CodeAnalysis.Sarif.PatternMatcher$/, 'CredScan on Push'),
+				source: run.tool.driver.fullName || run.tool.driver.name.replace(/^Microsoft.CodeAnalysis.Sarif.PatternMatcher$/, 'CredScan on Push'),
 				level: r.level && capitalize(r.level) || 'Warning', // Need a non empty string for counts
 				baselinestate: r.baselineState && capitalize(r.baselineState) || 'New',
 				uri,
