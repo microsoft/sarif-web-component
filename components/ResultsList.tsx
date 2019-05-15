@@ -17,10 +17,10 @@ import {Icon} from 'office-ui-fabric-react/lib/Icon'
 import {initializeIcons} from '@uifabric/icons'
 initializeIcons(undefined, { disableWarnings: true }) // Warnings disabled for HMR.
 
-import {Hi} from './Hi.tsx'
-import {Colorize} from './Colorize.tsx'
-import {ResultsPolicy} from './ResultsPolicy.tsx'
-import {ResultsFilterDropdown} from './ResultsFilterDropdown.tsx'
+import {Hi} from './Hi'
+import {Colorize} from './Colorize'
+import {ResultsPolicy} from './ResultsPolicy'
+import {ResultsFilterDropdown} from './ResultsFilterDropdown'
 
 import {loadTheme} from 'office-ui-fabric-react/lib/Styling'
 loadTheme({
