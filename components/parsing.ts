@@ -1,13 +1,6 @@
 // Copyright (c) Microsoft Corporation. All rights reserved.
 // Licensed under the MIT License.
 
-const rowsToResults = (row: [any]) => {
-	const result: any = {}
-	// TOOD: rename source to tool or driver.
-	'rule ruleObj source level baselinestate uri path details raw'.split(' ').forEach((col: string, i: number) => (result as any)[col] = row[i])
-	return result
-}
-
 class Details {
 	readonly snippet // aka phyLoc
 	constructor(readonly message, phyLoc, readonly relatedLocations) {
@@ -47,10 +40,7 @@ export async function parse(file) {
 		if (toolDriver === 'Microsoft.CodeAnalysis.Sarif.PatternMatcher') toolDriver = 'CredScan on Push' // Temporary.
 		const results = run.results.filter(r => r.locations).map(r => {
 			const ruleObj = rulesMap.get(r.ruleId)
-			
 			const capitalize = str => `${str[0].toUpperCase()}${str.slice(1)}`
-			const level = r.level && capitalize(r.level) || 'Warning' // Need a non empty string for counts
-			const baseline = r.baselineState && capitalize(r.baselineState) || 'New'
 
 			const loc0 = r.locations[0]
 			const message = r.message && r.message.text
@@ -79,18 +69,18 @@ export async function parse(file) {
 
 			const uri = findUri(phyLoc) || analysisTarget(r) || ''
 
-			return [
-				r.ruleId || 'No RuleId', // Lack of a ruleId is legal.
-				ruleObj || { toString: () => r.ruleId }, // Minimal interface required to be a sortable column/key.
-				toolDriver,
-				level,
-				baseline,
+			return {
+				rule: r.ruleId || 'No RuleId', // Lack of a ruleId is legal.
+				ruleObj: ruleObj || { toString: () => r.ruleId }, // Minimal interface required to be a sortable column/key.
+				source: toolDriver,
+				level: r.level && capitalize(r.level) || 'Warning', // Need a non empty string for counts
+				baselinestate: r.baselineState && capitalize(r.baselineState) || 'New',
 				uri,
-	/* path */	uri.split('/').pop(),
-				new Details(message, phyLoc, r.relatedLocations),
-				r,
-			]
-		}).map(rowsToResults)
+				path: uri.split('/').pop(),
+				details: new Details(message, phyLoc, r.relatedLocations),
+				raw: r,
+			}
+		})
 
 		return results
 	}))
