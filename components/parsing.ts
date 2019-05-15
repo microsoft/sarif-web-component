@@ -3,6 +3,7 @@
 
 const rowsToResults = (row: [any]) => {
 	const result: any = {}
+	// TOOD: rename source to tool or driver.
 	'rule ruleObj source level baselinestate uri path details raw'.split(' ').forEach((col: string, i: number) => (result as any)[col] = row[i])
 	return result
 }
@@ -42,8 +43,8 @@ export async function parse(file) {
 			].filter(i => i).join(': ')
 		})
 		
-		let source = (run.tool.driver || run.tool).name //  + ' ' + sarif.version
-		if (source === 'Microsoft.CodeAnalysis.Sarif.PatternMatcher') source = 'CredScan on Push' // Temporary.
+		let toolDriver = run.tool.driver.name
+		if (toolDriver === 'Microsoft.CodeAnalysis.Sarif.PatternMatcher') toolDriver = 'CredScan on Push' // Temporary.
 		const results = run.results.filter(r => r.locations).map(r => {
 			const ruleObj = rulesMap.get(r.ruleId)
 			
@@ -60,15 +61,12 @@ export async function parse(file) {
 			let phyLoc =  loc0 && loc0.physicalLocation
 
 			const findUri = ploc => {
-				if (!ploc) return
-				const floc = ploc.artifactLocation || ploc.fileLocation // fileLocation is v1
-				if (!floc) return
-				let {uri, uriBaseId} = floc
+				if (!ploc || !ploc.artifactLocation) return
+				let {uri, uriBaseId} = ploc.artifactLocation
 				if (uriBaseId) {
 					const baseUriObj = run.originalUriBaseIds && run.originalUriBaseIds[uriBaseId]
 					if (baseUriObj) {
-						const baseUri = baseUriObj.uri || baseUriObj
-						uri = baseUri + uri
+						uri = baseUriObj.uri + uri
 					}
 				}
 				return uri
@@ -84,7 +82,7 @@ export async function parse(file) {
 			return [
 				r.ruleId || 'No RuleId', // Lack of a ruleId is legal.
 				ruleObj || { toString: () => r.ruleId }, // Minimal interface required to be a sortable column/key.
-				source,
+				toolDriver,
 				level,
 				baseline,
 				uri,
