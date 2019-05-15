@@ -43,22 +43,10 @@ export async function parse(file) {
 			const capitalize = str => `${str[0].toUpperCase()}${str.slice(1)}`
 
 			const loc0 = r.locations[0]
-			let phyLoc =  loc0 && loc0.physicalLocation
-
-			const findUri = ploc => {
-				if (!ploc || !ploc.artifactLocation) return
-				let {uri, uriBaseId} = ploc.artifactLocation
-				if (uriBaseId) {
-					const baseUriObj = run.originalUriBaseIds && run.originalUriBaseIds[uriBaseId]
-					if (baseUriObj) {
-						uri = baseUriObj.uri + uri
-					}
-				}
-				return uri
-			}
-			// FxCop is often missing physicalLocation and files are typically DLLs.
-			const analysisTarget = r => r.analysisTarget && r.analysisTarget.uri
-			const uri = findUri(phyLoc) || analysisTarget(r) || ''
+			const phyLoc = loc0 && loc0.physicalLocation
+			const uri = phyLoc && phyLoc.artifactLocation && phyLoc.artifactLocation.uri
+				|| r.analysisTarget && r.analysisTarget.uri // FxCop is often missing physicalLocation and files are typically DLLs.
+				|| ''
 
 			return {
 				rule: r.ruleId || 'No RuleId', // Lack of a ruleId is legal.
