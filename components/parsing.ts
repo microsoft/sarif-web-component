@@ -43,11 +43,7 @@ export async function parse(file) {
 			const capitalize = str => `${str[0].toUpperCase()}${str.slice(1)}`
 
 			const loc0 = r.locations[0]
-			const message = r.message && r.message.text
-				|| typeof r.message === 'string' && r.message
-				|| r.message && r.message.messageId && ruleObj && ruleObj.messageStrings[r.message.messageId]
-				|| r.formattedRuleMessage && r.formattedRuleMessage.formatId // Temporary compat.
-				|| ''
+				
 			let phyLoc =  loc0 && loc0.physicalLocation
 
 			const findUri = ploc => {
@@ -77,7 +73,7 @@ export async function parse(file) {
 				baselinestate: r.baselineState && capitalize(r.baselineState) || 'New',
 				uri,
 				path: uri.split('/').pop(),
-				details: new Details(message, phyLoc, r.relatedLocations),
+				details: new Details(r.message.text || '', phyLoc, r.relatedLocations),
 				raw: r,
 			}
 		})
