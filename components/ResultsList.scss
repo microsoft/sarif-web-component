@@ -116,7 +116,7 @@ a {
 			text-overflow: ellipsis;
 			overflow: hidden;
 		}
-		.resultsGroupHeaderCount { flex: 0 0 auto; }
+		.resultsGroupHeaderNoClip { flex: 0 0 auto; }
 	}
 
 	.ms-DetailsRow, .ms-GroupHeader {

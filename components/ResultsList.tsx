@@ -199,12 +199,14 @@ declare module "office-ui-fabric-react/lib/components/GroupedList/GroupedList.ty
 				<span className="resultsGroupHeaderText">
 					{tryLink(() => rule.helpUri, <Hi term={filterText}>{rule.id}</Hi>)}
 					{tryOr(() => <>: <Hi term={filterText}>{rule.fullDescription.text}</Hi></>)}
+				</span>
+				<span className="resultsGroupHeaderNoClip">
 					{tryOr(() => rule.relationships.map(rel => {
 						const taxon = rule.run.taxonomies[rel.target.toolComponent.index].taxa[rel.target.index]
 						return <React.Fragment key={rel.target.id}>, {tryLink(() => taxon.helpUri, taxon.name)}</React.Fragment>
 					}))}
+					<span className="resultsGroupHeaderCount">{count}</span>
 				</span>
-				<span className="resultsGroupHeaderCount">{count}</span>
 			</span>
 	}
 }
