@@ -20,6 +20,7 @@ initializeIcons(undefined, { disableWarnings: true }) // Warnings disabled for H
 import {Hi} from './Hi'
 import {Colorize} from './Colorize'
 import {ResultsPolicy} from './ResultsPolicy'
+import {IResult, RuleEx} from './Result'
 import {ResultsFilterDropdown} from './ResultsFilterDropdown'
 
 import {loadTheme} from 'office-ui-fabric-react/lib/Styling'
@@ -29,8 +30,6 @@ loadTheme({
 		neutralSecondary:    'hsl(0, 0%, 10%)',	// DetailsRow color hover, chevron. Dropdown color, chevron.
 	},
 })
-
-type IResult = any
 
 @observer export class ResultsBar extends React.Component<any> {
 	render() {

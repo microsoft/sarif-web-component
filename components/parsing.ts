@@ -1,6 +1,9 @@
 // Copyright (c) Microsoft Corporation. All rights reserved.
 // Licensed under the MIT License.
 
+import {IResult, RuleEx} from './Result'
+import {Log} from 'sarif'
+
 class Details {
 	readonly snippet // aka phyLoc
 	constructor(readonly message, phyLoc, readonly relatedLocations) {
@@ -22,13 +25,14 @@ class Details {
 export async function parse(file) {
 	file = await file
 	if (file === '') return [] // In cases such as the default/empty file.
-	const sarif = typeof file === 'string' ? JSON.parse(file) : file
+	const sarif: Log = typeof file === 'string' ? JSON.parse(file) : file
 
 	const flattenedRunResults = [].concat(...sarif.runs.filter(run => run.results).map(run => {
 		const rulesList = run.tool.driver.rules || []
-		const rulesMap = new Map<string, any>(rulesList.map(rule => [rule.id, rule]))
+		const rulesMap = new Map<string, RuleEx>(rulesList.map(rule => [rule.id, rule] as any)) // Unable to express [[string, RuleEx]].
 		
-		rulesList.forEach(rule => {
+		rulesList.forEach((rule: RuleEx) => {
+			rule.run = run // For taxonomies
 			rule.toString = () => rule.id
 			rule.desc = [
 				rule.id,
@@ -55,7 +59,8 @@ export async function parse(file) {
 				path: uri.split('/').pop(),
 				details: new Details(r.message.text || '', phyLoc, r.relatedLocations),
 				raw: r,
-			}
+				run: run,
+			} as IResult
 		})
 	}))
 

@@ -19,6 +19,7 @@
     "@types/jest": "^23.3.1",
     "@types/react": "^16.4.7",
     "@types/react-dom": "^16.0.6",
+    "@types/sarif": "^2.1.0",
     "autobind-decorator": "^2.1.0",
     "css-loader": "^1.0.0",
     "enzyme": "^3.4.1",

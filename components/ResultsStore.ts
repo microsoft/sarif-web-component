@@ -4,6 +4,7 @@
 import autobind from 'autobind-decorator'
 import {observable, computed, autorun, untracked, toJS, trace} from "mobx"
 import {generateGroups, sortItems, generateItems} from './grouping'
+import {IResult} from './Result'
 import {Selection} from 'office-ui-fabric-react/lib/Selection'
 
 function debounce(ms) {
@@ -56,7 +57,7 @@ class ResultsStore {
 		if (!results) return
 		
 		const {filter, filterText} = this
-		this.resultsFiltered = results.filter((r: any) => { // IResult
+		this.resultsFiltered = results.filter((r: IResult) => {
 			// A matching result matches all conditions (AND), not just some (OR).
 			for (const column in filter) {
 				const field = r[column.toLowerCase().replace(/ /g, '')]
