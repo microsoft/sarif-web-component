@@ -104,7 +104,7 @@ const unindent = lines => {
 		let lang = ext && ext[1] || uri && uri.startsWith('http') && 'html' || ''
 
 		return <pre key={Date.now()} onClick={() => this.showAll = true} onDoubleClick={() => console.log(phyLoc)}>
-			{region.startLine && <code><br />{region.startLine}<br />{region.startLine + 1}</code>}
+			{region.startLine && <code className="lineNumber"><br />{region.startLine}<br />{region.startLine + 1}</code>}
 			<code className={lang} ref="code">{snippet}</code>
 		</pre>
 	}

@@ -219,7 +219,7 @@ pre { @extend %resultsCode; // <pre> is only emitted by SyntaxHighlighter
 	text-overflow: ellipsis;
 	display: flex;
 
-	code:nth-child(1) {
+	code.lineNumber { // For Colorize.tsx
 		width: 36px;
 		color: hsl(0, 0%, 60%);
 		flex: 0 0 auto;
