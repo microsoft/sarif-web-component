@@ -116,7 +116,10 @@ a {
 			text-overflow: ellipsis;
 			overflow: hidden;
 		}
-		.resultsGroupHeaderNoClip { flex: 0 0 auto; }
+		.resultsGroupHeaderNoClip {
+			margin-left: 4px; // Whitespace collapses, so need some manual separation.
+			flex: 0 0 auto;
+		}
 	}
 
 	.ms-DetailsRow, .ms-GroupHeader {

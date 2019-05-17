@@ -101,7 +101,7 @@ declare module "office-ui-fabric-react/lib/components/GroupedList/GroupedList.ty
 							{tryOr(() => {
 								const {index} = item.raw.locations[0].physicalLocation.artifactLocation
 								const art = item.run.artifacts[index]
-								return tryLink(() => art.location.uri , art.description.text) // Missing 8px margin left.
+								return tryLink(() => art.location.uri , art.description.text, { marginLeft: 8, whiteSpace: 'normal', display: 'inline-block' }) // whiteSpace overriding parent styles. Inline-Block so margin applies to wrapped lines.
 							})}
 						</div>,
 						() => item.uri.endsWith('.dll')
@@ -197,13 +197,13 @@ declare module "office-ui-fabric-react/lib/components/GroupedList/GroupedList.ty
 			? <ResultsPolicy group={group as unknown as IResultsGroup} />
 			: <span className="resultsGroupHeader">
 				<span className="resultsGroupHeaderText">
-					{tryLink(() => rule.helpUri, <Hi term={filterText}>{rule.id}</Hi>)}
-					{tryOr(() => <>: <Hi term={filterText}>{rule.fullDescription.text}</Hi></>)}
+					{tryLink(() => rule.helpUri, <Hi term={filterText}>{rule.id}</Hi>, { color: '#0078D4' })}
+					{tryOr(() => <>: <span title={rule.fullDescription.text}><Hi term={filterText}>{rule.fullDescription.text}</Hi></span></>)}
 				</span>
 				<span className="resultsGroupHeaderNoClip">
-					{tryOr(() => rule.relationships.map(rel => {
+					{tryOr(() => rule.relationships.map((rel, i) => {
 						const taxon = rule.run.taxonomies[rel.target.toolComponent.index].taxa[rel.target.index]
-						return <React.Fragment key={rel.target.id}>, {tryLink(() => taxon.helpUri, taxon.name)}</React.Fragment>
+						return <React.Fragment key={rel.target.id}>{i > 0 ? ',' : ''} {tryLink(() => taxon.helpUri, taxon.name)}</React.Fragment>
 					}))}
 					<span className="resultsGroupHeaderCount">{count}</span>
 				</span>

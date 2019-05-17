@@ -1,10 +1,10 @@
 import * as React from 'react'
 
-export const tryLink = (fHref: () => string, inner: string | JSX.Element) => {
+export const tryLink = (fHref: () => string, inner: string | JSX.Element, style?: {}) => {
 	try {
 		const href = fHref()
 		if (!href) throw null
-		return <a href={fHref()} target="_blank">{inner}</a>
+		return <a href={fHref()} target="_blank" style={style}>{inner}</a>
 	}
 	catch (e) { return inner }
 }
