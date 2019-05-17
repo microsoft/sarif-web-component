@@ -19,7 +19,7 @@ initializeIcons(undefined, { disableWarnings: true }) // Warnings disabled for H
 
 import {Hi} from './Hi'
 import {Colorize} from './Colorize'
-import {ResultsPolicy} from './ResultsPolicy'
+import {tryOr, tryLink} from './try'
 import {IResult, RuleEx} from './Result'
 import {ResultsFilterDropdown} from './ResultsFilterDropdown'
 
@@ -94,12 +94,21 @@ declare module "office-ui-fabric-react/lib/components/GroupedList/GroupedList.ty
 				minWidth: 100, maxWidth: 200, className: 'resultsCell',
 				onRender: (item: IResult, i: number, col: IColumn) => <>
 					{icons[item.level] || icons['Unknown']}
-						{item.uri.endsWith('.dll')
+					{tryOr(
+						() => <div>
+							<pre style={{ marginBottom: 2 }}><code><Hi term={filterText}>{item.raw.locations[0].logicalLocation.fullyQualifiedName}</Hi></code></pre>
+							{tryOr(() => {
+								const {index} = item.raw.locations[0].physicalLocation.artifactLocation
+								const art = item.run.artifacts[index]
+								return tryLink(() => art.location.uri , art.description.text) // Missing 8px margin left.
+							})}
+						</div>,
+						() => item.uri.endsWith('.dll')
 							? <span title={item.uri}><Hi term={filterText}>{item[col.key]}</Hi></span>
 							: <a href={item.uri + hashLine(item.details.snippet)} target="_blank" title={item.uri}>
 								<Hi term={filterText}>{item[col.key]}</Hi>
 							</a>
-						}
+					)}
 					</>,
 			},
 			{ minWidth: 300, key: 'details',  name: 'Details', isMultiline: true, className: 'resultsCellDetails',
@@ -182,10 +191,18 @@ declare module "office-ui-fabric-react/lib/components/GroupedList/GroupedList.ty
 	@autobind private onRenderTitle(props: IGroupDividerProps): JSX.Element {
 		const filterText = untracked(() => this.props.store.filterText)
 		const {group, group: {key, keyObj, children, count}} = props
+		const rule = keyObj as RuleEx
 		return children
-			? <ResultsPolicy group={group as any} /> // Tried casting to IResultsGroup
+			? <ResultsPolicy group={group as unknown as IResultsGroup} />
 			: <span className="resultsGroupHeader">
-				<span className="resultsGroupHeaderText"><Hi term={filterText}>{keyObj && keyObj.desc || key}</Hi></span>
+				<span className="resultsGroupHeaderText">
+					{tryLink(() => rule.helpUri, <Hi term={filterText}>{rule.id}</Hi>)}
+					{tryOr(() => <>: <Hi term={filterText}>{rule.fullDescription.text}</Hi></>)}
+					{tryOr(() => rule.relationships.map(rel => {
+						const taxon = rule.run.taxonomies[rel.target.toolComponent.index].taxa[rel.target.index]
+						return <React.Fragment key={rel.target.id}>, {tryLink(() => taxon.helpUri, taxon.name)}</React.Fragment>
+					}))}
+				</span>
 				<span className="resultsGroupHeaderCount">{count}</span>
 			</span>
 	}
