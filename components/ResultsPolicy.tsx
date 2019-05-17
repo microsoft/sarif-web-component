@@ -9,7 +9,7 @@ import {DirectionalHint} from 'office-ui-fabric-react/lib/common/DirectionalHint
 import {Icon} from 'office-ui-fabric-react/lib/Icon'
 import {IconButton} from 'office-ui-fabric-react/lib/Button'
 
-interface IResultsGroup {
+export interface IResultsGroup {
 	key: string
 	count: number
 	countsBug: number

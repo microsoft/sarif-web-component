@@ -21,6 +21,7 @@ import {Hi} from './Hi'
 import {Colorize} from './Colorize'
 import {tryOr, tryLink} from './try'
 import {IResult, RuleEx} from './Result'
+import {ResultsPolicy, IResultsGroup} from './ResultsPolicy'
 import {ResultsFilterDropdown} from './ResultsFilterDropdown'
 
 import {loadTheme} from 'office-ui-fabric-react/lib/Styling'
@@ -109,7 +110,7 @@ declare module "office-ui-fabric-react/lib/components/GroupedList/GroupedList.ty
 								<Hi term={filterText}>{item[col.key]}</Hi>
 							</a>
 					)}
-					</>,
+				</>,
 			},
 			{ minWidth: 300, key: 'details',  name: 'Details', isMultiline: true, className: 'resultsCellDetails',
 				onRender: (item: IResult, i: number, col: IColumn) => {
