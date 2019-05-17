@@ -58,7 +58,7 @@ export async function parse(file) {
 
 			return {
 				rule: r.ruleId || 'No RuleId', // Lack of a ruleId is legal.
-				ruleObj: rulesMap.get(r.ruleId) || { toString: () => r.ruleId }, // Minimal interface required to be a sortable column/key.
+				ruleObj: rulesMap.get(r.ruleId) || { id: r.ruleId, toString: () => r.ruleId }, // id required for rendering. toString required to be a sortable column/key.
 				source,
 				level: r.level && capitalize(r.level) || 'Warning', // Need a non empty string for counts
 				baselinestate: r.baselineState && capitalize(r.baselineState) || 'New',
