@@ -30,8 +30,11 @@ export async function parse(file) {
 
 	const flattenedRunResults = [].concat(...sarif.runs.filter(run => run.results).map(run => {
 		const driverName = run.tool.driver.fullName || run.tool.driver.name.replace(/^Microsoft.CodeAnalysis.Sarif.PatternMatcher$/, 'CredScan on Push')
-		const qualityDomain = tryOr(() => `(${run.tool.driver.properties['microsoft/qualityDomain']})`)
-		const source = [driverName, qualityDomain].map(i => i).join(' ')
+		const qualityDomain = tryOr(() => {
+			const text = run.tool.driver.properties['microsoft/qualityDomain']
+			return text && `(${text})` // When properties exists, but text is undefined.
+		})
+		const source = [driverName, qualityDomain].filter(i => i).join(' ')
 
 		const rulesList = run.tool.driver.rules || []
 		const rulesMap = new Map<string, RuleEx>(rulesList.map(rule => [rule.id, rule] as any)) // Unable to express [[string, RuleEx]].
