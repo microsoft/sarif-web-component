@@ -28,9 +28,11 @@ export async function parse(file) {
 	const sarif: Log = typeof file === 'string' ? JSON.parse(file) : file
 
 	const flattenedRunResults = [].concat(...sarif.runs.filter(run => run.results).map(run => {
+		const driverName = run.tool.driver.fullName || run.tool.driver.name.replace(/^Microsoft.CodeAnalysis.Sarif.PatternMatcher$/, 'CredScan on Push')
+		const source = driverName
+
 		const rulesList = run.tool.driver.rules || []
 		const rulesMap = new Map<string, RuleEx>(rulesList.map(rule => [rule.id, rule] as any)) // Unable to express [[string, RuleEx]].
-		
 		rulesList.forEach((rule: RuleEx) => {
 			rule.run = run // For taxonomies
 			rule.toString = () => rule.id
@@ -52,7 +54,7 @@ export async function parse(file) {
 			return {
 				rule: r.ruleId || 'No RuleId', // Lack of a ruleId is legal.
 				ruleObj: rulesMap.get(r.ruleId) || { toString: () => r.ruleId }, // Minimal interface required to be a sortable column/key.
-				source: run.tool.driver.fullName || run.tool.driver.name.replace(/^Microsoft.CodeAnalysis.Sarif.PatternMatcher$/, 'CredScan on Push'),
+				source,
 				level: r.level && capitalize(r.level) || 'Warning', // Need a non empty string for counts
 				baselinestate: r.baselineState && capitalize(r.baselineState) || 'New',
 				uri,
