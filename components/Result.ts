@@ -1,4 +1,4 @@
-import {ReportingDescriptor, Run} from 'sarif'
+import {ReportingDescriptor, Result, Run} from 'sarif'
 
 export interface RuleEx extends ReportingDescriptor {
 	desc: string
@@ -14,6 +14,6 @@ export interface IResult {
     uri: string
     path: string,
     details: any,
-    raw: any,
+    raw: Result,
     run: Run,
 }
