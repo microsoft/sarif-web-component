@@ -6,6 +6,7 @@ import * as React from 'react'
 import {untracked, trace} from "mobx"
 import {observer} from "mobx-react"
 import autobind from 'autobind-decorator'
+import * as ReactMarkDown from 'react-markdown'
 
 import {DetailsList, ConstrainMode, IColumn} from 'office-ui-fabric-react/lib/DetailsList'
 import {IGroupDividerProps} from 'office-ui-fabric-react/lib/components/GroupedList/index'
@@ -120,6 +121,9 @@ declare module "office-ui-fabric-react/lib/components/GroupedList/GroupedList.ty
 						if (!message) return undefined
 						if (filterText) return <Hi term={filterText}>{message}</Hi>
 						
+						const markdown = item.raw.message && item.raw.message.markdown
+						if (markdown) return <ReactMarkDown source={markdown} />
+
 						const rxLink = /\[([^\]]*)\]\((\d+)\)/ // Replace [text](relatedIndex) with <a href />
 						if (message.match(rxLink)) {
 							try {
