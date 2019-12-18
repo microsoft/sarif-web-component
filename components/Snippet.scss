@@ -1,0 +1,42 @@
+// Copyright (c) Microsoft Corporation. All rights reserved.
+// Licensed under the MIT License.
+
+.swcSnippet {
+	margin: 4px 8px 4px 0;
+	font-size: 12px;
+	overflow: hidden;
+	position: relative;
+	display: flex; // For line number column.
+
+	code { font-family: SFMono-Regular, monospace; } // Override UA default 'monospace'.
+
+	&.clipped {
+		&::before {
+			content: "";
+			width: 100%;
+			height: 108px; // 108px is a 6-line snippet whcih is very common.
+			position: absolute;
+			left: 0;
+			top: 0;
+			background: linear-gradient(transparent 75px, var(--palette-black-alpha-6));
+		}
+	}
+
+	.swcRegion {
+		background-color: rgba(255, 230, 0, 0.5);
+	}
+}
+
+code.lineNumber {
+	width: 36px;
+	color: hsl(0, 0%, 60%);
+	flex: 0 0 auto;
+}
+
+.swcSnippet .hljs {
+	color: inherit;
+	display: initial;
+	overflow-x: initial;
+	padding: initial;
+	background: initial;
+}

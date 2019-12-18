@@ -1,0 +1,62 @@
+// Copyright (c) Microsoft Corporation. All rights reserved.
+// Licensed under the MIT License.
+
+@import "azure-devops-ui/Core/_platformCommon.scss";
+
+.bolt-page {
+	padding-bottom: 32px;
+}
+
+.bolt-page { // Parent is #app which is display block.
+	height: 100%;
+
+	& > * { flex: 0 0 auto; }
+
+	.bolt-messagecard {
+		margin: 16px 32px 0;
+	}
+
+	.swcShim {
+		height: 32px;
+		position: sticky;
+		z-index: 2;
+		top: 0;
+		background-color: $neutral-2;
+	}
+
+	.vss-FilterBar {
+		position: sticky;
+		z-index: 2; // Focused inputs/buttons are z=1.
+		top: 29px; // 3px less than .svShim height so the shadow overlaps neatly.
+	}
+
+	// Nested under .bolt-page for artificial precedence.
+	.bolt-card-content { // bolt-card-content forced by bolt-card.
+		flex-direction: column; // Override DevOps row. To allow ZeroData to center.
+	}
+}
+
+.vss-ZeroData {
+	min-height: 400px; // Mimicking pipelines page.
+	margin-top: 0; // Override DevOps 35px, since we have min-height.
+	.vss-ZeroDataItem { justify-content: center; }			
+}
+
+// Used by both renderUniversalTreeCell and Snippet
+pre {
+	background-color: var(--palette-black-alpha-6);
+	border-radius: 2px;
+	padding: 4px 8px 6px 8px;
+}
+
+.bolt-card { // Technically belongs in RunCard.tsx.
+	// List-cells are also used in DropDowns, this only applies to cards.
+	.bolt-list-cell {
+		padding: 6px 8px; // Have all cells behave like .bolt-table-cell-content-with-inline-link
+	}
+}
+
+.swcSplitter {
+	width: 100%;
+	height: 100%;
+}

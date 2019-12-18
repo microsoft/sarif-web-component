@@ -1,0 +1,186 @@
+// Copyright (c) Microsoft Corporation. All rights reserved.
+// Licensed under the MIT License.
+
+import './RunCard.renderCell.scss'
+import * as React from 'react'
+import {Fragment} from 'react'
+import * as ReactMarkDown from 'react-markdown'
+import {Result} from 'sarif'
+
+import {Hi} from './Hi'
+import {tryOr, tryLink} from './try'
+import {Rule, More} from './Viewer.Types'
+import {ReviewCell} from './RunCard.ReviewCell'
+import {Snippet} from './Snippet'
+import {TooltipSpan} from './TooltipSpan'
+
+import {css} from 'azure-devops-ui/Util'
+import {Link} from 'azure-devops-ui/Link'
+import {ObservableLike} from 'azure-devops-ui/Core/Observable'
+import {Status, Statuses, StatusSize} from "azure-devops-ui/Status"
+import {PillSize, Pill} from 'azure-devops-ui/Pill'
+import {ISimpleTableCell, TableCell} from 'azure-devops-ui/Table'
+import {ExpandableTreeCell, ITreeColumn} from 'azure-devops-ui/TreeEx'
+import {ITreeItemEx} from 'azure-devops-ui/Utilities/TreeItemProvider'
+import {Tooltip} from 'azure-devops-ui/TooltipEx'
+import {Icon, IconSize} from 'azure-devops-ui/Icon'
+
+export function renderCell<T extends ISimpleTableCell>(
+	rowIndex: number,
+	columnIndex: number,
+	treeColumn: ITreeColumn<T>,
+	treeItem: ITreeItemEx<T>): JSX.Element {
+
+	const data = ObservableLike.getValue(treeItem.underlyingItem.data)
+	const commonProps = {
+		className: treeColumn.className,
+		columnIndex,
+		treeItem,
+		treeColumn,
+	}
+
+	// ROW RULE
+	const isRule = (item => item.isRule) as (item: any) => item is Rule
+	if (isRule(data)) {
+		const rule = data
+		return columnIndex === 0
+			? ExpandableTreeCell({
+				children: <div className="swcRowRule">{/* Div for flow layout. */}
+					{tryLink(() => rule.helpUri, <Hi>{data.id || data.guid}</Hi>)}
+					{tryOr(() => rule.name && <>: <Hi>{rule.name}</Hi></>)}
+					{tryOr(() => rule.relationships.map((rel, i) => {
+						const taxon = rule.run.taxonomies[rel.target.toolComponent.index].taxa[rel.target.index]
+						return <Fragment key={rel.target.id}>{i > 0 ? ',' : ''} {tryLink(() => taxon.helpUri, taxon.name)}</Fragment>
+					}))}
+					<Pill size={PillSize.compact}>{rule.treeItem.childItemsAll.length}</Pill>
+				</div>,
+				colspan: 4, // Conditionally less than 4 columns, but extra does not hurt.
+				...commonProps,
+			})
+			: null
+	}
+
+	// ROW RESULT
+	const capitalize = str => `${str[0].toUpperCase()}${str.slice(1)}`
+	const isResult = (item => item.message !== undefined) as (item: any) => item is Result
+	if (isResult(data)) {
+		const result = data
+		const status = {
+			none: Statuses.Queued,
+			note: Statuses.Information,
+			error: Statuses.Failed,
+		}[result.level] || Statuses.Warning
+		const rowClasses = 'bolt-table-two-line-cell-item flex-row scroll-hidden'
+		return columnIndex === 0
+			// ExpandableTreeCell (td div.bolt-table-cell-content.flex-row.flex-center TreeExpand children)
+			// calls SimpleTableCell - adds an extra div
+			// calls TableCell
+			? ExpandableTreeCell({ // As close to Table#TwoLineTableCell (which calls TableCell) as possible.
+				children: <>
+					<Status {...status} className="bolt-table-two-line-cell-icon flex-noshrink bolt-table-status-icon" size={StatusSize.m} ariaLabel={result.level || 'warning'} />
+					{tryOr(
+						() => <div className="flex-column scroll-hidden">
+							<div className={rowClasses}>
+								<div className="fontsize font-size swcWidth100">{/* Constraining width to 100% to play well with the Tooltip. */}
+									<Tooltip overflowOnly={true}>
+										<pre style={{ margin: 0 }}><code><Hi>{result.locations[0].logicalLocations[0].fullyQualifiedName}</Hi></code></pre>
+									</Tooltip>
+								</div>
+							</div>
+							{tryOr(() => {
+								const {index} = result.locations[0].physicalLocation.artifactLocation
+								const art = result.run.artifacts[index]
+								const text = tryOr(() => art.description.text, () => art.location.uri)
+								if (!text) throw undefined
+								return <div className={rowClasses}>
+									<TooltipSpan overflowOnly={true} text={text} className="swcWordBreakUnset">
+										{tryLink(
+											() => art.location.uri ,
+											<Hi>{text}</Hi>,
+											'fontSize font-size secondary-text swcColorUnset swcWidth100' /* Override .bolt-list-cell */)}
+									</TooltipSpan>
+								</div>
+							})}
+						</div>,
+						() => {
+							const uri = tryOr<string>(
+								() => result.locations[0].physicalLocation.artifactLocation.uri,
+								() => result.analysisTarget.uri,
+								'—')
+							const fileName = uri.split('/').pop()
+							return <div className="flex-row scroll-hidden">{/* From Advanced table demo. */}
+								<TooltipSpan text={uri} disabled={uri === fileName}>
+									{tryLink(
+										() => {
+											if (uri.endsWith('.dll')) return undefined
+											return uri + tryOr(() => `#L${result.locations[0].physicalLocation.region.startLine}`, '')
+										},
+										<Hi>{fileName}</Hi>,
+										'swcColorUnset')}
+								</TooltipSpan>
+							</div>
+						}
+					)}
+				</>,
+				...commonProps,
+			})
+			: TableCell({ // Don't want SimpleTableCell as it has flex row.
+				children: (() => {
+					switch (treeColumn.id) {
+						case 'Details':
+							return <>
+								{result.message.markdown
+									? <div className="swcMarkDown"><ReactMarkDown source={result.message.markdown} /></div> // Div to cancel out containers display flex row.
+									: <Hi>{renderMessageWithEmbeddedLinks(result)}</Hi> || ''}
+								{tryOr(() => <Snippet ploc={result.locations[0].physicalLocation} />)}
+							</>
+						case 'Baseline':
+							return <Hi>{result.baselineState && capitalize(result.baselineState) || 'New'}</Hi>
+						case 'Bug':
+							return tryOr(() => <Link href={result.workItemUris[0]} target="_blank">
+								<Icon iconName="LadybugSolid" size={IconSize.medium} style={{ color: '#E81123' }} />
+							</Link>)
+						case 'Review':
+							return <ReviewCell key={data.guid} review={data.review} />
+					}
+				})(),
+				className: css(treeColumn.className, 'font-size'),
+				columnIndex,
+			})
+	}
+
+	// ROW MORE
+	const isMore = (item => item.onClick !== undefined) as (item: any) => item is More
+	if (isMore(data)) {
+		return columnIndex === 0
+			? ExpandableTreeCell({
+				children: <Link onClick={data.onClick} tabIndex={-1}>Show All</Link>,
+				colspan: 4, // Conditionally less than 4 columns, but extra does not hurt.
+				...commonProps
+			})
+			: null
+	}
+
+	return null
+}
+
+// Replace [text](relatedIndex) with <a href />
+function renderMessageWithEmbeddedLinks(result: Result) {
+	const message = result.message.text || ''
+	const rxLink = /\[([^\]]*)\]\(([^\)]+)\)/ // Matches [text](id). Similar to below, but with an extra grouping around the id part.
+	return message.match(rxLink)
+		? message
+			.split(/(\[[^\]]*\]\([^\)]+\))/g)
+			.map((item, i) => {
+				if (i % 2 === 0) return item
+				const [_, text, id] = item.match(rxLink)
+				const href = isNaN(id as any)
+					? id
+					  // RelatedLocations is typically [{ id: 1, ...}, { id: 2, ...}]
+					  // Consider using [].find inside of assuming the index correlates to the id.
+					: result.relatedLocations[+id - 1].physicalLocation.artifactLocation.uri
+						+ tryOr(() => `#L${result.locations[0].physicalLocation.region.startLine}`, '')
+				return <a key={i} href={href} target="_blank">{text}</a>
+			})
+		: message
+}

@@ -1,0 +1,24 @@
+// Copyright (c) Microsoft Corporation. All rights reserved.
+// Licensed under the MIT License.
+
+@import "azure-devops-ui/Core/_platformCommon.scss";
+
+.swcRunTitle {
+	display: flex;
+	align-items: center;
+
+	.bolt-pill { margin-left: 8px; }
+}
+
+.bolt-table-cell .bolt-dropdown-expandable {
+	display: block;
+	.bolt-button {
+		width: 100%;
+	}
+}
+
+.swcRunEmpty {
+	color: $disabled-text;
+	text-align: center;
+	margin-bottom: 32px;
+}

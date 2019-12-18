@@ -2,10 +2,8 @@
 ~*
 .vscode/
 
-coverage
 node_modules
 package-lock.json
-stats.json
 bundle*
-
-*.test.txt
+resources
+dist

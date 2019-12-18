@@ -12,9 +12,9 @@ npm install @microsoft/sarif-web-component
 ```js
 import * as React from 'react'
 import * as ReactDOM from 'react-dom'
-import {ResultsViewer} from 'sarifviewer/Index.tsx'
+import {Log} from 'sarif-web-component'
 
-ReactDOM.render(<ResultsViewer sarif={yourSarifString} />, document.body.firstChild)
+ReactDOM.render(<Viewer logs={arrayOfLogs} />, document.body.firstChild)
 ```
 
 ## Contributing

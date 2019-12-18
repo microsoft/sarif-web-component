@@ -1,0 +1,44 @@
+// Copyright (c) Microsoft Corporation. All rights reserved.
+// Licensed under the MIT License.
+
+.swcTree .bolt-list-cell {
+	white-space: normal; // Override .bolt-list-cell { white-space: nowrap }
+}
+
+.swcMarkDown {
+	li {
+		list-style: unset;
+		list-style-position: inside;
+	}
+
+	& > :first-child {
+		margin-top: 0;
+	}
+
+	& > :last-child {
+		margin-bottom: 0;
+	}
+}
+
+.swcMarkDown + .swcSnippet {
+	margin-top: 12px; // Normally 8.
+}
+
+.swcColorUnset {
+	color: unset;
+}
+
+.swcWidth100 {
+	width: 100%;
+}
+
+.swcWordBreakUnset .bolt-tooltip-content {
+	word-break: unset; // Fix: Tooltip is normally set to break-all and it was wrapping the last letter.
+}
+
+.swcRowRule {
+	display: flex;
+	flex-direction: row;
+	align-items: center;
+	.bolt-pill { margin-left: 8px; }
+}
