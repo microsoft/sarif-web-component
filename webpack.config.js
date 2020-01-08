@@ -1,6 +1,13 @@
+const path = require('path')
+
 module.exports = {
 	entry: './components/Viewer.tsx',
-	output: { path: __dirname, filename: 'bundle.js' },
+	output: {
+		path: path.join(__dirname, 'dist'),
+		filename: 'index.js',
+		libraryTarget: 'umd',
+		globalObject: 'this',
+	},
 	mode: 'production',
 	resolve: {
 		extensions: ['.js', '.ts', '.tsx'] // .js is neccesary for transitive imports
