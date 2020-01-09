@@ -98,7 +98,7 @@ import { ObservableValue } from 'azure-devops-ui/Core/Observable'
 							<RunCard runStore={run} index={index} />
 						</div>)
 					: <div className="page-content-left page-content-right page-content-top">
-							<Card contentProps={{ contentPadding: false }}>
+						<Card contentProps={{ contentPadding: false }}>
 							<ZeroData
 								imagePath={noResultsPng}
 								imageAltText="No results found"
