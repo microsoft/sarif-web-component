@@ -45,6 +45,7 @@
 
 .midEllipsis {
 	display: flex;
+	white-space: nowrap;
 	:first-child {
 		overflow: hidden;
 		text-overflow: ellipsis;
