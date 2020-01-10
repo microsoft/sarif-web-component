@@ -107,7 +107,14 @@ export function renderCell<T extends ISimpleTableCell>(
 								() => result.locations[0].physicalLocation.artifactLocation.uri,
 								() => result.analysisTarget.uri,
 								'—')
-							const fileName = uri.split('/').pop()
+
+							const [path, fileName] = (() => {
+								const index = uri.lastIndexOf('/')
+								return index >= 0
+									? [uri.slice(0, index), uri.slice(index + 1)]
+									: [uri]
+							})()
+
 							return <div className="flex-row scroll-hidden">{/* From Advanced table demo. */}
 								<TooltipSpan text={uri} disabled={uri === fileName}>
 									{tryLink(
@@ -115,7 +122,12 @@ export function renderCell<T extends ISimpleTableCell>(
 											if (uri.endsWith('.dll')) return undefined
 											return uri + tryOr(() => `#L${result.locations[0].physicalLocation.region.startLine}`, '')
 										},
-										<Hi>{fileName}</Hi>,
+										fileName
+											? <span className="midEllipsis">
+												<span><Hi>{path}</Hi></span>
+												<span><Hi>/{fileName}</Hi></span>
+											</span>
+											: <span>{uri}</span>,
 										'swcColorUnset')}
 								</TooltipSpan>
 							</div>

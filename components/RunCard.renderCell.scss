@@ -42,3 +42,11 @@
 	align-items: center;
 	.bolt-pill { margin-left: 8px; }
 }
+
+.midEllipsis {
+	display: flex;
+	:first-child {
+		overflow: hidden;
+		text-overflow: ellipsis;
+	}
+}
