@@ -33,7 +33,16 @@ import { IFilterState } from 'azure-devops-ui/Utilities/Filter'
 import { ZeroData } from 'azure-devops-ui/ZeroData'
 import { ObservableValue } from 'azure-devops-ui/Core/Observable'
 
-@observer export class Viewer extends Component<{ logs?: Log[], filterState?: IFilterState, pipelineId?: string, user?: string }> {
+interface ViewerProps {
+	logs?: Log[]
+	filterState?: IFilterState
+	pipelineId?: string
+	user?: string
+	hideBaseline?: boolean
+	hideLevel?: boolean
+}
+
+@observer export class Viewer extends Component<ViewerProps> {
 	private collapseComments = new ObservableValue(false)
 	private filter: MobxFilter
 	private pipelineContext?: PipelineContext
@@ -62,10 +71,10 @@ import { ObservableValue } from 'azure-devops-ui/Core/Observable'
 	})
 
 	@computed get runStores() {
-		const {logs} = this.props
+		const {logs, hideBaseline} = this.props
 		if (!logs) return [] // Undef interpreted as loading.
 		const runs = [].concat(...logs.filter(log => log.version === '2.1.0').map(log => log.runs)) as Run[]
-		const runStores = runs.map((run, i) => new RunStore(run, i, this.filter, this.pipelineContext))
+		const runStores = runs.map((run, i) => new RunStore(run, i, this.filter, this.pipelineContext, hideBaseline))
 		runStores.sort((a, b) => a.driverName.localeCompare(b.driverName)) // May not be required after introduction of runStoresSorted.
 		return runStores
 	}
@@ -78,11 +87,13 @@ import { ObservableValue } from 'azure-devops-ui/Core/Observable'
 		const {pipelineContext} = this
 		if (pipelineContext && !pipelineContext.reviews) return null
 
+		const {hideBaseline, hideLevel} = this.props
+
 		// Computed values fail to cache if called from onRenderNearElement() for unknown reasons. Thus call them in advance.
 		const filterKeywords = this.filter.getState().Keywords?.value
 		const nearElement = <Page>
 			<div className="swcShim"></div>
-			<FilterBar filter={this.filter} showReview={false} />
+			<FilterBar filter={this.filter} hideBaseline={hideBaseline} hideLevel={hideLevel} showReview={false} />
 			{this.warnOldVersion && <MessageCard
 				severity={MessageCardSeverity.Warning}
 				onDismiss={() => this.warnOldVersion = false}>

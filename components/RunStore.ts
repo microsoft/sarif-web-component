@@ -23,11 +23,19 @@ export class RunStore {
 	@observable sortOrder = SortOrder.ascending
 	private rulesInUse: Map<string, Rule>
 
-	constructor(readonly run: Run, readonly logIndex, readonly filter: MobxFilter, readonly pipeline?: PipelineContext) {
+	constructor(readonly run: Run, readonly logIndex, readonly filter: MobxFilter, readonly pipeline?: PipelineContext, readonly hideBaseline?: boolean) {
 		const {driver} = run.tool
 		const rules = driver.rules || []
 		this.driverName = run.properties && run.properties['logFileName'] || driver.name.replace(/^Microsoft.CodeAnalysis.Sarif.PatternMatcher$/, 'CredScan on Push')
 		
+		if (!hideBaseline) {
+			this.columns.push({
+				id: 'Baseline',
+				filterString: (result: Result) => result.baselineState as string || 'new',
+				sortString:   (result: Result) => result.baselineState as string || 'new',
+			})
+		}
+
 		const hasWorkItemUris = run.results && run.results.some(result => result.workItemUris && !!result.workItemUris.length)
 		if (hasWorkItemUris) {
 			this.columns.push({
@@ -134,13 +142,14 @@ export class RunStore {
 
 				treeItem.childItemsAll = rule.results
 					.filter(result => {
-						if (filterBaseline.length && !filterBaseline.includes(this.columns[2].filterString(result))) return false
-						if (filterLevel   .length && !filterLevel   .includes(result.level || 'warning')           ) return false
-						if (filterReview  .length && !filterReview  .includes(this.columns[3].filterString(result))) return false
+						// Possible bug with certain combinations of baseline/review show/hide.
+						if (this.columns[2] && filterBaseline.length && !filterBaseline.includes(this.columns[2].filterString(result))) return false
+						if (                   filterLevel   .length && !filterLevel   .includes(result.level || 'warning')           ) return false
+						if (this.columns[3] && filterReview  .length && !filterReview  .includes(this.columns[3].filterString(result))) return false
 
-						const path     = this.columns[0].filterString(result).toLowerCase()
-						const details  = this.columns[1].filterString(result).toLowerCase()
-						const baseline = this.columns[2].filterString(result).toLowerCase()
+						const path     = this.columns[0]?.filterString(result).toLowerCase() ?? ''
+						const details  = this.columns[1]?.filterString(result).toLowerCase() ?? ''
+						const baseline = this.columns[2]?.filterString(result).toLowerCase() ?? ''
 
 						return isDriverMatch || isRuleMatch || isMatch(path, filterKeywords) || isMatch( details, filterKeywords) || isMatch(baseline, filterKeywords)
 					})
@@ -206,11 +215,6 @@ export class RunStore {
 				return `${message} ${snippet}`
 			},
 			sortString:   (result: Result) => result.message.text as string || '',
-		},
-		{
-			id: 'Baseline',
-			filterString: (result: Result) => result.baselineState as string || 'new',
-			sortString:   (result: Result) => result.baselineState as string || 'new',
 		},
 	]
 }
