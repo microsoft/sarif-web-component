@@ -23,7 +23,7 @@ import {Tree, ITreeColumn} from 'azure-devops-ui/TreeEx'
 import {TreeItemProvider, ITreeItemEx} from 'azure-devops-ui/Utilities/TreeItemProvider'
 import {Tooltip} from 'azure-devops-ui/TooltipEx'
 
-@observer export class RunCard extends Component<{ runStore: RunStore, index: number }> {
+@observer export class RunCard extends Component<{ runStore: RunStore, index: number, runCount: number }> {
 	@observable private show = true
 	private sortRuleByMenuItems: IHeaderCommandBarItem[]
 	private columns: ITreeColumn<ResultOrRuleOrMore>[]
@@ -100,7 +100,7 @@ import {Tooltip} from 'azure-devops-ui/TooltipEx'
 
 	render() {
 		const {show, itemProvider} = this
-		const {runStore} = this.props
+		const {runStore, runCount} = this.props
 		
 		return <Observer renderChildren={itemProvider}>
 			{(observedProps: { itemProvider }) => {
@@ -126,15 +126,18 @@ import {Tooltip} from 'azure-devops-ui/TooltipEx'
 					}}
 					contentProps={{ contentPadding: false }}
 					headerCommandBarItems={[
-						{
-							id: 'hide',
-							text: '', // Remove?
-							ariaLabel: 'Show/Hide',
-							onActivate: () => this.show = !this.show,
-							iconProps: { iconName: this.show ? 'ChevronDown' : 'ChevronUp' }, // Naturally updates as this entire object is re-created each render.
-						},
+						runCount > 1
+							? {
+								id: 'hide',
+								text: '', // Remove?
+								ariaLabel: 'Show/Hide',
+								onActivate: () => this.show = !this.show,
+								iconProps: { iconName: this.show ? 'ChevronDown' : 'ChevronUp' }, // Naturally updates as this entire object is re-created each render.
+								important: runCount > 1
+							}
+							: undefined,
 						...this.sortRuleByMenuItems,
-					]}
+					].filter(item => item)}
 					className="flex-grow bolt-card-no-vertical-padding">
 					{show && (itemProvider.length
 						? <Tree<ResultOrRuleOrMore>

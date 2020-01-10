@@ -106,7 +106,7 @@ interface ViewerProps {
 					? this.runStoresSorted
 						.filter(run => !filterKeywords || run.filteredCount)
 						.map((run, index) => <div key={run.logIndex} className="page-content-left page-content-right page-content-top">
-							<RunCard runStore={run} index={index} />
+							<RunCard runStore={run} index={index} runCount={this.runStoresSorted.length} />
 						</div>)
 					: <div className="page-content-left page-content-right page-content-top">
 						<Card contentProps={{ contentPadding: false }}>
