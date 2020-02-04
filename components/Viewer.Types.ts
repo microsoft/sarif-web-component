@@ -8,7 +8,6 @@ import {ITreeItem} from 'azure-devops-ui/Utilities/TreeItemProvider'
 declare module 'sarif' {
 	interface Result {
 		run: Run
-		review: IObservableValue<string>
 	}
 }
 

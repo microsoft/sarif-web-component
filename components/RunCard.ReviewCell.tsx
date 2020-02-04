@@ -13,6 +13,7 @@ import {DropdownSelection} from 'azure-devops-ui/Utilities/DropdownSelection'
 
 import {reviewStates} from './PipelineContext'
 
+// No longer used.
 @observer export class ReviewCell extends Component<{ review: IObservableValue<string> }> {
 	private selection = new DropdownSelection()
 

@@ -44,13 +44,6 @@ export class RunStore {
 				sortString:   (result: Result) => '',
 			})
 		}
-		// if (pipeline) {
-		// 	this.columns.push({
-		// 		id: 'Review',
-		// 		filterString: (result: Result) => untracked(() => result.review.get()) || '—',
-		// 		sortString:   (result: Result) => '',
-		// 	})
-		// }
 
 		const rulesListed = new Map<string, Rule>(rules.map(rule => [rule.id, rule] as any)) // Unable to express [[string, RuleEx]].
 		this.rulesInUse = new Map<string, Rule>()
@@ -78,20 +71,6 @@ export class RunStore {
 			}
 
 			result.run = run // For result renderer to get to run.artifacts.
-
-			// If a PipelineContext exists, add the property.
-			if (pipeline) {
-				const guid = result.correlationGuid || result.guid
-				result.review = observable.box<string>(untracked(() => pipeline.reviews[guid]))
-				observe(result.review, change => {
-					pipeline.showReviewUpdated = true
-					if (change.newValue === '—') {
-						delete pipeline.reviews[guid]
-					} else {
-						pipeline.reviews[guid] = change.newValue
-					}
-				})
-			}
 		})
 
 		autorun(() => {

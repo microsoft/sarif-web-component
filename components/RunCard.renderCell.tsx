@@ -152,8 +152,6 @@ export function renderCell<T extends ISimpleTableCell>(
 							return tryOr(() => <Link href={result.workItemUris[0]} target="_blank">
 								<Icon iconName="LadybugSolid" size={IconSize.medium} style={{ color: '#E81123' }} />
 							</Link>)
-						case 'Review':
-							return <ReviewCell key={data.guid} review={data.review} />
 					}
 				})(),
 				className: css(treeColumn.className, 'font-size'),
