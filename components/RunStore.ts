@@ -115,41 +115,41 @@ export class RunStore {
 		ruleTreeItems.forEach(treeItem => {
 			const rule = treeItem.data as Rule
 
-				// if (!treeItem.hasOwnProperty('isShowAll')) extendObservable(treeItem, { isShowAll: false })
-				treeItem.isShowAll = false
+			// if (!treeItem.hasOwnProperty('isShowAll')) extendObservable(treeItem, { isShowAll: false })
+			treeItem.isShowAll = false
 
-				// Filtering logic: Show if 1) dropdowns match AND 2) any field matches text.
-				const isDriverMatch = isMatch(this.driverName.toLowerCase(), filterKeywords)
-				const ruleId = rule.id.toLowerCase()
-				const ruleName = rule.name?.toLowerCase() ?? ''
-				const isRuleMatch = isMatch(ruleId, filterKeywords) || isMatch(ruleName, filterKeywords)
+			// Filtering logic: Show if 1) dropdowns match AND 2) any field matches text.
+			const isDriverMatch = isMatch(this.driverName.toLowerCase(), filterKeywords)
+			const ruleId = rule.id.toLowerCase()
+			const ruleName = rule.name?.toLowerCase() ?? ''
+			const isRuleMatch = isMatch(ruleId, filterKeywords) || isMatch(ruleName, filterKeywords)
 
-				treeItem.childItemsAll = rule.results
-					.filter(result => {
-						// Possible bug with certain combinations of baseline/review show/hide.
-						if (this.columns[2] && filterBaseline.length && !filterBaseline.includes(this.columns[2].filterString(result))) return false
-						if (                   filterLevel   .length && !filterLevel   .includes(result.level || 'warning')           ) return false
-						if (this.columns[3] && filterReview  .length && !filterReview  .includes(this.columns[3].filterString(result))) return false
+			treeItem.childItemsAll = rule.results
+				.filter(result => {
+					// Possible bug with certain combinations of baseline/review show/hide.
+					if (this.columns[2] && filterBaseline.length && !filterBaseline.includes(this.columns[2].filterString(result))) return false
+					if (                   filterLevel   .length && !filterLevel   .includes(result.level || 'warning')           ) return false
+					if (this.columns[3] && filterReview  .length && !filterReview  .includes(this.columns[3].filterString(result))) return false
 
-						const path     = this.columns[0]?.filterString(result).toLowerCase() ?? ''
-						const details  = this.columns[1]?.filterString(result).toLowerCase() ?? ''
-						const baseline = this.columns[2]?.filterString(result).toLowerCase() ?? ''
+					const path     = this.columns[0]?.filterString(result).toLowerCase() ?? ''
+					const details  = this.columns[1]?.filterString(result).toLowerCase() ?? ''
+					const baseline = this.columns[2]?.filterString(result).toLowerCase() ?? ''
 
-						return isDriverMatch || isRuleMatch || isMatch(path, filterKeywords) || isMatch( details, filterKeywords) || isMatch(baseline, filterKeywords)
-					})
-					.map(result => ({ data: result })) // Can cache the result here.
-
-				treeItem.childItemsAll.sort((treeItemLeft, treeItemRight) => {
-					const resultToValue = this.columns[sortColumnIndex].sortString
-					const valueLeft = resultToValue(treeItemLeft.data as Result)
-					const valueRight = resultToValue(treeItemRight.data as Result)
-
-					const inverter = sortOrder === SortOrder.ascending ? 1 : -1
-					return inverter * valueLeft.localeCompare(valueRight)
+					return isDriverMatch || isRuleMatch || isMatch(path, filterKeywords) || isMatch( details, filterKeywords) || isMatch(baseline, filterKeywords)
 				})
+				.map(result => ({ data: result })) // Can cache the result here.
 
-				return treeItem as ITreeItem<ResultOrRuleOrMore>
+			treeItem.childItemsAll.sort((treeItemLeft, treeItemRight) => {
+				const resultToValue = this.columns[sortColumnIndex].sortString
+				const valueLeft = resultToValue(treeItemLeft.data as Result)
+				const valueRight = resultToValue(treeItemRight.data as Result)
+
+				const inverter = sortOrder === SortOrder.ascending ? 1 : -1
+				return inverter * valueLeft.localeCompare(valueRight)
 			})
+
+			return treeItem as ITreeItem<ResultOrRuleOrMore>
+		})
 		const ruleTreeItemsVisible =  ruleTreeItems.filter(rule => rule.childItemsAll.length)
 
 		ruleTreeItemsVisible.sort(this.sortRuleBy === SortRuleBy.Count
