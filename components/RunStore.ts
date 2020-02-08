@@ -103,12 +103,17 @@ export class RunStore {
 		const filterReview   = filter.Review?.value   ?? []
 		const {sortColumnIndex, sortOrder} = this
 
-		const rules = [...this.rulesInUse.values()]
+		const ruleTreeItems = [...this.rulesInUse.values()]
 			.map(rule => {
 				const treeItem = rule.treeItem = rule.treeItem || {
 					data: rule,
 					expanded: false,
-				} // ITreeItem<ResultOrRule>
+				}
+				return treeItem as ITreeItem<ResultOrRuleOrMore>
+			})
+
+		ruleTreeItems.forEach(treeItem => {
+			const rule = treeItem.data as Rule
 
 				// if (!treeItem.hasOwnProperty('isShowAll')) extendObservable(treeItem, { isShowAll: false })
 				treeItem.isShowAll = false
@@ -145,16 +150,16 @@ export class RunStore {
 
 				return treeItem as ITreeItem<ResultOrRuleOrMore>
 			})
-			.filter(rule => rule.childItemsAll.length)
+		const ruleTreeItemsVisible =  ruleTreeItems.filter(rule => rule.childItemsAll.length)
 
-		rules.sort(this.sortRuleBy === SortRuleBy.Count
+		ruleTreeItemsVisible.sort(this.sortRuleBy === SortRuleBy.Count
 			? (a, b) => b.childItemsAll.length - a.childItemsAll.length
 			: (a, b) => (a.data as Rule).id.localeCompare((b.data as Rule).id)
 		)
 		
-		rules.forEach((rule, i) => rule.expanded = i === 0)
+		ruleTreeItemsVisible.forEach((rule, i) => rule.expanded = i === 0)
 
-		return rules
+		return ruleTreeItemsVisible
 	}
 
 	@computed get filteredCount() {
