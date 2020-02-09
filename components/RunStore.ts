@@ -71,6 +71,7 @@ export class RunStore {
 			}
 
 			result.run = run // For result renderer to get to run.artifacts.
+			result._rule = rule
 		})
 
 		autorun(() => {
@@ -113,19 +114,20 @@ export class RunStore {
 			})
 
 		ruleTreeItems.forEach(treeItem => {
-			const rule = treeItem.data as Rule
-
 			// if (!treeItem.hasOwnProperty('isShowAll')) extendObservable(treeItem, { isShowAll: false })
 			treeItem.isShowAll = false
 
 			// Filtering logic: Show if 1) dropdowns match AND 2) any field matches text.
 			const isDriverMatch = isMatch(this.driverName.toLowerCase(), filterKeywords)
-			const ruleId = rule.id.toLowerCase()
-			const ruleName = rule.name?.toLowerCase() ?? ''
-			const isRuleMatch = isMatch(ruleId, filterKeywords) || isMatch(ruleName, filterKeywords)
 
-			treeItem.childItemsAll = rule.results
+			const resultContainer = treeItem.data as { results: Result[] }
+			treeItem.childItemsAll = resultContainer.results
 				.filter(result => {
+					const {_rule} = result
+					const ruleId = _rule.id.toLowerCase()
+					const ruleName = _rule.name?.toLowerCase() ?? ''
+					const isRuleMatch = isMatch(ruleId, filterKeywords) || isMatch(ruleName, filterKeywords)
+
 					// Possible bug with certain combinations of baseline/review show/hide.
 					if (this.columns[2] && filterBaseline.length && !filterBaseline.includes(this.columns[2].filterString(result))) return false
 					if (                   filterLevel   .length && !filterLevel   .includes(result.level || 'warning')           ) return false

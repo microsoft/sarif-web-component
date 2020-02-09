@@ -8,6 +8,7 @@ import {ITreeItem} from 'azure-devops-ui/Utilities/TreeItemProvider'
 declare module 'sarif' {
 	interface Result {
 		run: Run
+		_rule: Rule // rule already used for ReportingDescriptorReference.
 	}
 }
 
