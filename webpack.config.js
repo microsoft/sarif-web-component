@@ -12,6 +12,10 @@ module.exports = {
 	resolve: {
 		extensions: ['.js', '.ts', '.tsx'] // .js is neccesary for transitive imports
 	},
+	externals: {
+		'react': 'React',
+		'react-dom': 'ReactDOM',
+	},
 	module: {
 		rules: [
 			{
