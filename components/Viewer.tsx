@@ -40,6 +40,7 @@ interface ViewerProps {
 	user?: string
 	hideBaseline?: boolean
 	hideLevel?: boolean
+	showAge?: boolean
 }
 
 @observer export class Viewer extends Component<ViewerProps> {
@@ -71,10 +72,10 @@ interface ViewerProps {
 	})
 
 	@computed get runStores() {
-		const {logs, hideBaseline} = this.props
+		const {logs, hideBaseline, showAge} = this.props
 		if (!logs) return [] // Undef interpreted as loading.
 		const runs = [].concat(...logs.filter(log => log.version === '2.1.0').map(log => log.runs)) as Run[]
-		const runStores = runs.map((run, i) => new RunStore(run, i, this.filter, this.pipelineContext, hideBaseline))
+		const runStores = runs.map((run, i) => new RunStore(run, i, this.filter, this.pipelineContext, hideBaseline, showAge))
 		runStores.sort((a, b) => a.driverName.localeCompare(b.driverName)) // May not be required after introduction of runStoresSorted.
 		return runStores
 	}

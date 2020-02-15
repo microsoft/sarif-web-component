@@ -18,6 +18,7 @@ import {Card} from 'azure-devops-ui/Card'
 import {Observer} from 'azure-devops-ui/Observer'
 import {ObservableValue, IObservableValue} from 'azure-devops-ui/Core/Observable'
 import {IHeaderCommandBarItem} from 'azure-devops-ui/HeaderCommandBar'
+import {MenuItemType} from 'azure-devops-ui/Menu'
 import {Pill, PillSize} from "azure-devops-ui/Pill"
 import {Tree, ITreeColumn} from 'azure-devops-ui/TreeEx'
 import {TreeItemProvider, ITreeItemEx} from 'azure-devops-ui/Utilities/TreeItemProvider'
@@ -25,6 +26,7 @@ import {Tooltip} from 'azure-devops-ui/TooltipEx'
 
 @observer export class RunCard extends Component<{ runStore: RunStore, index: number, runCount: number }> {
 	@observable private show = true
+	private groupByMenuItems = [] as IHeaderCommandBarItem[]
 	private sortRuleByMenuItems: IHeaderCommandBarItem[]
 	private columns: ITreeColumn<ResultOrRuleOrMore>[]
 	private itemProvider = new TreeItemProvider<ResultOrRuleOrMore>([])
@@ -32,6 +34,37 @@ import {Tooltip} from 'azure-devops-ui/TooltipEx'
 	constructor(props) {
 		super(props)
 		const {runStore} = this.props
+
+		if (runStore.showAge) {
+			const onActivateGroupBy = menuItem => {
+				runStore.groupByAge = menuItem.data
+				this.groupByMenuItems
+					.filter(item => item.itemType !== MenuItemType.Divider)
+					.forEach(item => (item.checked as IObservableValue<boolean>).value = item.id === menuItem.id)
+			}
+	
+			this.groupByMenuItems = [
+				{
+					data: true,
+					id: 'groupByAge',
+					text: 'Group by age',
+					ariaLabel: 'Group by age',
+					onActivate: onActivateGroupBy,
+					important: false,
+					checked: new ObservableValue(runStore.groupByAge),
+				},
+				{
+					data: false,
+					id: 'groupByRule',
+					text: 'Group by rule',
+					ariaLabel: 'Group by rule',
+					onActivate: onActivateGroupBy,
+					important: false,
+					checked: new ObservableValue(!runStore.groupByAge),
+				},
+				{ id: "separator", important: false, itemType: MenuItemType.Divider },
+			]
+		}
 
 		const onActivate = menuItem => {
 			runStore.sortRuleBy = menuItem.data
@@ -136,6 +169,7 @@ import {Tooltip} from 'azure-devops-ui/TooltipEx'
 								important: runCount > 1
 							}
 							: undefined,
+						...this.groupByMenuItems,
 						...this.sortRuleByMenuItems,
 					].filter(item => item)}
 					className="flex-grow bolt-card-no-vertical-padding">

@@ -18,12 +18,17 @@ export const isMatch = (field: string, keywords: string[]) => !keywords.length |
 
 export class RunStore {
 	driverName: string
+	@observable groupByAge = false
 	@observable sortRuleBy = SortRuleBy.Count
 	@observable sortColumnIndex = 1
 	@observable sortOrder = SortOrder.ascending
 	private rulesInUse: Map<string, Rule>
+	private agesInUse = new Map
+		(['Past SLA (31+ days)', 'Within SLA (0 - 30 days)']
+		.map(name => [name, { results: [], treeItem: null, name, isAge: true }])
+	)
 
-	constructor(readonly run: Run, readonly logIndex, readonly filter: MobxFilter, readonly pipeline?: PipelineContext, readonly hideBaseline?: boolean) {
+	constructor(readonly run: Run, readonly logIndex, readonly filter: MobxFilter, readonly pipeline?: PipelineContext, readonly hideBaseline?: boolean, readonly showAge?: boolean) {
 		const {driver} = run.tool
 		const rules = driver.rules || []
 		this.driverName = run.properties && run.properties['logFileName'] || driver.name.replace(/^Microsoft.CodeAnalysis.Sarif.PatternMatcher$/, 'CredScan on Push')
@@ -49,6 +54,7 @@ export class RunStore {
 		this.rulesInUse = new Map<string, Rule>()
 
 		run.results?.forEach(result => {
+			// Collate by Rule
 			const {ruleIndex} = result
 			const ruleId = result.ruleId?.split('/')[0] ?? '(No Rule)' // 3.5.4 Hierarchical strings.
 			if (!this.rulesInUse.has(ruleId)) {
@@ -63,6 +69,14 @@ export class RunStore {
 			rule.results = rule.results || []
 			rule.results.push(result)
 
+			// Collate by Age
+			const firstDetection = result.provenance?.firstDetectionTimeUtc
+			const firstDetectionDate = firstDetection ? new Date(firstDetection) : new Date()
+			const age = (new Date().getTime() - firstDetectionDate.getTime()) > 31 * 24 * 60 * 60 * 1000 // 31 days in milliseconds
+				? 'Past SLA (31+ days)'
+				: 'Within SLA (0 - 30 days)'
+			this.agesInUse.get(age).results.push(result)
+
 			// Fill-in url from run.artifacts as needed.
 			const artLoc = tryOr(() => result.locations[0].physicalLocation.artifactLocation)
 			if (artLoc && artLoc.uri === undefined) {
@@ -76,7 +90,9 @@ export class RunStore {
 
 		autorun(() => {
 			this.showAllRevision // Read.
-			const rules = this.rulesFiltered.slice() // Slice to satisfy ref rulesTruncated.
+			const rules = this.groupByAge // Slice to satisfy ref rulesTruncated.
+				? this.agesFiltered.slice()
+				: this.rulesFiltered.slice()
 
 			rules.forEach(ruleTreeItem => {
 				const maxLength = 3
@@ -95,8 +111,7 @@ export class RunStore {
 		}, { name: 'Truncation' })
 	}
 
-	@computed get rulesFiltered() {
-		if (this.pipeline) this.pipeline.reviewRevision // Read.
+	private filterHelper(treeItems: ITreeItem<ResultOrRuleOrMore>[]) {
 		const filter = this.filter.getState()
 		const filterKeywords = (filter.Keywords?.value ?? '').toLowerCase().split(/\s+/).filter(part => part)
 		const filterBaseline = filter.Baseline?.value ?? []
@@ -104,16 +119,7 @@ export class RunStore {
 		const filterReview   = filter.Review?.value   ?? []
 		const {sortColumnIndex, sortOrder} = this
 
-		const ruleTreeItems = [...this.rulesInUse.values()]
-			.map(rule => {
-				const treeItem = rule.treeItem = rule.treeItem || {
-					data: rule,
-					expanded: false,
-				}
-				return treeItem as ITreeItem<ResultOrRuleOrMore>
-			})
-
-		ruleTreeItems.forEach(treeItem => {
+		treeItems.forEach(treeItem => {
 			// if (!treeItem.hasOwnProperty('isShowAll')) extendObservable(treeItem, { isShowAll: false })
 			treeItem.isShowAll = false
 
@@ -152,16 +158,43 @@ export class RunStore {
 
 			return treeItem as ITreeItem<ResultOrRuleOrMore>
 		})
-		const ruleTreeItemsVisible =  ruleTreeItems.filter(rule => rule.childItemsAll.length)
 
-		ruleTreeItemsVisible.sort(this.sortRuleBy === SortRuleBy.Count
+		const treeItemsVisible = treeItems.filter(rule => rule.childItemsAll.length)
+
+		treeItemsVisible.sort(this.sortRuleBy === SortRuleBy.Count
 			? (a, b) => b.childItemsAll.length - a.childItemsAll.length
 			: (a, b) => (a.data as Rule).id.localeCompare((b.data as Rule).id)
 		)
 		
-		ruleTreeItemsVisible.forEach((rule, i) => rule.expanded = i === 0)
+		treeItemsVisible.forEach((rule, i) => rule.expanded = i === 0)
 
-		return ruleTreeItemsVisible
+		return treeItemsVisible
+	}
+
+	@computed get agesFiltered() {
+		if (this.pipeline) this.pipeline.reviewRevision // Read.
+		const treeItems = [...this.agesInUse.values()]
+			.map(age => {
+				const treeItem = age.treeItem = age.treeItem || {
+					data: age,
+					expanded: false,
+				}
+				return treeItem as ITreeItem<ResultOrRuleOrMore>
+			})
+		return this.filterHelper(treeItems)
+	}
+
+	@computed get rulesFiltered() {
+		if (this.pipeline) this.pipeline.reviewRevision // Read.
+		const treeItems = [...this.rulesInUse.values()]
+			.map(rule => {
+				const treeItem = rule.treeItem = rule.treeItem || {
+					data: rule,
+					expanded: false,
+				}
+				return treeItem as ITreeItem<ResultOrRuleOrMore>
+			})
+		return this.filterHelper(treeItems)
 	}
 
 	@computed get filteredCount() {

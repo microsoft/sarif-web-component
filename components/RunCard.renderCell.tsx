@@ -9,7 +9,7 @@ import {Result} from 'sarif'
 
 import {Hi} from './Hi'
 import {tryOr, tryLink} from './try'
-import {Rule, More} from './Viewer.Types'
+import {Rule, More, ResultOrRuleOrMore} from './Viewer.Types'
 import {ReviewCell} from './RunCard.ReviewCell'
 import {Snippet} from './Snippet'
 import {TooltipSpan} from './TooltipSpan'
@@ -21,7 +21,7 @@ import {Status, Statuses, StatusSize} from "azure-devops-ui/Status"
 import {PillSize, Pill} from 'azure-devops-ui/Pill'
 import {ISimpleTableCell, TableCell} from 'azure-devops-ui/Table'
 import {ExpandableTreeCell, ITreeColumn} from 'azure-devops-ui/TreeEx'
-import {ITreeItemEx} from 'azure-devops-ui/Utilities/TreeItemProvider'
+import {ITreeItemEx, ITreeItem} from 'azure-devops-ui/Utilities/TreeItemProvider'
 import {Tooltip} from 'azure-devops-ui/TooltipEx'
 import {Icon, IconSize} from 'azure-devops-ui/Icon'
 
@@ -37,6 +37,22 @@ export function renderCell<T extends ISimpleTableCell>(
 		columnIndex,
 		treeItem,
 		treeColumn,
+	}
+
+	// ROW AGE
+	const isAge = (item => item.isAge) as (item: any) => item is { name: string, treeItem: ITreeItem<ResultOrRuleOrMore> }
+	if (isAge(data)) {
+		const age = data
+		return columnIndex === 0
+			? ExpandableTreeCell({
+				children: <div className="swcRowRule">{/* Div for flow layout. */}
+					{age.name}
+					<Pill size={PillSize.compact}>{age.treeItem.childItemsAll.length}</Pill>
+				</div>,
+				colspan: 4, // Conditionally less than 4 columns, but extra does not hurt.
+				...commonProps,
+			})
+			: null
 	}
 
 	// ROW RULE
