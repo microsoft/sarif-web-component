@@ -114,8 +114,6 @@ export class RunStore {
 	private filterHelper(treeItems: ITreeItem<ResultOrRuleOrMore>[]) {
 		const filter = this.filter.getState()
 		const filterKeywords = (filter.Keywords?.value ?? '').toLowerCase().split(/\s+/).filter(part => part)
-		const filterBaseline = filter.Baseline?.value ?? []
-		const filterLevel    = filter.Level?.value    ?? []
 		const {sortColumnIndex, sortOrder} = this
 
 		treeItems.forEach(treeItem => {
@@ -133,9 +131,17 @@ export class RunStore {
 					const ruleName = _rule.name?.toLowerCase() ?? ''
 					const isRuleMatch = isMatch(ruleId, filterKeywords) || isMatch(ruleName, filterKeywords)
 
-					// Possible bug with certain combinations of baseline/review show/hide.
-					if (this.columns[2] && filterBaseline.length && !filterBaseline.includes(this.columns[2].filterString(result))) return false
-					if (                   filterLevel   .length && !filterLevel   .includes(result.level || 'warning')           ) return false
+					for (const columnName in filter) {
+						const selectedValues = filter[columnName].value
+						if (!Array.isArray(selectedValues)) continue
+						if (!selectedValues.length) continue
+						const map = { // TODO: Dynamic lookup.
+							Baseline: this.columns[2].filterString,
+							Level: result => result.level || 'warning',
+						}
+						const translatedCellValue = map[columnName] ? map[columnName](result) : result
+						if (!selectedValues.includes(translatedCellValue)) return false
+					}
 
 					const path     = this.columns[0]?.filterString(result).toLowerCase() ?? ''
 					const details  = this.columns[1]?.filterString(result).toLowerCase() ?? ''
