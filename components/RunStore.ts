@@ -116,7 +116,6 @@ export class RunStore {
 		const filterKeywords = (filter.Keywords?.value ?? '').toLowerCase().split(/\s+/).filter(part => part)
 		const filterBaseline = filter.Baseline?.value ?? []
 		const filterLevel    = filter.Level?.value    ?? []
-		const filterReview   = filter.Review?.value   ?? []
 		const {sortColumnIndex, sortOrder} = this
 
 		treeItems.forEach(treeItem => {
@@ -137,7 +136,6 @@ export class RunStore {
 					// Possible bug with certain combinations of baseline/review show/hide.
 					if (this.columns[2] && filterBaseline.length && !filterBaseline.includes(this.columns[2].filterString(result))) return false
 					if (                   filterLevel   .length && !filterLevel   .includes(result.level || 'warning')           ) return false
-					if (this.columns[3] && filterReview  .length && !filterReview  .includes(this.columns[3].filterString(result))) return false
 
 					const path     = this.columns[0]?.filterString(result).toLowerCase() ?? ''
 					const details  = this.columns[1]?.filterString(result).toLowerCase() ?? ''

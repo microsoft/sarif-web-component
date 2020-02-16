@@ -11,8 +11,6 @@ import { KeywordFilterBarItem } from 'azure-devops-ui/TextFilterBarItem'
 import { DropdownMultiSelection } from 'azure-devops-ui/Utilities/DropdownSelection'
 import { Filter, FILTER_CHANGE_EVENT, IFilterState } from 'azure-devops-ui/Utilities/Filter'
 
-import { reviewStates } from './PipelineContext'
-
 export class MobxFilter extends Filter {
 	private atom = createAtom('MobxFilter')
 	constructor(startingState?: IFilterState) {
@@ -28,12 +26,11 @@ export class MobxFilter extends Filter {
 	}
 }
 
-@observer export class FilterBar extends React.Component<{ filter: MobxFilter, hideBaseline?:boolean, hideLevel?: boolean, showReview: boolean }> {
+@observer export class FilterBar extends React.Component<{ filter: MobxFilter, hideBaseline?:boolean, hideLevel?: boolean }> {
 	private ms1 = new DropdownMultiSelection()
 	private ms2 = new DropdownMultiSelection()
-	private ms3 = new DropdownMultiSelection()
 	render() {
-		const {filter, hideBaseline, hideLevel, showReview} = this.props
+		const {filter, hideBaseline, hideLevel} = this.props
 		return <AzFilterBar filter={filter}>
 			<KeywordFilterBarItem filterItemKey="Keywords" placeholder="Filter by keyword" />
 			{!hideBaseline && <AzDropdownFilterBarItem
@@ -49,13 +46,6 @@ export class MobxFilter extends Filter {
 				showPlaceholderAsLabel
 				items={['None', 'Note', 'Warning', 'Error'].map(text => ({ id: text.toLowerCase(), text }))}
 				selection={this.ms2}
-				 />}
-			{showReview && <AzDropdownFilterBarItem
-				filterItemKey="Review"
-				placeholder="Review"
-				showPlaceholderAsLabel
-				items={reviewStates}
-				selection={this.ms3}
 				 />}
 		</AzFilterBar>
 	}

@@ -94,7 +94,7 @@ interface ViewerProps {
 		const filterKeywords = this.filter.getState().Keywords?.value
 		const nearElement = <Page>
 			<div className="swcShim"></div>
-			<FilterBar filter={this.filter} hideBaseline={hideBaseline} hideLevel={hideLevel} showReview={false} />
+			<FilterBar filter={this.filter} hideBaseline={hideBaseline} hideLevel={hideLevel} />
 			{this.warnOldVersion && <MessageCard
 				severity={MessageCardSeverity.Warning}
 				onDismiss={() => this.warnOldVersion = false}>

@@ -18,13 +18,6 @@ export class Comment {
 	constructor(readonly who: string, readonly when: Date, readonly text: string) {}
 }
 
-export const reviewStates = [
-	{ id: '—', text: '—' },
-	{ id: 'Confirm',  text: 'Confirm',  iconProps: { iconName: 'CheckMark' } },
-	{ id: 'Dispute',  text: 'Dispute',  iconProps: { iconName: 'StatusCircleErrorX' } },
-	{ id: 'Suppress', text: 'Suppress', iconProps: { iconName: 'Warning' } },
-] as IListBoxItem[]
-
 export class PipelineContext {
 	private container: Container
 	@observable public threads = [] as Thread[]

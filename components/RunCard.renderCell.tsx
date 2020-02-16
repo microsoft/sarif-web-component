@@ -10,7 +10,6 @@ import {Result} from 'sarif'
 import {Hi} from './Hi'
 import {tryOr, tryLink} from './try'
 import {Rule, More, ResultOrRuleOrMore} from './Viewer.Types'
-import {ReviewCell} from './RunCard.ReviewCell'
 import {Snippet} from './Snippet'
 import {TooltipSpan} from './TooltipSpan'
 
