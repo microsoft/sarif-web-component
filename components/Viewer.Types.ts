@@ -9,6 +9,8 @@ declare module 'sarif' {
 	interface Result {
 		run: Run
 		_rule: Rule // rule already used for ReportingDescriptorReference.
+		firstDetection?: Date
+		sla?: string
 	}
 }
 

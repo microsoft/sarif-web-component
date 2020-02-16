@@ -23,10 +23,10 @@ export class RunStore {
 	@observable sortColumnIndex = 1
 	@observable sortOrder = SortOrder.ascending
 	private rulesInUse: Map<string, Rule>
-	private agesInUse = new Map
-		(['Past SLA (31+ days)', 'Within SLA (0 - 30 days)']
-		.map(name => [name, { results: [], treeItem: null, name, isAge: true }])
-	)
+	private agesInUse = new Map([
+		['Past SLA'  , { results: [], treeItem: null, name: 'Past SLA (31+ days)'     , isAge: true }],
+		['Within SLA', { results: [], treeItem: null, name: 'Within SLA (0 - 30 days)', isAge: true }],
+	])
 
 	constructor(readonly run: Run, readonly logIndex, readonly filter: MobxFilter, readonly pipeline?: PipelineContext, readonly hideBaseline?: boolean, readonly showAge?: boolean) {
 		const {driver} = run.tool
@@ -71,11 +71,10 @@ export class RunStore {
 
 			// Collate by Age
 			const firstDetection = result.provenance?.firstDetectionTimeUtc
-			const firstDetectionDate = firstDetection ? new Date(firstDetection) : new Date()
-			const age = (new Date().getTime() - firstDetectionDate.getTime()) > 31 * 24 * 60 * 60 * 1000 // 31 days in milliseconds
-				? 'Past SLA (31+ days)'
-				: 'Within SLA (0 - 30 days)'
-			this.agesInUse.get(age).results.push(result)
+			result.firstDetection = firstDetection ? new Date(firstDetection) : new Date()
+			const age = (new Date().getTime() - result.firstDetection.getTime()) / (24 * 60 * 60 * 1000) // 1 day in milliseconds
+			result.sla = age > 31 ? 'Past SLA' : 'Within SLA'
+			this.agesInUse.get(result.sla).results.push(result)
 
 			// Fill-in url from run.artifacts as needed.
 			const artLoc = tryOr(() => result.locations[0].physicalLocation.artifactLocation)
