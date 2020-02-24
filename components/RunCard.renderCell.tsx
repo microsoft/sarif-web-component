@@ -167,6 +167,10 @@ export function renderCell<T extends ISimpleTableCell>(
 							return tryOr(() => <Link href={result.workItemUris[0]} target="_blank">
 								<Icon iconName="LadybugSolid" size={IconSize.medium} style={{ color: '#E81123' }} />
 							</Link>)
+						case 'Age':
+							return <Hi>{result.sla}</Hi>
+						case 'FirstObserved':
+							return <Hi>{result.firstDetection.toLocaleDateString()}</Hi>
 					}
 				})(),
 				className: css(treeColumn.className, 'font-size'),

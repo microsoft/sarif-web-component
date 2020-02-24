@@ -50,6 +50,19 @@ export class RunStore {
 			})
 		}
 
+		if (showAge) {
+			this.columns.push({
+				id: 'Age',
+				filterString: (result: Result) => result.sla,
+				sortString:   (result: Result) => result.sla,
+			})
+			this.columns.push({
+				id: 'First Observed', // Consider using name instead of id
+				filterString: (result: Result) => result.firstDetection.toLocaleDateString(),
+				sortString:   (result: Result) => result.firstDetection.getTime().toString(),
+			})
+		}
+
 		const rulesListed = new Map<string, Rule>(rules.map(rule => [rule.id, rule] as any)) // Unable to express [[string, RuleEx]].
 		this.rulesInUse = new Map<string, Rule>()
 

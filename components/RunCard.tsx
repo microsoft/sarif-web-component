@@ -93,9 +93,9 @@ import {Tooltip} from 'azure-devops-ui/TooltipEx'
  
 		this.columns = runStore.columns.map((col, i) => {
 			const {id} = col
-			const width = new ObservableValue([-1, -3, 100, 150][i])
+			const width = new ObservableValue([-1, -3, 100, 80, 120][i])
 			return {
-				id,
+				id: id.replace(/ /g, ''),
 				name: id,
 				width,
 				onSize: (e, i, newWidth) => width.value = newWidth,
