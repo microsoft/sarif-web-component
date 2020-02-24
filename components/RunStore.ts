@@ -142,11 +142,12 @@ export class RunStore {
 						if (!selectedValues.includes(translatedCellValue)) return false
 					}
 
-					const path     = this.columns[0]?.filterString(result).toLowerCase() ?? ''
-					const details  = this.columns[1]?.filterString(result).toLowerCase() ?? ''
-					const baseline = this.columns[2]?.filterString(result).toLowerCase() ?? ''
+					const isKeywordMatch = this.columns.some(column => {
+						const field = column.filterString(result).toLowerCase()
+						return isMatch(field, filterKeywords)
+					})
 
-					return isDriverMatch || isRuleMatch || isMatch(path, filterKeywords) || isMatch( details, filterKeywords) || isMatch(baseline, filterKeywords)
+					return isDriverMatch || isRuleMatch || isKeywordMatch
 				})
 				.map(result => ({ data: result })) // Can cache the result here.
 
