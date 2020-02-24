@@ -149,7 +149,8 @@ export class RunStore {
 						if (!selectedValues.length) continue
 						const map = { // TODO: Dynamic lookup.
 							Baseline: this.columns[2].filterString,
-							Level: result => result.level || 'warning',
+							Level: (result: Result) => result.level || 'warning',
+							Age: (result: Result) => result.sla.toLowerCase(),
 						}
 						const translatedCellValue = map[columnName] ? map[columnName](result) : result
 						if (!selectedValues.includes(translatedCellValue)) return false

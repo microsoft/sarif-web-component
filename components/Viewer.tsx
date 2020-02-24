@@ -40,7 +40,7 @@ interface ViewerProps {
 	user?: string
 	hideBaseline?: boolean
 	hideLevel?: boolean
-	showAge?: boolean
+	showAge?: boolean // Enables age-related columns, group by age, and an age dropdown filter.
 }
 
 @observer export class Viewer extends Component<ViewerProps> {
@@ -88,13 +88,13 @@ interface ViewerProps {
 		const {pipelineContext} = this
 		if (pipelineContext && !pipelineContext.reviews) return null
 
-		const {hideBaseline, hideLevel} = this.props
+		const {hideBaseline, hideLevel, showAge} = this.props
 
 		// Computed values fail to cache if called from onRenderNearElement() for unknown reasons. Thus call them in advance.
 		const filterKeywords = this.filter.getState().Keywords?.value
 		const nearElement = <Page>
 			<div className="swcShim"></div>
-			<FilterBar filter={this.filter} hideBaseline={hideBaseline} hideLevel={hideLevel} />
+			<FilterBar filter={this.filter} hideBaseline={hideBaseline} hideLevel={hideLevel} showAge={showAge} />
 			{this.warnOldVersion && <MessageCard
 				severity={MessageCardSeverity.Warning}
 				onDismiss={() => this.warnOldVersion = false}>

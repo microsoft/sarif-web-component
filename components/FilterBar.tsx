@@ -26,11 +26,12 @@ export class MobxFilter extends Filter {
 	}
 }
 
-@observer export class FilterBar extends React.Component<{ filter: MobxFilter, hideBaseline?:boolean, hideLevel?: boolean }> {
+@observer export class FilterBar extends React.Component<{ filter: MobxFilter, hideBaseline?:boolean, hideLevel?: boolean, showAge?: boolean }> {
 	private ms1 = new DropdownMultiSelection()
 	private ms2 = new DropdownMultiSelection()
+	private msAge = new DropdownMultiSelection()
 	render() {
-		const {filter, hideBaseline, hideLevel} = this.props
+		const {filter, hideBaseline, hideLevel, showAge} = this.props
 		return <AzFilterBar filter={filter}>
 			<KeywordFilterBarItem filterItemKey="Keywords" placeholder="Filter by keyword" />
 			{!hideBaseline && <AzDropdownFilterBarItem
@@ -46,6 +47,13 @@ export class MobxFilter extends Filter {
 				showPlaceholderAsLabel
 				items={['None', 'Note', 'Warning', 'Error'].map(text => ({ id: text.toLowerCase(), text }))}
 				selection={this.ms2}
+				 />}
+			{showAge && <AzDropdownFilterBarItem
+				filterItemKey="Age"
+				placeholder="Age"
+				showPlaceholderAsLabel
+				items={['Past SLA', 'Within SLA'].map(text => ({ id: text.toLowerCase(), text }))}
+				selection={this.msAge}
 				 />}
 		</AzFilterBar>
 	}
