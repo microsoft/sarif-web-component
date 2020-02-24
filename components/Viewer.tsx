@@ -46,6 +46,7 @@ interface ViewerProps {
 @observer export class Viewer extends Component<ViewerProps> {
 	private collapseComments = new ObservableValue(false)
 	private filter: MobxFilter
+	private groupByAge = observable.box(false)
 	private pipelineContext?: PipelineContext
 
 	constructor(props) {
@@ -75,7 +76,8 @@ interface ViewerProps {
 		const {logs, hideBaseline, showAge} = this.props
 		if (!logs) return [] // Undef interpreted as loading.
 		const runs = [].concat(...logs.filter(log => log.version === '2.1.0').map(log => log.runs)) as Run[]
-		const runStores = runs.map((run, i) => new RunStore(run, i, this.filter, this.pipelineContext, hideBaseline, showAge))
+		const {filter, groupByAge, pipelineContext} = this
+		const runStores = runs.map((run, i) => new RunStore(run, i, filter, groupByAge, pipelineContext, hideBaseline, showAge))
 		runStores.sort((a, b) => a.driverName.localeCompare(b.driverName)) // May not be required after introduction of runStoresSorted.
 		return runStores
 	}

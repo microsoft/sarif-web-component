@@ -1,7 +1,7 @@
 // Copyright (c) Microsoft Corporation. All rights reserved.
 // Licensed under the MIT License.
 
-import {observable, autorun, computed, observe, untracked} from 'mobx'
+import {observable, autorun, computed, IObservableValue} from 'mobx'
 import {Run, Result, Artifact} from 'sarif'
 
 import {MobxFilter} from './FilterBar'
@@ -18,7 +18,6 @@ export const isMatch = (field: string, keywords: string[]) => !keywords.length |
 
 export class RunStore {
 	driverName: string
-	@observable groupByAge = false
 	@observable sortRuleBy = SortRuleBy.Count
 	@observable sortColumnIndex = 1
 	@observable sortOrder = SortOrder.ascending
@@ -28,7 +27,7 @@ export class RunStore {
 		['Within SLA', { results: [], treeItem: null, name: 'Within SLA (0 - 30 days)', isAge: true }],
 	])
 
-	constructor(readonly run: Run, readonly logIndex, readonly filter: MobxFilter, readonly pipeline?: PipelineContext, readonly hideBaseline?: boolean, readonly showAge?: boolean) {
+	constructor(readonly run: Run, readonly logIndex, readonly filter: MobxFilter, readonly groupByAge?: IObservableValue<boolean>, readonly pipeline?: PipelineContext, readonly hideBaseline?: boolean, readonly showAge?: boolean) {
 		const {driver} = run.tool
 		const rules = driver.rules || []
 		this.driverName = run.properties && run.properties['logFileName'] || driver.name.replace(/^Microsoft.CodeAnalysis.Sarif.PatternMatcher$/, 'CredScan on Push')
@@ -102,7 +101,7 @@ export class RunStore {
 
 		autorun(() => {
 			this.showAllRevision // Read.
-			const rules = this.groupByAge // Slice to satisfy ref rulesTruncated.
+			const rules = this.groupByAge.get() // Slice to satisfy ref rulesTruncated.
 				? this.agesFiltered.slice()
 				: this.rulesFiltered.slice()
 

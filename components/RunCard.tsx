@@ -37,7 +37,7 @@ import {Tooltip} from 'azure-devops-ui/TooltipEx'
 
 		if (runStore.showAge) {
 			const onActivateGroupBy = menuItem => {
-				runStore.groupByAge = menuItem.data
+				runStore.groupByAge.set(menuItem.data)
 				this.groupByMenuItems
 					.filter(item => item.itemType !== MenuItemType.Divider)
 					.forEach(item => (item.checked as IObservableValue<boolean>).value = item.id === menuItem.id)
@@ -51,7 +51,7 @@ import {Tooltip} from 'azure-devops-ui/TooltipEx'
 					ariaLabel: 'Group by age',
 					onActivate: onActivateGroupBy,
 					important: false,
-					checked: new ObservableValue(runStore.groupByAge),
+					checked: new ObservableValue(runStore.groupByAge.get()),
 				},
 				{
 					data: false,
@@ -60,7 +60,7 @@ import {Tooltip} from 'azure-devops-ui/TooltipEx'
 					ariaLabel: 'Group by rule',
 					onActivate: onActivateGroupBy,
 					important: false,
-					checked: new ObservableValue(!runStore.groupByAge),
+					checked: new ObservableValue(!runStore.groupByAge.get()),
 				},
 				{ id: "separator", important: false, itemType: MenuItemType.Divider },
 			]
