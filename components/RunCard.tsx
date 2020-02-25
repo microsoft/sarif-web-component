@@ -4,7 +4,7 @@
 import './RunCard.scss'
 import * as React from 'react'
 import {Component} from 'react'
-import {autorun, runInAction, observable} from 'mobx'
+import {autorun, runInAction, observable, computed} from 'mobx'
 import {observer} from 'mobx-react'
 
 import {Hi} from './Hi'
@@ -28,8 +28,27 @@ import {Tooltip} from 'azure-devops-ui/TooltipEx'
 	@observable private show = true
 	private groupByMenuItems = [] as IHeaderCommandBarItem[]
 	private sortRuleByMenuItems: IHeaderCommandBarItem[]
-	private columns: ITreeColumn<ResultOrRuleOrMore>[]
 	private itemProvider = new TreeItemProvider<ResultOrRuleOrMore>([])
+
+	@computed private get columns() {
+		const {runStore} = this.props
+		return runStore.columns.map((col, i) => {
+			const {id, width} = col
+			const observableWidth = new ObservableValue(width)
+			return {
+				id: id.replace(/ /g, ''),
+				name: id,
+				width: observableWidth,
+				onSize: (e, i, newWidth) => observableWidth.value = newWidth,
+				renderCell: renderCell, // Normally renderTreeCell
+				sortProps: {
+					ariaLabelAscending: "Sorted A to Z", // Need to change for date values.
+					ariaLabelDescending: "Sorted Z to A",
+					sortOrder: i === runStore.sortColumnIndex ? runStore.sortOrder : undefined
+				},
+			} as ITreeColumn<ResultOrRuleOrMore>
+		})
+	}
 
 	constructor(props) {
 		super(props)
@@ -90,23 +109,6 @@ import {Tooltip} from 'azure-devops-ui/TooltipEx'
 				checked: new ObservableValue(runStore.sortRuleBy === SortRuleBy.Name),
 			},
 		]
- 
-		this.columns = runStore.columns.map((col, i) => {
-			const {id, width} = col
-			const observableWidth = new ObservableValue(width)
-			return {
-				id: id.replace(/ /g, ''),
-				name: id,
-				width: observableWidth,
-				onSize: (e, i, newWidth) => observableWidth.value = newWidth,
-				renderCell: renderCell, // Normally renderTreeCell
-				sortProps: {
-					ariaLabelAscending: "Sorted A to Z", // Need to change for date values.
-					ariaLabelDescending: "Sorted Z to A",
-					sortOrder: i === runStore.sortColumnIndex ? runStore.sortOrder : undefined
-				},
-			} as ITreeColumn<ResultOrRuleOrMore>
-		})
 
 		autorun(() => {
 			this.itemProvider.clear()

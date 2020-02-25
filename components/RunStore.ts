@@ -31,40 +31,6 @@ export class RunStore {
 		const {driver} = run.tool
 		const rules = driver.rules || []
 		this.driverName = run.properties && run.properties['logFileName'] || driver.name.replace(/^Microsoft.CodeAnalysis.Sarif.PatternMatcher$/, 'CredScan on Push')
-		
-		if (!hideBaseline) {
-			this.columns.push({
-				id: 'Baseline',
-				filterString: (result: Result) => result.baselineState as string || 'new',
-				sortString:   (result: Result) => result.baselineState as string || 'new',
-				width: -1,
-			})
-		}
-
-		const hasWorkItemUris = run.results && run.results.some(result => result.workItemUris && !!result.workItemUris.length)
-		if (hasWorkItemUris) {
-			this.columns.push({
-				id: 'Bug',
-				filterString: (result: Result) => '',
-				sortString:   (result: Result) => '',
-				width: -1,
-			})
-		}
-
-		if (showAge) {
-			this.columns.push({
-				id: 'Age',
-				filterString: (result: Result) => result.sla,
-				sortString:   (result: Result) => result.sla,
-				width: -1,
-			})
-			this.columns.push({
-				id: 'First Observed', // Consider using name instead of id
-				filterString: (result: Result) => result.firstDetection.toLocaleDateString(),
-				sortString:   (result: Result) => result.firstDetection.getTime().toString(),
-				width: -1,
-			})
-		}
 
 		const rulesListed = new Map<string, Rule>(rules.map(rule => [rule.id, rule] as any)) // Unable to express [[string, RuleEx]].
 		this.rulesInUse = new Map<string, Rule>()
@@ -225,38 +191,76 @@ export class RunStore {
 	@observable showAllRevision = 0
 	@observable.ref rulesTruncated = [] as ITreeItem<ResultOrRuleOrMore>[] // Technically ITreeItem<Rule>[], ref assuming immutable array.
 
-	readonly columns = [
-		{
-			id: 'Path',
-			filterString: (result: Result) => tryOr<string>(
-				() => `${result.locations[0].logicalLocations[0].fullyQualifiedName} ${tryOr(() => {
-						const {index} = result.locations[0].physicalLocation.artifactLocation
-						return result.run.artifacts[index].description.text
-					}, '')}`,
-				() => result.locations[0].physicalLocation.artifactLocation.uri,
-				'',
-			),
-			sortString:   (result: Result) => tryOr<string>(
-				() => result.locations[0].physicalLocation.artifactLocation.uri,
-				'\u2014', // Using escape as VS Packaging munges the char.
-			),
-			width: -3,
-		},
-		{
-			id: 'Details',
-			filterString: (result: Result) => {
-				const message = tryOr<string>(
-					() => result.message.markdown,
-					() => result.message.text, // Can be a constant?
-					'')
-				const snippet = tryOr<string>(
-					() => result.locations[0].physicalLocation.contextRegion.snippet.text,
-					() => result.locations[0].physicalLocation.region.snippet.text,
-					'')
-				return `${message} ${snippet}`
+	@computed get columns() {
+		const columns = [
+			{
+				id: 'Path',
+				filterString: (result: Result) => tryOr<string>(
+					() => `${result.locations[0].logicalLocations[0].fullyQualifiedName} ${tryOr(() => {
+							const {index} = result.locations[0].physicalLocation.artifactLocation
+							return result.run.artifacts[index].description.text
+						}, '')}`,
+					() => result.locations[0].physicalLocation.artifactLocation.uri,
+					'',
+				),
+				sortString:   (result: Result) => tryOr<string>(
+					() => result.locations[0].physicalLocation.artifactLocation.uri,
+					'\u2014', // Using escape as VS Packaging munges the char.
+				),
+				width: -3,
 			},
-			sortString:   (result: Result) => result.message.text as string || '',
-			width: -5,
-		},
-	]
+			{
+				id: 'Details',
+				filterString: (result: Result) => {
+					const message = tryOr<string>(
+						() => result.message.markdown,
+						() => result.message.text, // Can be a constant?
+						'')
+					const snippet = tryOr<string>(
+						() => result.locations[0].physicalLocation.contextRegion.snippet.text,
+						() => result.locations[0].physicalLocation.region.snippet.text,
+						'')
+					return `${message} ${snippet}`
+				},
+				sortString:   (result: Result) => result.message.text as string || '',
+				width: -5,
+			},
+		]
+
+		if (!this.hideBaseline) {
+			columns.push({
+				id: 'Baseline',
+				filterString: (result: Result) => result.baselineState as string || 'new',
+				sortString:   (result: Result) => result.baselineState as string || 'new',
+				width: -1,
+			})
+		}
+
+		const hasWorkItemUris = this.run.results && this.run.results.some(result => result.workItemUris && !!result.workItemUris.length)
+		if (hasWorkItemUris) {
+			columns.push({
+				id: 'Bug',
+				filterString: (result: Result) => '',
+				sortString:   (result: Result) => '',
+				width: -1,
+			})
+		}
+
+		if (this.showAge) {
+			columns.push({
+				id: 'Age',
+				filterString: (result: Result) => result.sla,
+				sortString:   (result: Result) => result.sla,
+				width: -1,
+			})
+			columns.push({
+				id: 'First Observed', // Consider using name instead of id
+				filterString: (result: Result) => result.firstDetection.toLocaleDateString(),
+				sortString:   (result: Result) => result.firstDetection.getTime().toString(),
+				width: -1,
+			})
+		}
+
+		return columns
+	}
 }
