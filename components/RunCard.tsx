@@ -92,13 +92,13 @@ import {Tooltip} from 'azure-devops-ui/TooltipEx'
 		]
  
 		this.columns = runStore.columns.map((col, i) => {
-			const {id} = col
-			const width = new ObservableValue([-1, -3, 100, 80, 120][i])
+			const {id, width} = col
+			const observableWidth = new ObservableValue(width)
 			return {
 				id: id.replace(/ /g, ''),
 				name: id,
-				width,
-				onSize: (e, i, newWidth) => width.value = newWidth,
+				width: observableWidth,
+				onSize: (e, i, newWidth) => observableWidth.value = newWidth,
 				renderCell: renderCell, // Normally renderTreeCell
 				sortProps: {
 					ariaLabelAscending: "Sorted A to Z", // Need to change for date values.

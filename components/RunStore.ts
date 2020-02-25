@@ -37,6 +37,7 @@ export class RunStore {
 				id: 'Baseline',
 				filterString: (result: Result) => result.baselineState as string || 'new',
 				sortString:   (result: Result) => result.baselineState as string || 'new',
+				width: -1,
 			})
 		}
 
@@ -46,6 +47,7 @@ export class RunStore {
 				id: 'Bug',
 				filterString: (result: Result) => '',
 				sortString:   (result: Result) => '',
+				width: -1,
 			})
 		}
 
@@ -54,11 +56,13 @@ export class RunStore {
 				id: 'Age',
 				filterString: (result: Result) => result.sla,
 				sortString:   (result: Result) => result.sla,
+				width: -1,
 			})
 			this.columns.push({
 				id: 'First Observed', // Consider using name instead of id
 				filterString: (result: Result) => result.firstDetection.toLocaleDateString(),
 				sortString:   (result: Result) => result.firstDetection.getTime().toString(),
+				width: -1,
 			})
 		}
 
@@ -236,6 +240,7 @@ export class RunStore {
 				() => result.locations[0].physicalLocation.artifactLocation.uri,
 				'\u2014', // Using escape as VS Packaging munges the char.
 			),
+			width: -3,
 		},
 		{
 			id: 'Details',
@@ -251,6 +256,7 @@ export class RunStore {
 				return `${message} ${snippet}`
 			},
 			sortString:   (result: Result) => result.message.text as string || '',
+			width: -5,
 		},
 	]
 }
