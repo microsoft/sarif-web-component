@@ -61,7 +61,7 @@ export function renderCell<T extends ISimpleTableCell>(
 		return columnIndex === 0
 			? ExpandableTreeCell({
 				children: <div className="swcRowRule">{/* Div for flow layout. */}
-					{tryLink(() => rule.helpUri, <Hi>{data.id || data.guid}</Hi>)}
+					{tryLink(() => rule.helpUri, <Hi>{rule.id || rule.guid}</Hi>)}
 					{tryOr(() => rule.name && <>: <Hi>{rule.name}</Hi></>)}
 					{tryOr(() => rule.relationships.map((rel, i) => {
 						const taxon = rule.run.taxonomies[rel.target.toolComponent.index].taxa[rel.target.index]
