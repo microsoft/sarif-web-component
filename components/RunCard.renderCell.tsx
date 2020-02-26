@@ -142,7 +142,7 @@ export function renderCell<T extends ISimpleTableCell>(
 												<span><Hi>{path}</Hi></span>
 												<span><Hi>/{fileName}</Hi></span>
 											</span>
-											: <span>{uri}</span>,
+											: <span><Hi>{uri}</Hi></span>,
 										'swcColorUnset')}
 								</TooltipSpan>
 							</div>
