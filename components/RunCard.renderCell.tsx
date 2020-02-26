@@ -153,6 +153,7 @@ export function renderCell<T extends ISimpleTableCell>(
 			})
 			: TableCell({ // Don't want SimpleTableCell as it has flex row.
 				children: (() => {
+					const rule = result._rule
 					switch (treeColumn.id) {
 						case 'Details':
 							return <>
@@ -160,6 +161,11 @@ export function renderCell<T extends ISimpleTableCell>(
 									? <div className="swcMarkDown"><ReactMarkDown source={result.message.markdown} /></div> // Div to cancel out containers display flex row.
 									: <Hi>{renderMessageWithEmbeddedLinks(result)}</Hi> || ''}
 								{tryOr(() => <Snippet ploc={result.locations[0].physicalLocation} />)}
+							</>
+						case 'Rule':
+							return <>
+								{tryLink(() => rule.helpUri, <Hi>{rule.id || rule.guid}</Hi>)}
+								{tryOr(() => rule.name && <>: <Hi>{rule.name}</Hi></>)}
 							</>
 						case 'Baseline':
 							return <Hi>{result.baselineState && capitalize(result.baselineState) || 'New'}</Hi>

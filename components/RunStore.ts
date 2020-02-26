@@ -209,23 +209,39 @@ export class RunStore {
 				),
 				width: -3,
 			},
-			{
-				id: 'Details',
-				filterString: (result: Result) => {
-					const message = tryOr<string>(
-						() => result.message.markdown,
-						() => result.message.text, // Can be a constant?
-						'')
-					const snippet = tryOr<string>(
-						() => result.locations[0].physicalLocation.contextRegion.snippet.text,
-						() => result.locations[0].physicalLocation.region.snippet.text,
-						'')
-					return `${message} ${snippet}`
-				},
-				sortString:   (result: Result) => result.message.text as string || '',
-				width: -5,
-			},
 		]
+
+		if (this.showAge && this.groupByAge.get()) {
+			columns.push({
+				id: 'Rule',
+				filterString: (result: Result) => {
+					const rule = result._rule
+					return `${rule.id || rule.guid} ${rule.name ?? ''}`
+				},
+				sortString:   (result: Result) => {
+					const rule = result._rule
+					return `${rule.id || rule.guid} ${rule.name ?? ''}`
+				},
+				width: -2,
+			})
+		}
+
+		columns.push({
+			id: 'Details',
+			filterString: (result: Result) => {
+				const message = tryOr<string>(
+					() => result.message.markdown,
+					() => result.message.text, // Can be a constant?
+					'')
+				const snippet = tryOr<string>(
+					() => result.locations[0].physicalLocation.contextRegion.snippet.text,
+					() => result.locations[0].physicalLocation.region.snippet.text,
+					'')
+				return `${message} ${snippet}`
+			},
+			sortString:   (result: Result) => result.message.text as string || '',
+			width: -5,
+		})
 
 		if (!this.hideBaseline) {
 			columns.push({
@@ -246,13 +262,16 @@ export class RunStore {
 			})
 		}
 
-		if (this.showAge) {
+		if (this.showAge && !this.groupByAge.get()) {
 			columns.push({
 				id: 'Age',
 				filterString: (result: Result) => result.sla,
 				sortString:   (result: Result) => result.sla,
 				width: -1,
 			})
+		}
+
+		if (this.showAge) {
 			columns.push({
 				id: 'First Observed', // Consider using name instead of id
 				filterString: (result: Result) => result.firstDetection.toLocaleDateString(),
