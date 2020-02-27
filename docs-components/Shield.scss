@@ -1,0 +1,19 @@
+.shield {
+	pointer-events: none;
+	opacity: 0;
+	transition: opacity 0.5s;
+	&.shieldEnabled { opacity: 1; }
+	position: fixed;
+	top: 0; bottom: 0;
+	left: 0; right: 0;
+	background-color: hsla(0, 0%, 100%, 0.9);
+	padding: 10%;
+	
+	.shieldInner {
+		height: 100%;
+		border: 2px dashed hsl(0, 0%, 80%);
+		display: flex;
+		justify-content: center; // Left/Right
+		align-items: center; // Top/Bottom
+	}
+}

@@ -1,10 +1,11 @@
-const path = require('path')
-
 module.exports = {
-	entry: './components/Viewer.tsx',
+	entry: {
+		'dist': './components/Viewer.tsx',
+		'docs': './docs-components/Index.tsx',
+	},
 	output: {
-		path: path.join(__dirname, 'dist'),
-		filename: 'index.js',
+		path: __dirname,
+		filename: '[name]/index.js',
 		libraryTarget: 'umd',
 		globalObject: 'this',
 	},

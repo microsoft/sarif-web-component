@@ -1,0 +1,52 @@
+html {
+	height: 100%;
+}
+
+body {
+	height: 100%;
+	margin: 0;
+	font: 14px 'Segoe UI', sans-serif;
+
+	main {
+		width: 100%;
+	}
+
+	#app {
+		height: 100%;
+		display: flex; flex-direction: column;
+	}
+}
+
+::-webkit-scrollbar {
+	height: 8px;
+	width: 8px;
+}
+::-webkit-scrollbar-thumb {
+	background: hsla(0, 0, 0, 0.1);
+	&:hover { background: hsla(0, 0, 0, 0.2); }
+}
+
+h1, h2, h3, h4, h5, h6, p { // https://css-tricks.com/snippets/css/meyer-reset/
+	margin: 0;
+	padding: 0;
+	border: 0;
+	font-weight: inherit;
+	font-style: inherit;
+	font-size: 100%;
+	font-family: inherit;
+	vertical-align: baseline;
+}
+
+pre { margin: 0 }
+
+// Matching GitHub style.
+code { font-family: "SFMono-Regular", Consolas, "Liberation Mono", Menlo, Courier, monospace; }
+
+button, input { font: inherit; } // Override user agent.
+
+.demoHeader {
+	flex: 0 0 auto;
+	padding: 15px; padding-bottom: 10px;
+	display: flex;
+	border-bottom: 1px solid #EFEFEF; // Match policy headers.
+}
