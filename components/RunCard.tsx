@@ -29,24 +29,28 @@ import {Tooltip} from 'azure-devops-ui/TooltipEx'
 	private groupByMenuItems = [] as IHeaderCommandBarItem[]
 	private sortRuleByMenuItems: IHeaderCommandBarItem[]
 	private itemProvider = new TreeItemProvider<ResultOrRuleOrMore>([])
+	private columnCache = new Map<string, ITreeColumn<ResultOrRuleOrMore>>()
 
 	@computed private get columns() {
 		const {runStore} = this.props
 		return runStore.columns.map((col, i) => {
 			const {id, width} = col
-			const observableWidth = new ObservableValue(width)
-			return {
-				id: id.replace(/ /g, ''),
-				name: id,
-				width: observableWidth,
-				onSize: (e, i, newWidth) => observableWidth.value = newWidth,
-				renderCell: renderCell, // Normally renderTreeCell
-				sortProps: {
-					ariaLabelAscending: "Sorted A to Z", // Need to change for date values.
-					ariaLabelDescending: "Sorted Z to A",
-					sortOrder: i === runStore.sortColumnIndex ? runStore.sortOrder : undefined
-				},
-			} as ITreeColumn<ResultOrRuleOrMore>
+			if (!this.columnCache.has(id)) {
+				const observableWidth = new ObservableValue(width)
+				this.columnCache.set(id, {
+					id: id.replace(/ /g, ''),
+					name: id,
+					width: observableWidth,
+					onSize: (e, i, newWidth) => observableWidth.value = newWidth,
+					renderCell: renderCell, // Normally renderTreeCell
+					sortProps: {
+						ariaLabelAscending: "Sorted A to Z", // Need to change for date values.
+						ariaLabelDescending: "Sorted Z to A",
+						sortOrder: i === runStore.sortColumnIndex ? runStore.sortOrder : undefined
+					},
+				} as ITreeColumn<ResultOrRuleOrMore>)
+			}
+			return this.columnCache.get(id)
 		})
 	}
 
