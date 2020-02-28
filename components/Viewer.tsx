@@ -5,7 +5,7 @@ import './Viewer.scss'
 import * as React from 'react'
 import { Component } from 'react'
 import * as ReactDOM from 'react-dom'
-import { computed, observable, autorun } from 'mobx'
+import { computed, observable, autorun, IObservableValue } from 'mobx'
 import { observer } from 'mobx-react'
 import { Log, Run } from 'sarif'
 
@@ -46,12 +46,13 @@ interface ViewerProps {
 @observer export class Viewer extends Component<ViewerProps> {
 	private collapseComments = new ObservableValue(false)
 	private filter: MobxFilter
-	private groupByAge = observable.box(false)
+	private groupByAge: IObservableValue<boolean>
 	private pipelineContext?: PipelineContext
 
 	constructor(props) {
 		super(props)
 		this.filter = new MobxFilter(this.props.filterState)
+		this.groupByAge = observable.box(this.props.showAge)
 
 		autorun(() => {
 			this.filter.getState() // Read
