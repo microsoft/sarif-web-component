@@ -4,7 +4,6 @@
 import './Viewer.scss'
 import * as React from 'react'
 import { Component } from 'react'
-import * as ReactDOM from 'react-dom'
 import { computed, observable, autorun, IObservableValue } from 'mobx'
 import { observer } from 'mobx-react'
 import { Log, Run } from 'sarif'
@@ -13,8 +12,6 @@ import './extension'
 
 // Must come before renderCell or anything the uses this.
 export const FilterKeywordContext = React.createContext('')
-
-import sample from '../resources/sample'
 
 import { FilterBar, MobxFilter } from './FilterBar'
 import { PipelineContext } from './PipelineContext'
@@ -148,8 +145,4 @@ interface ViewerProps {
 			</SurfaceContext.Provider>
 		</FilterKeywordContext.Provider>
 	}
-}
-
-if (self === top) {
-	ReactDOM.render(<Viewer logs={sample} />, document.getElementById("app"))
 }
