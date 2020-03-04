@@ -1,55 +1,55 @@
 {
-  "name": "@microsoft/sarif-web-component",
-  "version": "0.1.0",
-  "author": "Microsoft",
-  "description": "Sarif Viewer",
-  "license": "MIT",
-  "repository": {
-    "type": "git",
-    "url": "https://github.com/Microsoft/sarif-web-component"
-  },
-  "scripts": {
-    "start": "webpack-dev-server --mode development",
-    "test": "jest --watchAll"
-  },
-  "devDependencies": {
-    "@babel/preset-env": "^7.4.5",
-    "@types/jest": "^24.0.13",
-    "@types/react": "^16.8.18",
-    "@types/react-dom": "^16.8.4",
-    "@types/sarif": "^2.1.1",
-    "autobind-decorator": "^2.4.0",
-    "babel-jest": "^24.8.0",
-    "css-loader": "^2.1.1",
-    "identity-obj-proxy": "^3.0.0",
-    "jest": "^24.8.0",
-    "node-sass": "^4.12.0",
-    "react": "^16.8.6",
-    "react-dom": "^16.8.6",
-    "sass-loader": "^7.1.0",
-    "style-loader": "^0.23.1",
-    "ts-jest": "^24.0.2",
-    "ts-loader": "^6.0.1",
-    "typescript": "^3.7.2",
-    "url-loader": "^2.0.0",
-    "webpack": "^4.32.2",
-    "webpack-bundle-analyzer": "^3.3.2",
-    "webpack-cli": "^3.3.2",
-    "webpack-dev-server": "^3.4.1"
-  },
-  "dependencies": {
-    "@azure/cosmos": "^3.3.6",
-    "azure-devops-ui": "^1.160.3",
-    "highlight.js": "^9.15.8",
-    "mobx": "^5.9.4",
-    "mobx-react": "^5.4.4",
-    "react-linkify": "^1.0.0-alpha",
-    "react-markdown": "^4.0.8"
-  },
-  "peerDependencies": {
-    "react": "^16.8.6",
-    "react-dom": "^16.8.6"
-  },
-  "main": "dist/index.js",
-  "types": "dist/index.d.ts"
+	"name": "@microsoft/sarif-web-component",
+	"version": "0.1.0",
+	"author": "Microsoft",
+	"description": "Sarif Viewer",
+	"license": "MIT",
+	"repository": {
+		"type": "git",
+		"url": "https://github.com/Microsoft/sarif-web-component"
+	},
+	"scripts": {
+		"start": "webpack-dev-server --mode development",
+		"test": "jest --watchAll"
+	},
+	"devDependencies": {
+		"@babel/preset-env": "^7.4.5",
+		"@types/jest": "^24.0.13",
+		"@types/react": "^16.8.18",
+		"@types/react-dom": "^16.8.4",
+		"@types/sarif": "^2.1.1",
+		"autobind-decorator": "^2.4.0",
+		"babel-jest": "^24.8.0",
+		"css-loader": "^2.1.1",
+		"identity-obj-proxy": "^3.0.0",
+		"jest": "^24.8.0",
+		"node-sass": "^4.12.0",
+		"react": "^16.8.6",
+		"react-dom": "^16.8.6",
+		"sass-loader": "^7.1.0",
+		"style-loader": "^0.23.1",
+		"ts-jest": "^24.0.2",
+		"ts-loader": "^6.0.1",
+		"typescript": "^3.7.2",
+		"url-loader": "^2.0.0",
+		"webpack": "^4.32.2",
+		"webpack-bundle-analyzer": "^3.3.2",
+		"webpack-cli": "^3.3.2",
+		"webpack-dev-server": "^3.4.1"
+	},
+	"dependencies": {
+		"@azure/cosmos": "^3.3.6",
+		"azure-devops-ui": "^1.160.3",
+		"highlight.js": "^9.15.8",
+		"mobx": "^5.9.4",
+		"mobx-react": "^5.4.4",
+		"react-linkify": "^1.0.0-alpha",
+		"react-markdown": "^4.0.8"
+	},
+	"peerDependencies": {
+		"react": "^16.8.6",
+		"react-dom": "^16.8.6"
+	},
+	"main": "dist/index.js",
+	"types": "dist/index.d.ts"
 }
