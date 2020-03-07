@@ -44,6 +44,7 @@
 		"highlight.js": "^9.15.8",
 		"mobx": "^5.9.4",
 		"mobx-react": "^5.4.4",
+		"mobx-utils": "^5.5.5",
 		"react-linkify": "^1.0.0-alpha",
 		"react-markdown": "^4.0.8"
 	},

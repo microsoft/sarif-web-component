@@ -6,6 +6,7 @@ import * as React from 'react'
 import { Component } from 'react'
 import { computed, observable, autorun, IObservableValue } from 'mobx'
 import { observer } from 'mobx-react'
+import { computedFn } from 'mobx-utils'
 import { Log, Run } from 'sarif'
 
 import './extension'
@@ -70,18 +71,19 @@ interface ViewerProps {
 		this.warnOldVersion = logs?.some(log => log.version !== '2.1.0')
 	})
 
-	@computed get runStores() {
-		const {logs, hideBaseline, showAge} = this.props
+	private runStores = computedFn(logs => {
+		const {hideBaseline, showAge} = this.props
 		if (!logs) return [] // Undef interpreted as loading.
 		const runs = [].concat(...logs.filter(log => log.version === '2.1.0').map(log => log.runs)) as Run[]
 		const {filter, groupByAge, pipelineContext} = this
 		const runStores = runs.map((run, i) => new RunStore(run, i, filter, groupByAge, pipelineContext, hideBaseline, showAge))
 		runStores.sort((a, b) => a.driverName.localeCompare(b.driverName)) // May not be required after introduction of runStoresSorted.
 		return runStores
-	}
+	}, { keepAlive: true })
 
 	@computed get runStoresSorted() {
-		return this.runStores.slice().sorted((a, b) => b.filteredCount - a.filteredCount) // Highest count first.
+		const {logs} = this.props
+		return this.runStores(logs).slice().sorted((a, b) => b.filteredCount - a.filteredCount) // Highest count first.
 	}
 
 	render() {
