@@ -119,6 +119,7 @@ export class RunStore {
 						const map = { // TODO: Dynamic lookup.
 							Baseline: this.columns[2].filterString,
 							Level: (result: Result) => result.level || 'warning',
+							Suppression: (result: Result) => result.suppressions?.some(s => s.kind === 'external') ? 'suppressed' : 'unsuppressed',
 							Age: (result: Result) => result.sla.toLowerCase(),
 						}
 						const translatedCellValue = map[columnName] ? map[columnName](result) : result
