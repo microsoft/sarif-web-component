@@ -17,6 +17,15 @@ import {Log} from 'sarif-web-component'
 ReactDOM.render(<Viewer logs={arrayOfLogs} />, document.body.firstChild)
 ```
 
+## Publishing
+Verify `package.json` `name` in case it was modified for development purposes.
+```
+npx webpack
+npm publish --access public
+```
+
+For a dry-run publish: `npm publish --dry-run`.
+
 ## Contributing
 
 This project welcomes contributions and suggestions.  Most contributions require you to agree to a
