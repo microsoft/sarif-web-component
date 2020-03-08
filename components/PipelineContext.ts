@@ -3,7 +3,6 @@
 
 import {CosmosClient, Container} from '@azure/cosmos'
 import {observable, observe} from 'mobx'
-import {IListBoxItem} from 'azure-devops-ui/ListBox'
 
 export class Thread {
 	@observable public comments = [] as Comment[]
@@ -18,10 +17,18 @@ export class Comment {
 	constructor(readonly who: string, readonly when: Date, readonly text: string) {}
 }
 
-export class PipelineContext {
+export interface PipelineContext {
+	threads: Thread[]
+	reviews // null = not ready, {}|{...} = ready
+	showReviewUpdated: boolean
+	reviewRevision: number
+	publish()
+}
+
+export class PipelineContextCosmos implements PipelineContext {
 	private container: Container
 	@observable public threads = [] as Thread[]
-	@observable public reviews = null // null = not ready, {}|{...} = ready
+	@observable public reviews = null
 	@observable public showReviewUpdated = false
 	@observable public reviewRevision = 0
 

@@ -16,6 +16,7 @@ export const FilterKeywordContext = React.createContext('')
 
 import { FilterBar, MobxFilter } from './FilterBar'
 import { PipelineContext } from './PipelineContext'
+import { PipelineContextDemo } from './PipelineContextDemo'
 import { RunCard } from './RunCard'
 import { RunStore } from './RunStore'
 import { Comments } from './Viewer.Comments'
@@ -62,8 +63,7 @@ interface ViewerProps {
 	private pipelineContextDisposer = autorun(() => {
 		const {pipelineId} = this.props
 		if (!pipelineId) return
-		if (![].includes(pipelineId)) return // Whitelist
-		this.pipelineContext = new PipelineContext(pipelineId)
+		this.pipelineContext = new PipelineContextDemo(pipelineId)
 	})
 
 	@observable warnOldVersion = false
