@@ -24,6 +24,8 @@ import {ITreeItemEx, ITreeItem} from 'azure-devops-ui/Utilities/TreeItemProvider
 import {Tooltip} from 'azure-devops-ui/TooltipEx'
 import {Icon, IconSize} from 'azure-devops-ui/Icon'
 
+const colspan = 99 // No easy way to parameterize this, however extra does not hurt, so using an arbitrarily large value.
+
 export function renderCell<T extends ISimpleTableCell>(
 	rowIndex: number,
 	columnIndex: number,
@@ -48,7 +50,7 @@ export function renderCell<T extends ISimpleTableCell>(
 					{age.name}
 					<Pill size={PillSize.compact}>{age.treeItem.childItemsAll.length}</Pill>
 				</div>,
-				colspan: 4, // Conditionally less than 4 columns, but extra does not hurt.
+				colspan,
 				...commonProps,
 			})
 			: null
@@ -69,7 +71,7 @@ export function renderCell<T extends ISimpleTableCell>(
 					}))}
 					<Pill size={PillSize.compact}>{rule.treeItem.childItemsAll.length}</Pill>
 				</div>,
-				colspan: 4, // Conditionally less than 4 columns, but extra does not hurt.
+				colspan,
 				...commonProps,
 			})
 			: null
@@ -190,7 +192,7 @@ export function renderCell<T extends ISimpleTableCell>(
 		return columnIndex === 0
 			? ExpandableTreeCell({
 				children: <Link onClick={data.onClick} tabIndex={-1}>Show All</Link>,
-				colspan: 4, // Conditionally less than 4 columns, but extra does not hurt.
+				colspan,
 				...commonProps
 			})
 			: null
