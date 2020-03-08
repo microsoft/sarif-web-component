@@ -5,3 +5,6 @@
 node_modules
 package-lock.json
 dist
+resources
+!resources/sample.ts
+*.txt
