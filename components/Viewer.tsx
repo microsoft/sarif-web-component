@@ -107,10 +107,10 @@ interface ViewerProps {
 				const {runStoresSorted} = this
 				if (!runStoresSorted.length) return null // Interpreted as loading.
 				return !filterKeywords || runStoresSorted.reduce((total, run) => total + run.filteredCount, 0)
-					? this.runStoresSorted
+					? runStoresSorted
 						.filter(run => !filterKeywords || run.filteredCount)
 						.map((run, index) => <div key={run.logIndex} className="page-content-left page-content-right page-content-top">
-							<RunCard runStore={run} index={index} runCount={this.runStoresSorted.length} />
+							<RunCard runStore={run} index={index} runCount={runStoresSorted.length} />
 						</div>)
 					: <div className="page-content-left page-content-right page-content-top">
 						<Card contentProps={{ contentPadding: false }}>
