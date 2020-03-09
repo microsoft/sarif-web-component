@@ -95,51 +95,52 @@ interface ViewerProps {
 
 		// Computed values fail to cache if called from onRenderNearElement() for unknown reasons. Thus call them in advance.
 		const filterKeywords = this.filter.getState().Keywords?.value
-		const nearElement = <Page>
-			<div className="swcShim"></div>
-			<FilterBar filter={this.filter} groupByAge={this.groupByAge.get()} hideBaseline={hideBaseline} hideLevel={hideLevel} showSuppression={showSuppression} showAge={showAge} />
-			{this.warnOldVersion && <MessageCard
-				severity={MessageCardSeverity.Warning}
-				onDismiss={() => this.warnOldVersion = false}>
-				Pre-SARIF-2.1 logs have been omitted. Use the Artifacts explorer to access all files.
-			</MessageCard>}
-			{(() => {
-				const {runStoresSorted} = this
-				if (!runStoresSorted.length) return null // Interpreted as loading.
-				return !filterKeywords || runStoresSorted.reduce((total, run) => total + run.filteredCount, 0)
-					? runStoresSorted
-						.filter(run => !filterKeywords || run.filteredCount)
-						.map((run, index) => <div key={run.logIndex} className="page-content-left page-content-right page-content-top">
-							<RunCard runStore={run} index={index} runCount={runStoresSorted.length} />
-						</div>)
-					: <div className="page-content-left page-content-right page-content-top">
-						<Card contentProps={{ contentPadding: false }}>
-							<ZeroData
-								imagePath={noResultsPng}
-								imageAltText="No results found"
-								secondaryText="No results found" />
-						</Card>
-					</div>
-			})()}
-		</Page>
+		const nearElement = (() => {
+			const {runStoresSorted} = this
+			if (!runStoresSorted.length) return null // Interpreted as loading.
+			return !filterKeywords || runStoresSorted.reduce((total, run) => total + run.filteredCount, 0)
+				? runStoresSorted
+					.filter(run => !filterKeywords || run.filteredCount)
+					.map((run, index) => <div key={run.logIndex} className="page-content-left page-content-right page-content-top">
+						<RunCard runStore={run} index={index} runCount={runStoresSorted.length} />
+					</div>)
+				: <div className="page-content-left page-content-right page-content-top">
+					<Card contentProps={{ contentPadding: false }}>
+						<ZeroData
+							imagePath={noResultsPng}
+							imageAltText="No results found"
+							secondaryText="No results found" />
+					</Card>
+				</div>
+		})() as JSX.Element
 		
 		return <FilterKeywordContext.Provider value={filterKeywords ?? ''}>
 			<SurfaceContext.Provider value={{ background: SurfaceBackground.neutral }}>
-				<Splitter className="swcSplitter bolt-page-grey"
-					collapsed={this.collapseComments} expandTooltip="Show comments"
-					onCollapsedChanged={collapsed => this.collapseComments.value = collapsed}
-					fixedElement={SplitterElementPosition.Far} initialFixedSize={400}
-					onRenderNearElement={() => nearElement}
-					onRenderFarElement={() => {
-						if (!pipelineContext) return null
-						return <Comments
-							pipeline={pipelineContext}
-							keywords={filterKeywords} user={this.props.user}
-							setKeywords={keywords => {
-								this.filter.setState({ ...this.filter.getState(), Keywords: { value: keywords } })
-							}} />
-					}}
-				/>
+				<Page>
+					<div className="swcShim"></div>
+					<FilterBar filter={this.filter} groupByAge={this.groupByAge.get()} hideBaseline={hideBaseline} hideLevel={hideLevel} showSuppression={showSuppression} showAge={showAge} />
+					{this.warnOldVersion && <MessageCard
+						severity={MessageCardSeverity.Warning}
+						onDismiss={() => this.warnOldVersion = false}>
+						Pre-SARIF-2.1 logs have been omitted. Use the Artifacts explorer to access all files.
+					</MessageCard>}
+					{pipelineContext
+						? <Splitter className="swcSplitter bolt-page-grey"
+							collapsed={this.collapseComments} expandTooltip="Show comments"
+							onCollapsedChanged={collapsed => this.collapseComments.value = collapsed}
+							fixedElement={SplitterElementPosition.Far} initialFixedSize={400}
+							onRenderNearElement={() => nearElement}
+							onRenderFarElement={() => {
+								return <Comments
+									pipeline={pipelineContext}
+									keywords={filterKeywords} user={this.props.user}
+									setKeywords={keywords => {
+										this.filter.setState({ ...this.filter.getState(), Keywords: { value: keywords } })
+									}} />
+							}}
+						/>
+						: nearElement}
+				</Page>
 				{pipelineContext?.showReviewUpdated && <Toast message="Some results updated."
 					callToAction="Re-apply Filter" onCallToActionClick={() => {
 						pipelineContext.showReviewUpdated = false

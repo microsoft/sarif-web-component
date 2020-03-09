@@ -3,10 +3,6 @@
 
 @import "azure-devops-ui/Core/_platformCommon.scss";
 
-.bolt-page {
-	padding-bottom: 32px;
-}
-
 .bolt-page { // Parent is #app which is display block.
 	height: 100%;
 
@@ -58,5 +54,4 @@ pre {
 
 .swcSplitter {
 	width: 100%;
-	height: 100%;
 }
