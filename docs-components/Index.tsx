@@ -57,7 +57,7 @@ const readAsText = file => new Promise<string>((resolve, reject) => {
 					}} />
 				<input type="button" value="Open..." onClick={() => (this.refs.inputFile as any).click() } />&nbsp;
 			</div>
-			<Viewer logs={[this.sample]} hideBaseline hideLevel showAge />
+			<Viewer logs={[this.sample]} hideBaseline hideLevel showSuppression showAge />
 			<Shield onDrop={this.loadFile} />
 		</>
 	}
