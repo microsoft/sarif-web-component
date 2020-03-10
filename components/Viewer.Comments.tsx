@@ -24,7 +24,7 @@ import { TextField } from 'azure-devops-ui/TextField'
 import { VssPersona } from 'azure-devops-ui/VssPersona'
 import { DropdownSelection } from 'azure-devops-ui/Utilities/DropdownSelection'
 
-class MobxDropdown extends Component<{ className?: string, items: string[], selection: string, onSelect: (item: string) => void, width?: number }>{
+export class MobxDropdown extends Component<{ className?: string, items: string[], selection: string, onSelect: (item: string) => void, width?: number }>{
 	private selection = new DropdownSelection()
 
 	constructor(props) {
@@ -38,8 +38,11 @@ class MobxDropdown extends Component<{ className?: string, items: string[], sele
 			className={this.props.className}
 			items={this.props.items}
 			selection={this.selection}
-			renderExpandable={props => <DropdownExpandableButton {...props} />}
-			onSelect={(e, item) => this.props.onSelect(item.id)}
+			renderExpandable={props => <DropdownExpandableButton onClick={e => e.stopPropagation()} {...props} />}
+			onSelect={(e, item) => {
+				e.stopPropagation()
+				this.props.onSelect(item.id)
+			}}
 			width={this.props.width}
 			/>
 	}

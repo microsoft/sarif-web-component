@@ -113,6 +113,7 @@ export class RunStore {
 					const isRuleMatch = isMatch(ruleId, filterKeywords) || isMatch(ruleName, filterKeywords)
 
 					for (const columnName in filter) {
+						if (columnName === 'Discussion') continue // Discussion filter does not apply to Results.
 						const selectedValues = filter[columnName].value
 						if (!Array.isArray(selectedValues)) continue
 						if (!selectedValues.length) continue

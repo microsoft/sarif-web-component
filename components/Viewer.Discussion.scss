@@ -1,0 +1,44 @@
+// Copyright (c) Microsoft Corporation. All rights reserved.
+// Licensed under the MIT License.
+
+.swcDiscussionHeader {
+	margin-bottom: 8px;
+
+	.bolt-dropdown-expandable {
+		margin-left: 8px;
+	}
+}
+
+.swcDiscussionPane {
+	font-size: 12px;
+
+	.swcDiscussionItem {
+		margin-bottom: 24px;
+	}
+
+	.vss-Persona {
+		margin-top: 2px;
+		margin-right: 8px;
+	}
+}
+
+// Duplicated from Viewer.Comments
+.swcCommentRowContent {
+	padding-bottom: 16px;
+
+	.swcCommentTitle {
+		margin-bottom: 2px;
+	}
+
+	.swcCommentPerson {
+		margin-right: 8px;
+	}
+
+	.secondary-text {
+		white-space: pre-wrap; // Override.
+	}
+}
+
+.swcDiscussionShowAll {
+	margin-bottom: 8px;
+}

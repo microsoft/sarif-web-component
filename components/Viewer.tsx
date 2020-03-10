@@ -19,7 +19,7 @@ import { PipelineContext } from './PipelineContext'
 import { PipelineContextDemo } from './PipelineContextDemo'
 import { RunCard } from './RunCard'
 import { RunStore } from './RunStore'
-import { Comments } from './Viewer.Comments'
+import { Discussion } from './Viewer.Discussion'
 const noResultsPng = require('./Viewer.ZeroData.png')
 
 import { Card } from 'azure-devops-ui/Card'
@@ -94,7 +94,8 @@ interface ViewerProps {
 		const {hideBaseline, hideLevel, showSuppression, showAge} = this.props
 
 		// Computed values fail to cache if called from onRenderNearElement() for unknown reasons. Thus call them in advance.
-		const filterKeywords = this.filter.getState().Keywords?.value
+		const filterState = this.filter.getState()
+		const filterKeywords = filterState.Keywords?.value
 		const nearElement = (() => {
 			const {runStoresSorted} = this
 			if (!runStoresSorted.length) return null // Interpreted as loading.
@@ -118,7 +119,7 @@ interface ViewerProps {
 			<SurfaceContext.Provider value={{ background: SurfaceBackground.neutral }}>
 				<Page>
 					<div className="swcShim"></div>
-					<FilterBar filter={this.filter} groupByAge={this.groupByAge.get()} hideBaseline={hideBaseline} hideLevel={hideLevel} showSuppression={showSuppression} showAge={showAge} />
+					<FilterBar filter={this.filter} groupByAge={this.groupByAge.get()} hideBaseline={hideBaseline} hideLevel={hideLevel} showDiscussion={!!pipelineContext} showSuppression={showSuppression} showAge={showAge} />
 					{this.warnOldVersion && <MessageCard
 						severity={MessageCardSeverity.Warning}
 						onDismiss={() => this.warnOldVersion = false}>
@@ -128,16 +129,11 @@ interface ViewerProps {
 						? <Splitter className="swcSplitter bolt-page-grey"
 							collapsed={this.collapseComments} expandTooltip="Show comments"
 							onCollapsedChanged={collapsed => this.collapseComments.value = collapsed}
-							fixedElement={SplitterElementPosition.Far} initialFixedSize={400}
+							fixedElement={SplitterElementPosition.Far} initialFixedSize={450}
+							nearElementClassName="swcNearElement"
+							farElementClassName="swcFarElement"
 							onRenderNearElement={() => nearElement}
-							onRenderFarElement={() => {
-								return <Comments
-									pipeline={pipelineContext}
-									keywords={filterKeywords} user={this.props.user}
-									setKeywords={keywords => {
-										this.filter.setState({ ...this.filter.getState(), Keywords: { value: keywords } })
-									}} />
-							}}
+							onRenderFarElement={() => <Discussion filterState={filterState} user={this.props.user} />}
 						/>
 						: nearElement}
 				</Page>

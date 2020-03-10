@@ -54,4 +54,16 @@ pre {
 
 .swcSplitter {
 	width: 100%;
+	&.vss-Splitter--container .vss-Splitter--divider:after {
+		background-color: transparent;
+	}
+
+	.swcNearElement {
+		margin-right: -24px;
+		padding-bottom: 16px;
+	}
+
+	.swcFarElement {
+		margin-left: -24px;
+	}
 }
