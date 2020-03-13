@@ -63,3 +63,9 @@ const readAsText = file => new Promise<string>((resolve, reject) => {
 		</>
 	}
 }
+
+@observer export class Discuss extends React.Component {
+	render() {
+		return <Viewer logs={[demoLog]} pipelineId={'anyId'} />
+	}
+}
