@@ -59,7 +59,7 @@ const readAsText = file => new Promise<string>((resolve, reject) => {
 			</div>
 			<Viewer logs={[this.sample]} hideLevel showSuppression showAge
 				filterState={{
-					Baseline: { value: ['new', 'unchanged', 'udpated'] },
+					Baseline: { value: ['new', 'unchanged', 'updated'] },
 					Suppression: { value: ['unsuppressed']},
 				}} />
 			<Shield onDrop={this.loadFile} />
