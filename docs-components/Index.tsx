@@ -22,6 +22,7 @@ const demoLog = {
 					physicalLocation: { artifactLocation: { uri: 'example.txt' } },
 				}],
 				message: { text: 'Welcome to the online SARIF Viewer demo. Drag and drop a SARIF file here to view.' },
+				baselineState: 'new',
 			},
 		],
 	}]
