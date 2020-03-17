@@ -48,7 +48,7 @@ export class MobxFilter extends Filter {
 				filterItemKey="Level"
 				placeholder="Level"
 				showPlaceholderAsLabel
-				items={['None', 'Note', 'Warning', 'Error'].map(text => ({ id: text.toLowerCase(), text }))}
+				items={['Error', 'Warning', 'Note', 'None'].map(text => ({ id: text.toLowerCase(), text }))}
 				selection={this.ms2}
 				 />}
 			{showDiscussion && <AzDropdownFilterBarItem
