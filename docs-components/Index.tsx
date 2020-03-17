@@ -57,8 +57,11 @@ const readAsText = file => new Promise<string>((resolve, reject) => {
 					}} />
 				<input type="button" value="Open..." onClick={() => (this.refs.inputFile as any).click() } />&nbsp;
 			</div>
-			<Viewer logs={[this.sample]} hideBaseline hideLevel showSuppression showAge
-				filterState={{ Suppression: { value: ['unsuppressed']} }} />
+			<Viewer logs={[this.sample]} hideLevel showSuppression showAge
+				filterState={{
+					Baseline: { value: ['new', 'unchanged', 'udpated'] },
+					Suppression: { value: ['unsuppressed']},
+				}} />
 			<Shield onDrop={this.loadFile} />
 		</>
 	}
