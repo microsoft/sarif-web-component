@@ -117,8 +117,8 @@ export class RunStore {
 						const selectedValues = filter[columnName].value
 						if (!Array.isArray(selectedValues)) continue
 						if (!selectedValues.length) continue
-						const map = { // TODO: Dynamic lookup.
-							Baseline: this.columns[2].filterString,
+						const map = {
+							Baseline: (result: Result) => result.baselineState as string || 'new', // TODO: Merge with column def.
 							Level: (result: Result) => result.level || 'warning',
 							Suppression: (result: Result) => result.suppressions?.some(s => s.kind === 'external') ? 'suppressed' : 'unsuppressed',
 							Age: (result: Result) => result.sla.toLowerCase(),
