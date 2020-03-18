@@ -8,7 +8,7 @@ export default [{
 				name: "Sample Tool",
 				rules: [
 					{
-						id: 'RuleId 1',
+						id: 'RULE01',
 						name: 'Rule 1 Name',
 						helpUri: 'https://github.com/Microsoft/sarif-sdk',
 						fullDescription: { text: 'Full description for RuleId 1. Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed do eiusmod tempor incididunt ut labore et dolore magna aliqua. Ut enim ad minim veniam, quis nostrud exercitation ullamco laboris nisi ut aliquip ex ea commodo consequat. Duis aute irure dolor in reprehenderit in voluptate velit esse cillum dolore eu fugiat nulla pariatur. Excepteur sint occaecat cupidatat non proident, sunt in culpa qui officia deserunt mollit anim id est laborum.' },
@@ -40,7 +40,7 @@ export default [{
 			//     message: {},
 			// },
 			{
-				ruleId: 'RuleId 1',
+				ruleId: 'RULE01',
 				message: { text: 'Message only. Keyword "location" for testing.' },
 				locations: [{
 					physicalLocation: { artifactLocation: { uri: 'folder/file3.txt' } },
@@ -49,7 +49,7 @@ export default [{
 				workItemUris: ['http://sarifviewer.azurewebsites.net/'],
 			},
 			{
-				ruleId: 'RuleId 1/1',
+				ruleId: 'RULE01/1',
 				message: { text: 'Message with basic snippet.' },
 				locations: [{
 					physicalLocation: {
@@ -63,7 +63,7 @@ export default [{
 				level: 'error',
 			},
 			{
-				ruleId: 'RuleId 1',
+				ruleId: 'RULE01',
 				message: {},
 				locations: [{
 					physicalLocation: {
@@ -77,7 +77,7 @@ export default [{
 				level: 'note',
 			},
 			{
-				ruleId: 'RuleId 1',
+				ruleId: 'RULE01',
 				message: { text: 'Testing show all.' },
 				locations: [{
 					physicalLocation: { artifactLocation: { uri: 'folder/file4.txt' } },
@@ -87,18 +87,18 @@ export default [{
 
 			// Variation in Path.
 			{
-				ruleId: 'RuleId 2',
+				ruleId: 'RULE02',
 				message: { text: 'No path.' },
 				baselineState: 'updated',
 				level: 'none',
 			},
 			{
-				ruleId: 'RuleId 2',
+				ruleId: 'RULE02',
 				message: { text: 'Only analysisTarget.' },
 				analysisTarget: { uri: 'analysisTarget' }
 			},
 			{
-				ruleId: 'RuleId 2',
+				ruleId: 'RULE02',
 				message: {
 					markdown: "Fix any of the following:\n- Element does not have an alt attribute\n- aria-label attribute does not exist or is empty\n- aria-labelledby attribute does not exist, references elements that do not exist or references elements that are empty\n- Element has no title attribute or the title attribute is empty\n- Element's default semantics were not overridden with role=\"presentation\"\n- Element's default semantics were not overridden with role=\"none\".",
 					text: 'Only analysisTarget.',
@@ -108,7 +108,7 @@ export default [{
 
 			// Variations in Snippets.
 			{
-				ruleId: 'RuleId 3',
+				ruleId: 'RULE03',
 				message: { text: '1. Message with basic snippet and startLine' },
 				locations: [{
 					physicalLocation: {
@@ -121,7 +121,7 @@ export default [{
 				}]
 			},
 			{
-				ruleId: 'RuleId 3',
+				ruleId: 'RULE03',
 				message: { text: '2. Message with basic snippet and contextRegion' },
 				locations: [{
 					physicalLocation: {
@@ -139,7 +139,7 @@ export default [{
 
 			// Variations in AXE.
 			{
-				ruleId: 'RuleId 4',
+				ruleId: 'RULE04',
 				message: { text: '1. AXE-ish location. Typical.' },
 				locations: [{
 					logicalLocation: { fullyQualifiedName: 'fullyQualifiedName' },
@@ -152,7 +152,7 @@ export default [{
 				}]
 			},
 			{
-				ruleId: 'RuleId 4',
+				ruleId: 'RULE04',
 				message: { text: '2. AXE-ish location. No artifact location.' },
 				locations: [{
 					logicalLocation: { fullyQualifiedName: 'fullyQualifiedName' },
@@ -164,7 +164,7 @@ export default [{
 				}]
 			},
 			{
-				ruleId: 'RuleId 4',
+				ruleId: 'RULE04',
 				message: { text: '1. AXE-ish location. Typical.' },
 				locations: [{
 					physicalLocation: {
