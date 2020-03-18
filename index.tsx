@@ -7,6 +7,4 @@ import * as ReactDOM from 'react-dom'
 import { Viewer } from './components/Viewer'
 import sample from './resources/sample'
 
-if (self === top) {
-	ReactDOM.render(<Viewer logs={sample} />, document.getElementById("app"))
-}
+ReactDOM.render(<Viewer logs={sample} />, document.getElementById("app"))
