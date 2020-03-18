@@ -7,4 +7,11 @@ import * as ReactDOM from 'react-dom'
 import { Viewer } from './components/Viewer'
 import sample from './resources/sample'
 
-ReactDOM.render(<Viewer logs={sample} />, document.getElementById("app"))
+ReactDOM.render(
+	<Viewer logs={sample}
+		// hideLevel hideBaseline showAge
+		// filterState={{ Suppression: { value: ['unsuppressed']} }} showSuppression
+		// user={new URLSearchParams(location.search).get('user')} pipelineId={'pipeline.0'}
+		/>,
+	document.getElementById("app")
+)
