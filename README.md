@@ -20,10 +20,13 @@ ReactDOM.render(<Viewer logs={arrayOfLogs} />, document.body.firstChild)
 ## Publishing
 Verify `package.json` `name` in case it was modified for development purposes.
 ```
+npm install
 npx webpack --config ./webpack.config.npm.js
-npm publish --access public
+npm login
+npm publish
 ```
 
+For a scoped account publish: `npm publish --access public`.
 For a dry-run publish: `npm publish --dry-run`.
 
 ## Contributing
