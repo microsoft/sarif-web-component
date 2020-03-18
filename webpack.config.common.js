@@ -17,4 +17,10 @@ module.exports = {
 			{ test: /\.woff$/, use: 'url-loader' },
 		]
 	},
+	performance: {
+		// azure-devops-ui is the majority of the payload
+		// and is needed on boot (thus cannot be lazy loaded).
+		maxAssetSize: 820 * 1024,
+		maxEntrypointSize: 820 * 1024,
+	},
 }
