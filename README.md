@@ -20,7 +20,7 @@ ReactDOM.render(<Viewer logs={arrayOfLogs} />, document.body.firstChild)
 ## Publishing
 Verify `package.json` `name` in case it was modified for development purposes.
 ```
-npx webpack
+npx webpack --config ./webpack.config.npm.js
 npm publish --access public
 ```
 
