@@ -6,7 +6,7 @@ import { computed } from 'mobx'
 import {observer} from 'mobx-react'
 import * as React from 'react'
 import {Component} from 'react'
-import Linkify from 'react-linkify'
+// import Linkify from 'react-linkify'
 
 import { Hi } from './Hi'
 import { PipelineContext, Comment, Thread } from './PipelineContext'
@@ -101,7 +101,7 @@ export class MobxDropdown extends Component<{ className?: string, items: string[
 								<MobxDropdown className="swcDispositionDropdown" items={this.dispositions} selection={topic.disposition} onSelect={item => { topic.disposition = item; pipeline.publish(); }} width={200} />
 							</div>)
 							elements.push(...topic.comments.map(comment => {
-								const componentDecorator = (href, text, key) => <a href={href} key={key} target="_blank">{text}</a>
+								// const componentDecorator = (href, text, key) => <a href={href} key={key} target="_blank">{text}</a>
 								const {who, when, text} = comment
 								return <div className="swcCommentRowContent flex-row flex-start" key={when.getTime()}>
 									<VssPersona size="small" />
@@ -110,7 +110,12 @@ export class MobxDropdown extends Component<{ className?: string, items: string[
 											<div className="primary-text text-ellipsis swcCommentPerson">{who}</div>
 											<div className="secondary-text"><Ago date={when} /></div>
 										</div>
-										<div className="secondary-text"><Linkify componentDecorator={componentDecorator}>{text}</Linkify></div>
+										<div className="secondary-text">
+											{/* Investigate: Linkify causing the following erro: */}
+											{/* Uncaught TypeError: Super expression must either be null or a function, not undefined */}
+											{/* <Linkify componentDecorator={componentDecorator}>{text}</Linkify> */}
+											{text}
+										</div>
 									</div>
 								</div>
 							}))
