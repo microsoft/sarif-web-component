@@ -26,8 +26,8 @@ npm login
 npm publish
 ```
 
-For a scoped account publish: `npm publish --access public`.
-For a dry-run publish: `npm publish --dry-run`.
+For a scoped non-paid accounts (such as for personal testing), publish would require: `npm publish --access public`.
+For a dry-run publish: `npm publish --dry-run`. Careful: the typo `--dryrun` results in a real publish.
 
 ## Contributing
 
