@@ -12,7 +12,7 @@ npm install @microsoft/sarif-web-component
 ```js
 import * as React from 'react'
 import * as ReactDOM from 'react-dom'
-import {Log} from 'sarif-web-component'
+import {Viewer} from 'sarif-web-component'
 
 ReactDOM.render(<Viewer logs={arrayOfLogs} />, document.body.firstChild)
 ```
