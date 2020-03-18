@@ -11,7 +11,8 @@
 	"scripts": {
 		"start": "webpack-dev-server --mode development",
 		"test": "jest --watchAll",
-		"npm": "webpack --config ./webpack.config.npm.js && npm publish --dry-run"
+		"npm": "webpack --config ./webpack.config.npm.js",
+		"docs": "webpack --config ./webpack.config.docs.js"
 	},
 	"devDependencies": {
 		"@babel/preset-env": "^7.4.5",

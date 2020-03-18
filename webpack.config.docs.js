@@ -4,7 +4,7 @@ module.exports = {
 	...common,
 	mode: 'production',
 	entry: {
-		'dist': './components/Viewer.tsx',
+		'docs': './docs-components/Index.tsx',
 	},
 	output: {
 		path: __dirname,
