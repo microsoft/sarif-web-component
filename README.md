@@ -1,7 +1,7 @@
 
 # SARIF Web Component
 
-A React-based component for viewing [SARIF](http://sarifweb.azurewebsites.net/) files. [Try it out](https://sarifviewer.azurewebsites.net/).
+A React-based component for viewing [SARIF](http://sarifweb.azurewebsites.net/) files. [Try it out](https://microsoft.github.io/sarif-web-component/).
 
 ## Usage
 
