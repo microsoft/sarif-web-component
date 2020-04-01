@@ -41,7 +41,7 @@ export class RunStore {
 			const ruleId = result.ruleId?.split('/')[0] ?? '(No Rule)' // 3.5.4 Hierarchical strings.
 			if (!this.rulesInUse.has(ruleId)) {
 				// Need to generate rules for some like Microsoft.CodeAnalysis.Sarif.PatternMatcher.
-				const rule = rulesListed.get(ruleId) || ruleIndex !== undefined && rules[ruleIndex] as Rule || { id: ruleId } as Rule
+				const rule = ruleIndex !== undefined && rules[ruleIndex] as Rule || rulesListed.get(ruleId) || { id: ruleId } as Rule
 				rule.isRule = true
 				rule.run = run // For taxa.
 				this.rulesInUse.set(ruleId, rule)
