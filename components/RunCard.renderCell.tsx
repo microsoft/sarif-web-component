@@ -132,11 +132,14 @@ export function renderCell<T extends ISimpleTableCell>(
 									: [uri]
 							})()
 
+							const href = result.locations?.[0]?.physicalLocation?.artifactLocation?.properties?.['href']
+
 							return <div className="flex-row scroll-hidden">{/* From Advanced table demo. */}
-								<TooltipSpan text={uri} disabled={uri === fileName}>
+								<TooltipSpan text={href ?? uri} disabled={uri === fileName}>
 									{tryLink(
 										() => {
 											if (uri.endsWith('.dll')) return undefined
+											if (href) return href
 											return uri + tryOr(() => `#L${result.locations[0].physicalLocation.region.startLine}`, '')
 										},
 										fileName

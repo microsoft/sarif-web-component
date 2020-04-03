@@ -53,7 +53,7 @@ export default [{
 				message: { text: 'Message with basic snippet.' },
 				locations: [{
 					physicalLocation: {
-						artifactLocation: { uri: 'folder/file1.txt' },
+						artifactLocation: { uri: 'folder/file1.txt', properties: { href: 'http://example.com' } },
 						region: {
 							snippet: { text: 'Region snippet text only abc\n'.repeat(10) },
 						},
