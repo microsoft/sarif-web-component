@@ -100,7 +100,7 @@ export default [{
 			{
 				ruleId: 'RULE02',
 				message: {
-					markdown: "Fix any of the following:\n- Element does not have an alt attribute\n- aria-label attribute does not exist or is empty\n- aria-labelledby attribute does not exist, references elements that do not exist or references elements that are empty\n- Element has no title attribute or the title attribute is empty\n- Element's default semantics were not overridden with role=\"presentation\"\n- Element's default semantics were not overridden with role=\"none\".",
+					markdown: "Sample [link](https://example.com). Fix any of the following:\n- Element does not have an alt attribute\n- aria-label attribute does not exist or is empty\n- aria-labelledby attribute does not exist, references elements that do not exist or references elements that are empty\n- Element has no title attribute or the title attribute is empty\n- Element's default semantics were not overridden with role=\"presentation\"\n- Element's default semantics were not overridden with role=\"none\".",
 					text: 'Only analysisTarget.',
 				},
 				analysisTarget: { uri: 'analysisTarget' }

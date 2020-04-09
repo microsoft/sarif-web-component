@@ -163,7 +163,10 @@ export function renderCell<T extends ISimpleTableCell>(
 						case 'Details':
 							return <>
 								{result.message.markdown
-									? <div className="swcMarkDown"><ReactMarkDown source={result.message.markdown} /></div> // Div to cancel out containers display flex row.
+									? <div className="swcMarkDown">
+										<ReactMarkDown source={result.message.markdown}
+											renderers={{ link: ({href, children}) => <a href={href} target="_blank">{children}</a> }} />
+									</div> // Div to cancel out containers display flex row.
 									: <Hi>{renderMessageWithEmbeddedLinks(result)}</Hi> || ''}
 								{tryOr(() => <Snippet ploc={result.locations[0].physicalLocation} />)}
 							</>
