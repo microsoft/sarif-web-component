@@ -41,7 +41,13 @@ interface ViewerProps {
 	filterState?: IFilterState
 
 	/**
-	 * The state applied when the user resets.
+	 * The state applied when the user resets. If omitted, the default is:
+	 * ```javascript
+	 * {
+	 *     Baseline: { value: ['new', 'unchanged', 'updated'] },
+	 *     Suppression: { value: ['unsuppressed'] },
+	 * }
+	 * ```
 	 */
 	defaultFilterState?: IFilterState
 
