@@ -34,7 +34,17 @@ import { ObservableValue } from 'azure-devops-ui/Core/Observable'
 
 interface ViewerProps {
 	logs?: Log[]
+
+	/**
+	 * Consider this the "initial" or "starting" state. This value is only applied once (during load).
+	 */
 	filterState?: IFilterState
+
+	/**
+	 * The state applied when the user resets.
+	 */
+	defaultFilterState?: IFilterState
+
 	pipelineId?: string
 	user?: string
 	hideBaseline?: boolean
@@ -51,8 +61,9 @@ interface ViewerProps {
 
 	constructor(props) {
 		super(props)
-		this.filter = new MobxFilter(this.props.filterState)
-		this.groupByAge = observable.box(this.props.showAge)
+		const {defaultFilterState, filterState, showAge} = this.props
+		this.filter = new MobxFilter(defaultFilterState, filterState)
+		this.groupByAge = observable.box(showAge)
 
 		autorun(() => {
 			this.filter.getState() // Read

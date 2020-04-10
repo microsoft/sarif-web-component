@@ -13,9 +13,14 @@ import { Filter, FILTER_CHANGE_EVENT, IFilterState } from 'azure-devops-ui/Utili
 
 export class MobxFilter extends Filter {
 	private atom = createAtom('MobxFilter')
-	constructor(startingState?: IFilterState) {
+	constructor(defaultState?: IFilterState, startingState?: IFilterState) {
 		super()
-		this.setState(startingState, true)
+		const recommendedDefaultState = {
+			Baseline: { value: ['new', 'unchanged', 'updated'] },
+			Suppression: { value: ['unsuppressed'] },
+		}
+		this.setDefaultState(defaultState || recommendedDefaultState)
+		this.setState(startingState || defaultState || recommendedDefaultState, true)
 		this.subscribe(() => {
 			this.atom.reportChanged()
 		}, FILTER_CHANGE_EVENT)
