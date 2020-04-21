@@ -120,7 +120,7 @@ export class RunStore {
 						const map = {
 							Baseline: (result: Result) => result.baselineState as string || 'new', // TODO: Merge with column def.
 							Level: (result: Result) => result.level || 'warning',
-							Suppression: (result: Result) => result.suppressions?.some(s => s.state === undefined || s.state === 'accepted') ? 'suppressed' : 'unsuppressed',
+							Suppression: (result: Result) => result.suppressions?.some(s => s.status === undefined || s.status === 'accepted') ? 'suppressed' : 'unsuppressed',
 							Age: (result: Result) => result.sla.toLowerCase(),
 						}
 						const translatedCellValue = map[columnName] ? map[columnName](result) : result
