@@ -4,7 +4,7 @@
 import './RunCard.renderCell.scss'
 import * as React from 'react'
 import {Fragment} from 'react'
-import * as ReactMarkDown from 'react-markdown'
+import * as ReactMarkdown from 'react-markdown'
 import {Result} from 'sarif'
 
 import {Hi} from './Hi'
@@ -164,7 +164,7 @@ export function renderCell<T extends ISimpleTableCell>(
 							return <>
 								{result.message.markdown
 									? <div className="swcMarkDown">
-										<ReactMarkDown source={result.message.markdown}
+										<ReactMarkdown source={result.message.markdown}
 											renderers={{ link: ({href, children}) => <a href={href} target="_blank">{children}</a> }} />
 									</div> // Div to cancel out containers display flex row.
 									: <Hi>{renderMessageWithEmbeddedLinks(result)}</Hi> || ''}
