@@ -38,7 +38,7 @@ export class RunStore {
 		run.results?.forEach(result => {
 			// Collate by Rule
 			const {ruleIndex} = result
-			const ruleId = result.ruleId?.split('/')[0] ?? '(No Rule)' // 3.5.4 Hierarchical strings.
+			const ruleId = result.ruleId ?? '(No Rule)' // Ignores 3.5.4 Hierarchical strings.
 			if (!this.rulesInUse.has(ruleId)) {
 				// Need to generate rules for some like Microsoft.CodeAnalysis.Sarif.PatternMatcher.
 				const rule = ruleIndex !== undefined && rules[ruleIndex] as Rule || rulesListed.get(ruleId) || { id: ruleId } as Rule
