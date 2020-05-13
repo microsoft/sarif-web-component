@@ -4,7 +4,7 @@
 import * as React from 'react'
 import {Link} from 'azure-devops-ui/Link'
 
-export const tryLink = (fHref: () => string, inner: string | JSX.Element, className?: string) => {
+export const tryLink = (fHref: () => string, inner: string | JSX.Element, className?: string, onClick?: (event: React.MouseEvent<HTMLAnchorElement>) => void) => {
 	try {
 		const href = fHref()
 		if (!href) throw null
@@ -12,7 +12,8 @@ export const tryLink = (fHref: () => string, inner: string | JSX.Element, classN
 			className={className} // "bolt-table-link bolt-table-inline-link"
 			excludeTabStop
 			href={fHref()}
-			target="_blank">
+			target="_blank"
+			onClick={onClick}>
 			{inner}
 		</Link>
 	}

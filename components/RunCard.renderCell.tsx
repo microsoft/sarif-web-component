@@ -132,7 +132,9 @@ export function renderCell<T extends ISimpleTableCell>(
 									: [uri]
 							})()
 
-							const href = result.locations?.[0]?.physicalLocation?.artifactLocation?.properties?.['href']
+							const resArtLoc = result.locations?.[0]?.physicalLocation?.artifactLocation
+							const href = resArtLoc?.properties?.['href']
+							const runArtContentsText = result.run.artifacts?.[resArtLoc?.index ?? -1]?.contents?.text
 
 							return <div className="flex-row scroll-hidden">{/* From Advanced table demo. */}
 								<TooltipSpan text={href ?? uri} disabled={uri === fileName}>
@@ -140,6 +142,7 @@ export function renderCell<T extends ISimpleTableCell>(
 										() => {
 											if (uri.endsWith('.dll')) return undefined
 											if (href) return href
+											if (runArtContentsText) return '#'
 											return uri + tryOr(() => `#L${result.locations[0].physicalLocation.region.startLine}`, '')
 										},
 										fileName
@@ -148,7 +151,21 @@ export function renderCell<T extends ISimpleTableCell>(
 												<span><Hi>/{fileName}</Hi></span>
 											</span>
 											: <span><Hi>{uri}</Hi></span>,
-										'swcColorUnset')}
+										'swcColorUnset',
+										event => {
+											if (href) return // TODO: Test precedence.
+											if (!runArtContentsText) return
+											event.preventDefault()
+											event.stopPropagation()
+											const escapedText = runArtContentsText
+												.replace(/&/g, "&amp;")
+												.replace(/</g, "&lt;")
+												.replace(/>/g, "&gt;")
+												.replace(/"/g, "&quot;")
+												.replace(/'/g, "&#039;");
+											const win = window.open()
+											win.document.body.innerHTML = `<pre>${escapedText}</pre>`
+										})}
 								</TooltipSpan>
 							</div>
 						}
