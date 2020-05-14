@@ -83,7 +83,7 @@ export function renderCell<T extends ISimpleTableCell>(
 	if (isResult(data)) {
 		const result = data
 		const status = {
-			none: Statuses.Queued,
+			none: result.kind === 'pass' ? Statuses.Success : Statuses.Queued,
 			note: Statuses.Information,
 			error: Statuses.Failed,
 		}[result.level] || Statuses.Warning

@@ -84,6 +84,25 @@ export default [{
 				}],
 				baselineState: 'new',
 			},
+			{
+				ruleId: 'RULE01',
+				message: { text: 'Empty circle for level: none, kind: (undefined).' },
+				locations: [{
+					physicalLocation: { artifactLocation: { uri: 'folder/file5.txt' } },
+				}],
+				baselineState: 'new',
+				level: 'none',
+			},
+			{
+				ruleId: 'RULE01',
+				message: { text: 'Green check for level: none, kind: pass.' },
+				locations: [{
+					physicalLocation: { artifactLocation: { uri: 'folder/file5.txt' } },
+				}],
+				baselineState: 'new',
+				level: 'none',
+				kind: 'pass',
+			},
 
 			// Variation in Path.
 			{
