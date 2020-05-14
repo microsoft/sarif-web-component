@@ -132,7 +132,9 @@ export function renderCell<T extends ISimpleTableCell>(
 									: [uri]
 							})()
 
-							const resArtLoc = result.locations?.[0]?.physicalLocation?.artifactLocation
+							const ploc = result.locations?.[0]?.physicalLocation
+							const resArtLoc = ploc?.artifactLocation
+							const region = ploc?.region
 							const href = resArtLoc?.properties?.['href']
 							const runArtContentsText = result.run.artifacts?.[resArtLoc?.index ?? -1]?.contents?.text
 
@@ -157,14 +159,23 @@ export function renderCell<T extends ISimpleTableCell>(
 											if (!runArtContentsText) return
 											event.preventDefault()
 											event.stopPropagation()
-											const escapedText = runArtContentsText
+
+											const line = region?.startLine ?? 1
+											const col = region?.startColumn ?? 1
+											const length = (region?.endColumn ?? 1) - col
+											const [_, pre, hi, post] = new RegExp(`((?:.*\\n){${line - 1}}.{${col - 1}})(.{${length}})((?:.|\\n)*)`).exec(runArtContentsText)
+
+											const escape = unsafe => unsafe
 												.replace(/&/g, "&amp;")
 												.replace(/</g, "&lt;")
 												.replace(/>/g, "&gt;")
 												.replace(/"/g, "&quot;")
 												.replace(/'/g, "&#039;");
-											const win = window.open()
-											win.document.body.innerHTML = `<pre>${escapedText}</pre>`
+
+											const {document} = window.open()
+											document.title = fileName
+											document.body.innerHTML = `<pre>${escape(pre)}<mark>${escape(hi)}</mark>${escape(post)}</pre>`
+											setTimeout(() => document.body.querySelector('mark').scrollIntoView({ block: 'center' }))
 										})}
 								</TooltipSpan>
 							</div>
