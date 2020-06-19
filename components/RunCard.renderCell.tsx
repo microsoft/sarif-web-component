@@ -26,6 +26,14 @@ import {Icon, IconSize} from 'azure-devops-ui/Icon'
 
 const colspan = 99 // No easy way to parameterize this, however extra does not hurt, so using an arbitrarily large value.
 
+function isValidURL(url: string) {
+	try {
+		return !!new URL(url)
+	} catch (error) {
+		return false
+	}
+}
+
 export function renderCell<T extends ISimpleTableCell>(
 	rowIndex: number,
 	columnIndex: number,
@@ -120,12 +128,18 @@ export function renderCell<T extends ISimpleTableCell>(
 							})}
 						</div>,
 						() => {
-							const uri = tryOr<string>(
-								() => result.locations[0].physicalLocation.artifactLocation.uri,
-								() => result.analysisTarget.uri,
-								'—')
+							const artLoc = result.locations?.[0]?.physicalLocation?.artifactLocation
+								?? result.analysisTarget
+
+							const uri = artLoc?.uri // Commonly a relative URI.
+							const repoUriBase = artLoc?.uriBaseId // Only presence matters, not value.
+								&& result.run.versionControlProvenance?.[0]?.repositoryUri.startsWith('https://dev.azure.com') // We currently only support Azure DevOps.
+								&& result.run.versionControlProvenance?.[0]?.repositoryUri
+								|| ''
+							const repoUri = uri && repoUriBase && `${repoUriBase}?path=${encodeURIComponent(uri)}`
 
 							const [path, fileName] = (() => {
+								if (!uri) return ['—']
 								const index = uri.lastIndexOf('/')
 								return index >= 0
 									? [uri.slice(0, index), uri.slice(index + 1)]
@@ -142,17 +156,18 @@ export function renderCell<T extends ISimpleTableCell>(
 								<TooltipSpan text={href ?? uri} disabled={uri === fileName}>
 									{tryLink(
 										() => {
-											if (uri.endsWith('.dll')) return undefined
+											if (uri?.endsWith('.dll')) return undefined
 											if (href) return href
 											if (runArtContentsText) return '#'
-											return uri + tryOr(() => `#L${result.locations[0].physicalLocation.region.startLine}`, '')
+											if (!isValidURL(repoUri)) return undefined
+											return repoUri + tryOr(() => `#L${result.locations[0].physicalLocation.region.startLine}`, '') // Line hashes currently only apply to GitHub.
 										},
 										fileName
 											? <span className="midEllipsis">
 												<span><Hi>{path}</Hi></span>
 												<span><Hi>/{fileName}</Hi></span>
 											</span>
-											: <span><Hi>{uri}</Hi></span>,
+											: <span><Hi>{uri ?? '—'}</Hi></span>,
 										'swcColorUnset',
 										event => {
 											if (href) return // TODO: Test precedence.
