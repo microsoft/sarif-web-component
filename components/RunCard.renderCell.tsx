@@ -103,99 +103,101 @@ export function renderCell<T extends ISimpleTableCell>(
 			? ExpandableTreeCell({ // As close to Table#TwoLineTableCell (which calls TableCell) as possible.
 				children: <>
 					<Status {...status} className="bolt-table-two-line-cell-icon flex-noshrink bolt-table-status-icon" size={StatusSize.m} ariaLabel={result.level || 'warning'} />
-					{tryOr(
-						() => <div className="flex-column scroll-hidden">
-							<div className={rowClasses}>
-								<div className="fontsize font-size swcWidth100">{/* Constraining width to 100% to play well with the Tooltip. */}
-									<Tooltip overflowOnly={true}>
-										<pre style={{ margin: 0 }}><code><Hi>{result.locations[0].logicalLocations[0].fullyQualifiedName}</Hi></code></pre>
-									</Tooltip>
+					{(() => {
+						return tryOr(
+							() => <div className="flex-column scroll-hidden">
+								<div className={rowClasses}>
+									<div className="fontsize font-size swcWidth100">{/* Constraining width to 100% to play well with the Tooltip. */}
+										<Tooltip overflowOnly={true}>
+											<pre style={{ margin: 0 }}><code><Hi>{result.locations[0].logicalLocations[0].fullyQualifiedName}</Hi></code></pre>
+										</Tooltip>
+									</div>
 								</div>
-							</div>
-							{tryOr(() => {
-								const {index} = result.locations[0].physicalLocation.artifactLocation
-								const art = result.run.artifacts[index]
-								const text = tryOr(() => art.description.text, () => art.location.uri)
-								if (!text) throw undefined
-								return <div className={rowClasses}>
-									<TooltipSpan overflowOnly={true} text={text} className="swcWordBreakUnset">
+								{tryOr(() => {
+									const {index} = result.locations[0].physicalLocation.artifactLocation
+									const art = result.run.artifacts[index]
+									const text = tryOr(() => art.description.text, () => art.location.uri)
+									if (!text) throw undefined
+									return <div className={rowClasses}>
+										<TooltipSpan overflowOnly={true} text={text} className="swcWordBreakUnset">
+											{tryLink(
+												() => art.location.uri,
+												<Hi>{text}</Hi>,
+												'fontSize font-size secondary-text swcColorUnset swcWidth100' /* Override .bolt-list-cell */)}
+										</TooltipSpan>
+									</div>
+								})}
+							</div>,
+							() => {
+								const artLoc = result.locations?.[0]?.physicalLocation?.artifactLocation
+									?? result.analysisTarget
+
+								const uri = artLoc?.uri // Commonly a relative URI.
+								const repoUriBase = artLoc?.uriBaseId // Only presence matters, not value.
+									&& result.run.versionControlProvenance?.[0]?.repositoryUri.startsWith('https://dev.azure.com') // We currently only support Azure DevOps.
+									&& result.run.versionControlProvenance?.[0]?.repositoryUri
+									|| ''
+								const repoUri = uri && repoUriBase && `${repoUriBase}?path=${encodeURIComponent(uri)}`
+
+								const [path, fileName] = (() => {
+									if (!uri) return ['—']
+									const index = uri.lastIndexOf('/')
+									return index >= 0
+										? [uri.slice(0, index), uri.slice(index + 1)]
+										: [uri]
+								})()
+
+								const ploc = result.locations?.[0]?.physicalLocation
+								const resArtLoc = ploc?.artifactLocation
+								const region = ploc?.region
+								const href = resArtLoc?.properties?.['href']
+								const runArtContentsText = result.run.artifacts?.[resArtLoc?.index ?? -1]?.contents?.text
+
+								return <div className="flex-row scroll-hidden">{/* From Advanced table demo. */}
+									<TooltipSpan text={href ?? uri} disabled={uri === fileName}>
 										{tryLink(
-											() => art.location.uri ,
-											<Hi>{text}</Hi>,
-											'fontSize font-size secondary-text swcColorUnset swcWidth100' /* Override .bolt-list-cell */)}
+											() => {
+												if (uri?.endsWith('.dll')) return undefined
+												if (href) return href
+												if (runArtContentsText) return '#'
+												if (!isValidURL(repoUri)) return undefined
+												return repoUri + tryOr(() => `#L${result.locations[0].physicalLocation.region.startLine}`, '') // Line hashes currently only apply to GitHub.
+											},
+											fileName
+												? <span className="midEllipsis">
+													<span><Hi>{path}</Hi></span>
+													<span><Hi>/{fileName}</Hi></span>
+												</span>
+												: <span><Hi>{uri ?? '—'}</Hi></span>,
+											'swcColorUnset',
+											event => {
+												if (href) return // TODO: Test precedence.
+												if (!runArtContentsText) return
+												event.preventDefault()
+												event.stopPropagation()
+
+												const line = region?.startLine ?? 1
+												const col = region?.startColumn ?? 1
+												const length = (region?.endColumn ?? 1) - col
+												const [_, pre, hi, post] = new RegExp(`((?:.*\\n){${line - 1}}.{${col - 1}})(.{${length}})((?:.|\\n)*)`).exec(runArtContentsText)
+
+												const escape = unsafe => unsafe
+													.replace(/&/g, "&amp;")
+													.replace(/</g, "&lt;")
+													.replace(/>/g, "&gt;")
+													.replace(/"/g, "&quot;")
+													.replace(/'/g, "&#039;");
+
+												const {document} = window.open()
+												document.title = fileName
+												document.body.innerHTML = `<pre>${escape(pre)}<mark>${escape(hi)}</mark>${escape(post)}</pre>`
+												setTimeout(() => document.body.querySelector('mark').scrollIntoView({ block: 'center' }))
+											})}
 									</TooltipSpan>
 								</div>
-							})}
-						</div>,
-						() => {
-							const artLoc = result.locations?.[0]?.physicalLocation?.artifactLocation
-								?? result.analysisTarget
-
-							const uri = artLoc?.uri // Commonly a relative URI.
-							const repoUriBase = artLoc?.uriBaseId // Only presence matters, not value.
-								&& result.run.versionControlProvenance?.[0]?.repositoryUri.startsWith('https://dev.azure.com') // We currently only support Azure DevOps.
-								&& result.run.versionControlProvenance?.[0]?.repositoryUri
-								|| ''
-							const repoUri = uri && repoUriBase && `${repoUriBase}?path=${encodeURIComponent(uri)}`
-
-							const [path, fileName] = (() => {
-								if (!uri) return ['—']
-								const index = uri.lastIndexOf('/')
-								return index >= 0
-									? [uri.slice(0, index), uri.slice(index + 1)]
-									: [uri]
-							})()
-
-							const ploc = result.locations?.[0]?.physicalLocation
-							const resArtLoc = ploc?.artifactLocation
-							const region = ploc?.region
-							const href = resArtLoc?.properties?.['href']
-							const runArtContentsText = result.run.artifacts?.[resArtLoc?.index ?? -1]?.contents?.text
-
-							return <div className="flex-row scroll-hidden">{/* From Advanced table demo. */}
-								<TooltipSpan text={href ?? uri} disabled={uri === fileName}>
-									{tryLink(
-										() => {
-											if (uri?.endsWith('.dll')) return undefined
-											if (href) return href
-											if (runArtContentsText) return '#'
-											if (!isValidURL(repoUri)) return undefined
-											return repoUri + tryOr(() => `#L${result.locations[0].physicalLocation.region.startLine}`, '') // Line hashes currently only apply to GitHub.
-										},
-										fileName
-											? <span className="midEllipsis">
-												<span><Hi>{path}</Hi></span>
-												<span><Hi>/{fileName}</Hi></span>
-											</span>
-											: <span><Hi>{uri ?? '—'}</Hi></span>,
-										'swcColorUnset',
-										event => {
-											if (href) return // TODO: Test precedence.
-											if (!runArtContentsText) return
-											event.preventDefault()
-											event.stopPropagation()
-
-											const line = region?.startLine ?? 1
-											const col = region?.startColumn ?? 1
-											const length = (region?.endColumn ?? 1) - col
-											const [_, pre, hi, post] = new RegExp(`((?:.*\\n){${line - 1}}.{${col - 1}})(.{${length}})((?:.|\\n)*)`).exec(runArtContentsText)
-
-											const escape = unsafe => unsafe
-												.replace(/&/g, "&amp;")
-												.replace(/</g, "&lt;")
-												.replace(/>/g, "&gt;")
-												.replace(/"/g, "&quot;")
-												.replace(/'/g, "&#039;");
-
-											const {document} = window.open()
-											document.title = fileName
-											document.body.innerHTML = `<pre>${escape(pre)}<mark>${escape(hi)}</mark>${escape(post)}</pre>`
-											setTimeout(() => document.body.querySelector('mark').scrollIntoView({ block: 'center' }))
-										})}
-								</TooltipSpan>
-							</div>
-						}
-					)}
+							}
+						)
+					})()}
 				</>,
 				...commonProps,
 			})
