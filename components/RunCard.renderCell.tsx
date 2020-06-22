@@ -179,7 +179,7 @@ export function renderCell<T extends ISimpleTableCell>(
 												const line = region?.startLine ?? 1
 												const col = region?.startColumn ?? 1
 												const length = (region?.endColumn ?? 1) - col
-												const [_, pre, hi, post] = new RegExp(`((?:.*\\n){${line - 1}}.{${col - 1}})(.{${length}})((?:.|\\n)*)`).exec(runArtContentsText)
+							const [_, pre, hi, post] = new RegExp(`((?:.*?\\n){${line - 1}}.{${col - 1}})(.{${length}})((?:.|\\n)*)`, 's').exec(runArtContentsText)
 
 												const escape = unsafe => unsafe
 													.replace(/&/g, "&amp;")
