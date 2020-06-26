@@ -18,8 +18,9 @@ ReactDOM.render(<Viewer logs={arrayOfLogs} />, document.body.firstChild)
 ```
 
 ## Publishing
-Verify `package.json` `name` in case it was modified for development purposes.
+In your local clone of this repo, do the following. Double-check `package.json` `name` in case it was modified for development purposes.
 ```
+git pull
 npm install
 npx webpack --config ./webpack.config.npm.js
 npm login
