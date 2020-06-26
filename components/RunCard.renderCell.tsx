@@ -211,13 +211,16 @@ export function renderCell<T extends ISimpleTableCell>(
 					const rule = result._rule
 					switch (treeColumn.id) {
 						case 'Details':
+							const messageFromRule = result._rule?.messageStrings?.[result.message.id ?? -1] ?? result.message;
+							const formattedMessage = format(messageFromRule.text || result.message?.text, result.message.arguments) ?? '';
+							const formattedMarkdown = format(messageFromRule.markdown || result.message?.markdown, result.message.arguments); // No '—', leave undefined if empty.
 							return <>
-								{result.message.markdown
+								{formattedMarkdown
 									? <div className="swcMarkDown">
-										<ReactMarkdown source={result.message.markdown}
+										<ReactMarkdown source={formattedMarkdown}
 											renderers={{ link: ({href, children}) => <a href={href} target="_blank">{children}</a> }} />
 									</div> // Div to cancel out containers display flex row.
-									: <Hi>{renderMessageWithEmbeddedLinks(result)}</Hi> || ''}
+									: <Hi>{renderMessageWithEmbeddedLinks(result, formattedMessage)}</Hi> || ''}
 								{tryOr(() => <Snippet ploc={result.locations[0].physicalLocation} />)}
 							</>
 						case 'Rule':
@@ -258,8 +261,7 @@ export function renderCell<T extends ISimpleTableCell>(
 }
 
 // Replace [text](relatedIndex) with <a href />
-function renderMessageWithEmbeddedLinks(result: Result) {
-	const message = result.message.text || ''
+function renderMessageWithEmbeddedLinks(result: Result, message: string) {
 	const rxLink = /\[([^\]]*)\]\(([^\)]+)\)/ // Matches [text](id). Similar to below, but with an extra grouping around the id part.
 	return message.match(rxLink)
 		? message
@@ -276,4 +278,11 @@ function renderMessageWithEmbeddedLinks(result: Result) {
 				return <a key={i} href={href} target="_blank">{text}</a>
 			})
 		: message
+}
+
+// Borrowed from sarif-vscode-extension.
+function format(template: string | undefined, args?: string[]) {
+	if (!template) return undefined;
+	if (!args) return template;
+	return template.replace(/{(\d+)}/g, (_, group) => args[group]);
 }

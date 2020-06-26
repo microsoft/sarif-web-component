@@ -231,6 +231,7 @@ export class RunStore {
 		columns.push({
 			id: 'Details',
 			filterString: (result: Result) => {
+				// TODO: Support templated messages.
 				const message = tryOr<string>(
 					() => result.message.markdown,
 					() => result.message.text, // Can be a constant?
