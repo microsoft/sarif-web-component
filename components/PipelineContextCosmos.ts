@@ -2,15 +2,10 @@
 // Licensed under the MIT License.
 
 import {CosmosClient, Container} from '@azure/cosmos'
-import {observable, observe} from 'mobx'
-import {PipelineContext, Thread} from './PipelineContext'
+import {PipelineContext} from './PipelineContext'
 
 export class PipelineContextCosmos implements PipelineContext {
 	private container: Container
-	@observable public threads = [] as Thread[]
-	@observable public reviews = null
-	@observable public showReviewUpdated = false
-	@observable public reviewRevision = 0
 
 	public constructor(readonly pipelineId: string) {
 		if (!pipelineId) throw new Error()
@@ -31,18 +26,6 @@ export class PipelineContextCosmos implements PipelineContext {
 				.fetchAll()
 
 			const storedDef = resources[0]
-			this.threads = storedDef?.threads?.map(thread => {
-				const threadObject = new Thread(thread.disposition, thread.keywords)
-				threadObject.comments = thread.comments?.map(comment => {
-					comment.when = new Date(comment.when)
-					return comment
-				}) ?? []
-				return threadObject
-			}) ?? []
-			this.reviews = storedDef?.results || {}
-
-			observe(this.threads, () => this.publish())
-			observe(this.reviews, () => this.publish()) // Deprecated.
 		})()
 	}
 
@@ -52,8 +35,6 @@ export class PipelineContextCosmos implements PipelineContext {
 			.replace({
 				id: this.pipelineId,
 				key: 'foo',
-				threads: this.threads,
-				results: this.reviews,
 			})
 	}
 }

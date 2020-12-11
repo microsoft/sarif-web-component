@@ -161,7 +161,6 @@ export class RunStore {
 	}
 
 	@computed get agesFiltered() {
-		if (this.pipeline) this.pipeline.reviewRevision // Read.
 		const treeItems = [...this.agesInUse.values()]
 			.map(age => {
 				const treeItem = age.treeItem = age.treeItem || {
@@ -174,7 +173,6 @@ export class RunStore {
 	}
 
 	@computed get rulesFiltered() {
-		if (this.pipeline) this.pipeline.reviewRevision // Read.
 		const treeItems = [...this.rulesInUse.values()]
 			.map(rule => {
 				const treeItem = rule.treeItem = rule.treeItem || {

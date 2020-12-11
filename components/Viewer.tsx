@@ -27,7 +27,6 @@ import { MessageCard, MessageCardSeverity } from "azure-devops-ui/MessageCard"
 import { Page } from 'azure-devops-ui/Page'
 import { Splitter, SplitterElementPosition } from "azure-devops-ui/Splitter"
 import { SurfaceBackground, SurfaceContext } from 'azure-devops-ui/Surface'
-import { Toast } from "azure-devops-ui/Toast"
 import { IFilterState } from 'azure-devops-ui/Utilities/Filter'
 import { ZeroData } from 'azure-devops-ui/ZeroData'
 import { ObservableValue } from 'azure-devops-ui/Core/Observable'
@@ -70,11 +69,6 @@ interface ViewerProps {
 		const {defaultFilterState, filterState, showAge} = this.props
 		this.filter = new MobxFilter(defaultFilterState, filterState)
 		this.groupByAge = observable.box(showAge)
-
-		autorun(() => {
-			this.filter.getState() // Read
-			if (this.pipelineContext) this.pipelineContext.showReviewUpdated = false
-		})
 	}
 
 	private pipelineContextDisposer = autorun(() => {
@@ -154,11 +148,6 @@ interface ViewerProps {
 						/>
 						: nearElement}
 				</Page>
-				{pipelineContext?.showReviewUpdated && <Toast message="Some results updated."
-					callToAction="Re-apply Filter" onCallToActionClick={() => {
-						pipelineContext.showReviewUpdated = false
-						pipelineContext.reviewRevision += 1
-					}} />}
 			</SurfaceContext.Provider>
 		</FilterKeywordContext.Provider>
 	}
