@@ -2,14 +2,13 @@
 // Licensed under the MIT License.
 
 import './Viewer.Comments.scss'
-import { computed } from 'mobx'
+import { computed, observable } from 'mobx'
 import {observer} from 'mobx-react'
 import * as React from 'react'
 import {Component} from 'react'
 // import Linkify from 'react-linkify'
 
 import { Hi } from './Hi'
-import { PipelineContext, Comment, Thread } from './PipelineContext'
 import { isMatch } from './RunStore'
 
 import { Ago } from "azure-devops-ui/Ago"
@@ -46,6 +45,27 @@ export class MobxDropdown extends Component<{ className?: string, items: string[
 			width={this.props.width}
 			/>
 	}
+}
+
+export interface PipelineContext {
+	threads: Thread[]
+	reviews // null = not ready, {}|{...} = ready
+	showReviewUpdated: boolean
+	reviewRevision: number
+	publish()
+}
+
+class Thread {
+	@observable public comments = [] as Comment[]
+	constructor(public disposition: string, public keywords?: string) {}
+	get when() {
+		if (!this.comments.length) return new Date(0)
+		return new Date(Math.max(...this.comments.map(c => new Date(c.when).getTime())))
+	}
+}
+
+class Comment {
+	constructor(readonly who: string, readonly when: Date, readonly text: string) {}
 }
 
 // PipelineContext expected to be ready.
