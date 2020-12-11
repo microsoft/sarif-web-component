@@ -62,7 +62,7 @@ export class RunStore {
 			const artLoc = tryOr(() => result.locations[0].physicalLocation.artifactLocation)
 			if (artLoc && artLoc.uri === undefined) {
 				const art = tryOr<Artifact>(() => run.artifacts[artLoc.index])
-				artLoc.uri = art.location.uri
+				artLoc.uri = art.location?.uri
 			}
 
 			result.run = run // For result renderer to get to run.artifacts.
