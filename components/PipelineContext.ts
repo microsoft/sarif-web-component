@@ -2,7 +2,8 @@
 // Licensed under the MIT License.
 
 export class Comment {
-	constructor(readonly who: string, readonly when: Date, readonly text: string) {}
+	// Date as string for ease with Cosmos.
+	constructor(readonly who: string, readonly when: string, readonly text: string) {}
 }
 
 export interface PipelineContext {

@@ -45,18 +45,18 @@ class DiscussionItem {
 
 const store = {
 	discussions: [
-		new DiscussionItem('RULE01', statuses[0], [
-			new Comment('Michael', new Date('2010 Jan 1'), 'Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed do eiusmod tempor incididunt ut labore et dolore magna aliqua.'),
-			new Comment('Jeff'      , new Date('2010 Jan 2'), 'Ut enim ad minim veniam, quis nostrud exercitation ullamco laboris nisi ut aliquip ex ea commodo consequat.'),
-			new Comment('Michael', new Date('2010 Jan 3'), 'Platea dictumst quisque sagittis purus sit amet volutpat. Urna id volutpat lacus laoreet non curabitur gravida arcu ac.'),
-			new Comment('Jeff'      , new Date('2010 Jan 4'), 'Sed vulputate mi sit amet mauris commodo quis imperdiet. Sed felis eget velit aliquet sagittis id consectetur purus ut. Tincidunt tortor aliquam nulla facilisi cras fermentum odio. Turpis egestas maecenas pharetra convallis posuere morbi leo urna molestie.'),
+		new DiscussionItem('rule01', statuses[0], [
+			new Comment('Michael', new Date('2010 Jan 1').toISOString(), 'Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed do eiusmod tempor incididunt ut labore et dolore magna aliqua.'),
+			new Comment('Jeff'      , new Date('2010 Jan 2').toISOString(), 'Ut enim ad minim veniam, quis nostrud exercitation ullamco laboris nisi ut aliquip ex ea commodo consequat.'),
+			new Comment('Michael', new Date('2010 Jan 3').toISOString(), 'Platea dictumst quisque sagittis purus sit amet volutpat. Urna id volutpat lacus laoreet non curabitur gravida arcu ac.'),
+			new Comment('Jeff'      , new Date('2010 Jan 4').toISOString(), 'Sed vulputate mi sit amet mauris commodo quis imperdiet. Sed felis eget velit aliquet sagittis id consectetur purus ut. Tincidunt tortor aliquam nulla facilisi cras fermentum odio. Turpis egestas maecenas pharetra convallis posuere morbi leo urna molestie.'),
 			
 		]),
-		new DiscussionItem('RULE01 RULE02', statuses[1], [
-			new Comment('Larry', new Date('2010 Feb 1'), 'Duis aute irure dolor in reprehenderit in voluptate velit esse cillum dolore eu fugiat nulla pariatur.')
+		new DiscussionItem('rule01 rule02', statuses[1], [
+			new Comment('Larry', new Date('2010 Feb 1').toISOString(), 'Duis aute irure dolor in reprehenderit in voluptate velit esse cillum dolore eu fugiat nulla pariatur.')
 		]),
-		new DiscussionItem('RULE01 RULE02 RULE03', statuses[0], [
-			new Comment('Alison', new Date('2010 Mar 1'), 'Excepteur sint occaecat cupidatat non proident, sunt in culpa qui officia deserunt mollit anim id est laborum.')
+		new DiscussionItem('rule01 rule02 rule03', statuses[0], [
+			new Comment('Alison', new Date('2010 Mar 1').toISOString(), 'Excepteur sint occaecat cupidatat non proident, sunt in culpa qui officia deserunt mollit anim id est laborum.')
 		]),
 	] as DiscussionItem[]
 }
@@ -147,7 +147,7 @@ const discussionHeader = (discussion: DiscussionItem) => <div className="swcDisc
 					<div className="flex-column">
 						<div className="flex-row swcCommentTitle">
 							<div className="primary-text text-ellipsis swcCommentPerson">{who}</div>
-							<div className="secondary-text"><Ago date={when} /></div>
+							<div className="secondary-text"><Ago date={new Date(when)} /></div>
 						</div>
 						<div className="secondary-text">{text}</div>
 					</div>
@@ -169,7 +169,7 @@ const discussionHeader = (discussion: DiscussionItem) => <div className="swcDisc
 						onKeyPress={e => {
 							if (e.key !== 'Enter') return
 							e.preventDefault()
-							discussion.comments.push(new Comment(this.props.user ?? 'Anonymous', new Date(), this.newComment.value))
+							discussion.comments.push(new Comment(this.props.user ?? 'Anonymous', new Date().toISOString(), this.newComment.value))
 							this.newComment.value = ''	
 						}}
 						multiline rows={4}
