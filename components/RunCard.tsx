@@ -146,6 +146,7 @@ import {Tooltip} from 'azure-devops-ui/TooltipEx'
 				const qualityDomain = tryOr(() => runStore.run.tool.driver.properties['microsoft/qualityDomain'])
 				return <Card
 					titleProps={{
+						ariaLevel: 2,
 						text: <Tooltip
 							text={<>
 								<div>{tryOr(
