@@ -5,9 +5,9 @@ import './Snippet.scss'
 import * as React from 'react'
 import {observable} from 'mobx'
 import {observer} from 'mobx-react'
-import * as hljs from 'highlight.js/lib/highlight'
+import * as hljs from 'highlight.js/lib/core'
 require('!style-loader!css-loader!highlight.js/styles/vs.css')
-hljs.registerLanguage('cs', require('highlight.js/lib/languages/cs'))
+hljs.registerLanguage('csharp', require('highlight.js/lib/languages/csharp'))
 hljs.registerLanguage('java', require('highlight.js/lib/languages/java'))
 hljs.registerLanguage('typescript', require('highlight.js/lib/languages/typescript'))
 hljs.registerLanguage('xml', require('highlight.js/lib/languages/xml'))
