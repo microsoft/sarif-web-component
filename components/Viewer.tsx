@@ -100,7 +100,6 @@ interface ViewerProps {
 
 	render() {
 		const {pipelineContext} = this
-		if (pipelineContext && !pipelineContext.reviews) return null
 
 		const {hideBaseline, hideLevel, showSuppression, showAge} = this.props
 
