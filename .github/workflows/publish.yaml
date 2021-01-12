@@ -12,6 +12,7 @@ jobs:
         node-version: '14'
         registry-url: 'https://registry.npmjs.org'
     - run: npm install
+    - run: npx webpack --config ./webpack.config.npm.js
     - run: npm publish
       env:
         NODE_AUTH_TOKEN: ${{ secrets.NODE_AUTH_TOKEN }}
