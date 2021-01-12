@@ -19,6 +19,9 @@ ReactDOM.render(<Viewer logs={arrayOfLogs} />, document.body.firstChild)
 In the HTML page hosting this component, `<meta http-equiv="content-type" content="text/html; charset=utf-8">` is required to avoid text rendering issues.
 
 ## Publishing
+Update the package version. Run workflow `Publish`. Make sure Repository secret `NODE_AUTH_TOKEN` exists.
+
+## Publishing (Manual)
 In your local clone of this repo, do the following. Double-check `package.json` `name` in case it was modified for development purposes.
 ```
 git pull
