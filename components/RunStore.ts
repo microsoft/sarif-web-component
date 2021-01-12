@@ -12,6 +12,19 @@ import {Rule, ResultOrRuleOrMore} from './Viewer.Types'
 import {SortOrder} from 'azure-devops-ui/Table'
 import {ITreeItem} from 'azure-devops-ui/Utilities/TreeItemProvider'
 
+declare module 'sarif' {
+    interface Run {
+		_augmented: boolean
+		_rulesInUse: Map<string, Rule>
+		_agesInUse: Map<string, {
+			results: any[];
+			treeItem: any;
+			name: string;
+			isAge: boolean;
+		}>
+	}
+}
+
 export enum SortRuleBy { Count, Name }
 
 export const isMatch = (field: string, keywords: string[]) => !keywords.length || keywords.some(keyword => field.includes(keyword))
@@ -21,53 +34,55 @@ export class RunStore {
 	@observable sortRuleBy = SortRuleBy.Count
 	@observable sortColumnIndex = 1
 	@observable sortOrder = SortOrder.ascending
-	private rulesInUse: Map<string, Rule>
-	private agesInUse = new Map([
-		['Past SLA'  , { results: [], treeItem: null, name: 'Past SLA (31+ days)'     , isAge: true }],
-		['Within SLA', { results: [], treeItem: null, name: 'Within SLA (0 - 30 days)', isAge: true }],
-	])
 
 	constructor(readonly run: Run, readonly logIndex, readonly filter: MobxFilter, readonly groupByAge?: IObservableValue<boolean>, readonly pipeline?: PipelineContext, readonly hideBaseline?: boolean, readonly showAge?: boolean) {
 		const {driver} = run.tool
-		const rules = driver.rules || []
 		this.driverName = run.properties && run.properties['logFileName'] || driver.name.replace(/^Microsoft.CodeAnalysis.Sarif.PatternMatcher$/, 'CredScan on Push')
 
-		const rulesListed = new Map<string, Rule>(rules.map(rule => [rule.id, rule] as any)) // Unable to express [[string, RuleEx]].
-		this.rulesInUse = new Map<string, Rule>()
+		if (!run._augmented) {
+			run._rulesInUse = new Map<string, Rule>()
+			run._agesInUse = new Map([
+				['Past SLA'  , { results: [], treeItem: null, name: 'Past SLA (31+ days)'     , isAge: true }],
+				['Within SLA', { results: [], treeItem: null, name: 'Within SLA (0 - 30 days)', isAge: true }],
+			])
 
-		run.results?.forEach(result => {
-			// Collate by Rule
-			const {ruleIndex} = result
-			const ruleId = result.ruleId ?? '(No Rule)' // Ignores 3.5.4 Hierarchical strings.
-			if (!this.rulesInUse.has(ruleId)) {
-				// Need to generate rules for some like Microsoft.CodeAnalysis.Sarif.PatternMatcher.
-				const rule = ruleIndex !== undefined && rules[ruleIndex] as Rule || rulesListed.get(ruleId) || { id: ruleId } as Rule
-				rule.isRule = true
-				rule.run = run // For taxa.
-				this.rulesInUse.set(ruleId, rule)
-			}
+			const rules = driver.rules || []
+			const rulesListed = new Map<string, Rule>(rules.map(rule => [rule.id, rule] as any)) // Unable to express [[string, RuleEx]].
+			run.results?.forEach(result => {
+				// Collate by Rule
+				const {ruleIndex} = result
+				const ruleId = result.ruleId ?? '(No Rule)' // Ignores 3.5.4 Hierarchical strings.
+				if (!run._rulesInUse.has(ruleId)) {
+					// Need to generate rules for some like Microsoft.CodeAnalysis.Sarif.PatternMatcher.
+					const rule = ruleIndex !== undefined && rules[ruleIndex] as Rule || rulesListed.get(ruleId) || { id: ruleId } as Rule
+					rule.isRule = true
+					rule.run = run // For taxa.
+					run._rulesInUse.set(ruleId, rule)
+				}
 
-			const rule = this.rulesInUse.get(ruleId)
-			rule.results = rule.results || []
-			rule.results.push(result)
+				const rule = run._rulesInUse.get(ruleId)
+				rule.results = rule.results || []
+				rule.results.push(result)
 
-			// Collate by Age
-			const firstDetection = result.provenance?.firstDetectionTimeUtc
-			result.firstDetection = firstDetection ? new Date(firstDetection) : new Date()
-			const age = (new Date().getTime() - result.firstDetection.getTime()) / (24 * 60 * 60 * 1000) // 1 day in milliseconds
-			result.sla = age > 31 ? 'Past SLA' : 'Within SLA'
-			this.agesInUse.get(result.sla).results.push(result)
+				// Collate by Age
+				const firstDetection = result.provenance?.firstDetectionTimeUtc
+				result.firstDetection = firstDetection ? new Date(firstDetection) : new Date()
+				const age = (new Date().getTime() - result.firstDetection.getTime()) / (24 * 60 * 60 * 1000) // 1 day in milliseconds
+				result.sla = age > 31 ? 'Past SLA' : 'Within SLA'
+				run._agesInUse.get(result.sla).results.push(result)
 
-			// Fill-in url from run.artifacts as needed.
-			const artLoc = tryOr(() => result.locations[0].physicalLocation.artifactLocation)
-			if (artLoc && artLoc.uri === undefined) {
-				const art = tryOr<Artifact>(() => run.artifacts[artLoc.index])
-				artLoc.uri = art.location?.uri
-			}
+				// Fill-in url from run.artifacts as needed.
+				const artLoc = tryOr(() => result.locations[0].physicalLocation.artifactLocation)
+				if (artLoc && artLoc.uri === undefined) {
+					const art = tryOr<Artifact>(() => run.artifacts[artLoc.index])
+					artLoc.uri = art.location?.uri
+				}
 
-			result.run = run // For result renderer to get to run.artifacts.
-			result._rule = rule
-		})
+				result.run = run // For result renderer to get to run.artifacts.
+				result._rule = rule
+			})
+			run._augmented = true
+		}
 
 		autorun(() => {
 			this.showAllRevision // Read.
@@ -161,7 +176,7 @@ export class RunStore {
 	}
 
 	@computed get agesFiltered() {
-		const treeItems = [...this.agesInUse.values()]
+		const treeItems = [...this.run._agesInUse.values()]
 			.map(age => {
 				const treeItem = age.treeItem = age.treeItem || {
 					data: age,
@@ -173,7 +188,7 @@ export class RunStore {
 	}
 
 	@computed get rulesFiltered() {
-		const treeItems = [...this.rulesInUse.values()]
+		const treeItems = [...this.run._rulesInUse.values()]
 			.map(rule => {
 				const treeItem = rule.treeItem = rule.treeItem || {
 					data: rule,
