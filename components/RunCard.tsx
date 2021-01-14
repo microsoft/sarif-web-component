@@ -4,7 +4,7 @@
 import './RunCard.scss'
 import * as React from 'react'
 import {Component} from 'react'
-import {autorun, runInAction, observable, computed} from 'mobx'
+import {autorun, runInAction, observable, computed, untracked} from 'mobx'
 import {observer} from 'mobx-react'
 
 import {Hi} from './Hi'
@@ -27,9 +27,37 @@ import {Tooltip} from 'azure-devops-ui/TooltipEx'
 @observer export class RunCard extends Component<{ runStore: RunStore, index: number, runCount: number }> {
 	@observable private show = true
 	private groupByMenuItems = [] as IHeaderCommandBarItem[]
-	private sortRuleByMenuItems: IHeaderCommandBarItem[]
 	private itemProvider = new TreeItemProvider<ResultOrRuleOrMore>([])
 	private columnCache = new Map<string, ITreeColumn<ResultOrRuleOrMore>>()
+
+	@computed({ keepAlive: true }) private get sortRuleByMenuItems(): IHeaderCommandBarItem[] {
+		const {runStore} = this.props
+		const sortRuleBy = untracked(() => runStore.sortRuleBy)
+		const onActivate = menuItem => {
+			runStore.sortRuleBy = menuItem.data
+			this.sortRuleByMenuItems.forEach(item => (item.checked as IObservableValue<boolean>).value = item.id === menuItem.id)
+		}
+		return [
+			{
+				data: SortRuleBy.Count,
+				id: 'sortByRuleCount',
+				text: 'Sort by rule count',
+				ariaLabel: 'Sort by rule count',
+				onActivate,
+				important: false,
+				checked: new ObservableValue(sortRuleBy === SortRuleBy.Count),
+			},
+			{
+				data: SortRuleBy.Name,
+				id: 'sortByRuleName',
+				text: 'Sort by rule name',
+				ariaLabel: 'Sort by rule name',
+				onActivate,
+				important: false,
+				checked: new ObservableValue(sortRuleBy === SortRuleBy.Name),
+			},
+		]
+	}
 
 	@computed private get columns() {
 		const {runStore} = this.props
@@ -88,31 +116,6 @@ import {Tooltip} from 'azure-devops-ui/TooltipEx'
 				{ id: "separator", important: false, itemType: MenuItemType.Divider },
 			]
 		}
-
-		const onActivate = menuItem => {
-			runStore.sortRuleBy = menuItem.data
-			this.sortRuleByMenuItems.forEach(item => (item.checked as IObservableValue<boolean>).value = item.id === menuItem.id)
-		}
-		this.sortRuleByMenuItems = [
-			{
-				data: SortRuleBy.Count,
-				id: 'sortByRuleCount',
-				text: 'Sort by rule count',
-				ariaLabel: 'Sort by rule count',
-				onActivate,
-				important: false,
-				checked: new ObservableValue(runStore.sortRuleBy === SortRuleBy.Count),
-			},
-			{
-				data: SortRuleBy.Name,
-				id: 'sortByRuleName',
-				text: 'Sort by rule name',
-				ariaLabel: 'Sort by rule name',
-				onActivate,
-				important: false,
-				checked: new ObservableValue(runStore.sortRuleBy === SortRuleBy.Name),
-			},
-		]
 
 		autorun(() => {
 			this.itemProvider.clear()
