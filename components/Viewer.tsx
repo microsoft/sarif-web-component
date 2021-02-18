@@ -202,7 +202,7 @@ interface ViewerProps {
 							nearElementClassName="swcNearElement"
 							farElementClassName="swcFarElement"
 							onRenderNearElement={() => nearElement}
-							onRenderFarElement={() => <Discussion filterState={filterState} user={this.props.user} />}
+							onRenderFarElement={() => <Discussion filterState={currentfilterState} user={this.props.user} />}
 						/>
 						: nearElement}
 				</Page>
