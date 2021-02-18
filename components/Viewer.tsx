@@ -14,12 +14,13 @@ import './extension'
 // Must come before renderCell or anything the uses this.
 export const FilterKeywordContext = React.createContext('')
 
-import { FilterBar, MobxFilter } from './FilterBar'
+import { FilterBar, MobxFilter, recommendedDefaultState } from './FilterBar'
 import { PipelineContext } from './PipelineContext'
 import { PipelineContextDemo } from './PipelineContextDemo'
 import { RunCard } from './RunCard'
 import { RunStore } from './RunStore'
 import { Discussion } from './Viewer.Discussion'
+const successPng = require('./Viewer.Success.png')
 const noResultsPng = require('./Viewer.ZeroData.png')
 
 import { Card } from 'azure-devops-ui/Card'
@@ -56,6 +57,20 @@ interface ViewerProps {
 	hideLevel?: boolean
 	showSuppression?: boolean // If true, also defaults to Unsuppressed.
 	showAge?: boolean // Enables age-related columns, group by age, and an age dropdown filter.
+
+	/**
+	 * When there are zero errors¹, show this message instead of just "No Results".
+	 * Intended to communicate definitive positive confidence since "No Results" may be interpreted as inconclusive.
+	 * 
+	 * Note¹: If the (starting) `filterState` shows...
+	 * * Only errors (and hides warnings),
+	 *   then success is only communicated when there are zero errors (even if there exists warnings).
+	 * * Both errors and warnings,
+	 *   then success is communicated only when there are zero errors *and* zero warnings.
+	 * * Neither errors nor warnings,
+	 *   then the behavior is undefined. The current implementation will never communicate success.
+	 */
+	successMessage?: string
 }
 
 @observer export class Viewer extends Component<ViewerProps> {
@@ -101,21 +116,59 @@ interface ViewerProps {
 	render() {
 		const {pipelineContext} = this
 
-		const {hideBaseline, hideLevel, showSuppression, showAge} = this.props
+		const {hideBaseline, hideLevel, showSuppression, showAge, successMessage} = this.props
 
 		// Computed values fail to cache if called from onRenderNearElement() for unknown reasons. Thus call them in advance.
-		const filterState = this.filter.getState()
-		const filterKeywords = filterState.Keywords?.value
+		const currentfilterState = this.filter.getState()
+		const filterKeywords = currentfilterState.Keywords?.value
 		const nearElement = (() => {
 			const {runStoresSorted} = this
 			if (!runStoresSorted.length) return null // Interpreted as loading.
-			return !filterKeywords || runStoresSorted.reduce((total, run) => total + run.filteredCount, 0)
-				? runStoresSorted
-					.filter(run => !filterKeywords || run.filteredCount)
-					.map((run, index) => <div key={run.logIndex} className="page-content-left page-content-right page-content-top">
-						<RunCard runStore={run} index={index} runCount={runStoresSorted.length} />
-					</div>)
-				: <div className="page-content-left page-content-right page-content-top">
+			const filteredResultsCount = runStoresSorted.reduce((total, run) => total + run.filteredCount, 0)
+			if (filteredResultsCount === 0) {
+
+				const startingFilterState = this.props.filterState || recommendedDefaultState
+				const startingFilterStateLevel: string[] = startingFilterState['Level']?.value ?? []
+				if (!startingFilterStateLevel.length) {
+					startingFilterStateLevel.push('error', 'warning', 'note', 'none') // Normalize.
+				}
+
+				const currentfilterStateLevel: string[] = currentfilterState['Level']?.value ?? []
+				if (!currentfilterStateLevel.length) {
+					currentfilterStateLevel.push('error', 'warning', 'note', 'none') // Normalize.
+				}
+
+				// Desired Behavior Matrix:
+				// start curr 
+				// ew    ew    success (common)
+				// ew    e-    noResult (there could still be warnings)
+				// ew    -w    noResult (there could still be errors)
+				// ew    --    noResult (there could still be either)
+				// e-    ew    success
+				// e-    e-    success (common)
+				// e-    -w    noResult (there could still be errors)
+				// e-    --    noResult (there could still be either)
+				// -w    ew    success (uncommon)
+				// -w    e-    noResult (there could still be warnings, uncommon)
+				// -w    -w    success (uncommon)
+				// -w    --    noResult (there could still be either)
+				// --    **    no scenario
+				const showSuccess = successMessage
+					&& (!startingFilterStateLevel.includes('error')   || currentfilterStateLevel.includes('error'))
+					&& (!startingFilterStateLevel.includes('warning') || currentfilterStateLevel.includes('warning'))
+
+				if (showSuccess && !filterKeywords) {
+					return <div className="page-content-left page-content-right page-content-top">
+						<Card contentProps={{ contentPadding: false }}>
+							<ZeroData
+								imagePath={successPng}
+								imageAltText="Success"
+								secondaryText={successMessage} />
+						</Card>
+					</div>
+				}
+
+				return <div className="page-content-left page-content-right page-content-top">
 					<Card contentProps={{ contentPadding: false }}>
 						<ZeroData
 							imagePath={noResultsPng}
@@ -123,6 +176,12 @@ interface ViewerProps {
 							secondaryText="No results found" />
 					</Card>
 				</div>
+			}
+			return runStoresSorted
+				.filter(run => !filterKeywords || run.filteredCount)
+				.map((run, index) => <div key={run.logIndex} className="page-content-left page-content-right page-content-top">
+					<RunCard runStore={run} index={index} runCount={runStoresSorted.length} />
+				</div>)
 		})() as JSX.Element
 		
 		return <FilterKeywordContext.Provider value={filterKeywords ?? ''}>

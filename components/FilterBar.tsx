@@ -11,14 +11,15 @@ import { KeywordFilterBarItem } from 'azure-devops-ui/TextFilterBarItem'
 import { DropdownMultiSelection } from 'azure-devops-ui/Utilities/DropdownSelection'
 import { Filter, FILTER_CHANGE_EVENT, IFilterState } from 'azure-devops-ui/Utilities/Filter'
 
+export const recommendedDefaultState = {
+	Baseline: { value: ['new', 'unchanged', 'updated'] },
+	Suppression: { value: ['unsuppressed'] },
+}
+
 export class MobxFilter extends Filter {
 	private atom = createAtom('MobxFilter')
 	constructor(defaultState?: IFilterState, startingState?: IFilterState) {
 		super()
-		const recommendedDefaultState = {
-			Baseline: { value: ['new', 'unchanged', 'updated'] },
-			Suppression: { value: ['unsuppressed'] },
-		}
 		this.setDefaultState(defaultState || recommendedDefaultState)
 		this.setState(startingState || defaultState || recommendedDefaultState, true)
 		this.subscribe(() => {
