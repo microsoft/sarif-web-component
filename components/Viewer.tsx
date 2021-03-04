@@ -7,7 +7,7 @@ import { Component } from 'react'
 import { computed, observable, autorun, IObservableValue } from 'mobx'
 import { observer } from 'mobx-react'
 import { computedFn } from 'mobx-utils'
-import { Log, Run } from 'sarif'
+import { Log, Result, Run } from 'sarif'
 
 import './extension'
 
@@ -71,6 +71,15 @@ interface ViewerProps {
 	 *   then the behavior is undefined. The current implementation will never communicate success.
 	 */
 	successMessage?: string
+
+	/**
+	 * Callback upon Viewer creation/construction/instantiation namely to facilitate upward data flow.
+	 * 
+	 * Currenly only used for `getFilteredContextRegionSnippetTexts()`. This allows the caller to get a list of
+	 * `contextRegion`s or `region`s (fallback). Specifically the snippet text within these regions.
+	 * Namely used when the caller wants to export these snippets to another app.
+	 */
+	onCreate?: (getFilteredContextRegionSnippetTexts: () => string[]) => void
 }
 
 @observer export class Viewer extends Component<ViewerProps> {
@@ -81,9 +90,32 @@ interface ViewerProps {
 
 	constructor(props) {
 		super(props)
-		const {defaultFilterState, filterState, showAge} = this.props
+		const {defaultFilterState, filterState, showAge, onCreate} = this.props
 		this.filter = new MobxFilter(defaultFilterState, filterState)
 		this.groupByAge = observable.box(showAge)
+
+		const getFilteredContextRegionSnippetTexts = () => {
+			const {logs} = this.props
+			const foo = this.runStores(logs).map(store => {
+				const groups = store.groupByAge.get()
+					? store.agesFiltered
+					: store.rulesFiltered
+
+				const texts = []
+				groups.forEach(group => {
+					group.childItemsAll.forEach(item => {
+						const result = item.data as Result // Ideally ITreeItem would support more specific typing.
+						const phyLoc = result.locations?.[0]?.physicalLocation
+						const region = phyLoc?.contextRegion ?? phyLoc?.region
+						const text = region?.snippet?.text
+						if (text) texts.push(text)
+					})
+				})
+				return texts
+			})
+			return foo.reduce((acc, cur, i) => { acc.push(...cur); return acc }, [])
+		}
+		onCreate?.(getFilteredContextRegionSnippetTexts)
 	}
 
 	private pipelineContextDisposer = autorun(() => {
