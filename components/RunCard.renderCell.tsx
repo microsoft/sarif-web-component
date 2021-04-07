@@ -125,12 +125,23 @@ export function renderCell<T extends ISimpleTableCell>(
 								<span><Hi>/{fileName}</Hi></span>
 							</span>
 							: <Hi>{uri ?? '—'}</Hi>
+
+						function getHostname(url: string | undefined): string | undefined {
+							if (!url) return undefined
+							try {
+								return new URL(url).hostname
+							} catch (_) {
+								return undefined
+							}
+						}
 						
 						const href = artLoc?.properties?.['href']
 						const runArtContentsText = runArt?.contents?.text
+						const repositoryUri = result.run.versionControlProvenance?.[0]?.repositoryUri
+						const hostname = getHostname(repositoryUri)
 						const repoUriBase = artLoc?.uriBaseId // Only presence matters, not value.
-							&& result.run.versionControlProvenance?.[0]?.repositoryUri.startsWith('https://dev.azure.com') // We currently only support Azure DevOps.
-							&& result.run.versionControlProvenance?.[0]?.repositoryUri
+							&& (hostname?.endsWith('azure.com') || hostname?.endsWith('visualstudio.com')) // We currently only support Azure DevOps.
+							&& repositoryUri
 							|| ''
 						const repoUri = uri && repoUriBase && `${repoUriBase}?path=${encodeURIComponent(uri)}` || uri
 						const getHref = () => {
