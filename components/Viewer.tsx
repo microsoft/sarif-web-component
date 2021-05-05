@@ -15,23 +15,18 @@ import './extension'
 export const FilterKeywordContext = React.createContext('')
 
 import { FilterBar, MobxFilter, recommendedDefaultState } from './FilterBar'
-import { PipelineContext } from './PipelineContext'
-import { PipelineContextDemo } from './PipelineContextDemo'
 import { RunCard } from './RunCard'
 import { RunStore } from './RunStore'
-import { Discussion } from './Viewer.Discussion'
 const successPng = require('./Viewer.Success.png')
 const noResultsPng = require('./Viewer.ZeroData.png')
 
 import { Card } from 'azure-devops-ui/Card'
 import { MessageCard, MessageCardSeverity } from "azure-devops-ui/MessageCard"
 import { Page } from 'azure-devops-ui/Page'
-import { Splitter, SplitterElementPosition } from "azure-devops-ui/Splitter"
 import { SurfaceBackground, SurfaceContext } from 'azure-devops-ui/Surface'
 import { IFilterState } from 'azure-devops-ui/Utilities/Filter'
 import { ZeroData } from 'azure-devops-ui/ZeroData'
 import { ObservableValue } from 'azure-devops-ui/Core/Observable'
-import { PipelineContextCosmos } from './PipelineContextCosmos'
 
 interface ViewerProps {
 	logs?: Log[]
@@ -52,7 +47,6 @@ interface ViewerProps {
 	 */
 	defaultFilterState?: IFilterState
 
-	pipelineId?: string
 	user?: string
 	hideBaseline?: boolean
 	hideLevel?: boolean
@@ -87,7 +81,6 @@ interface ViewerProps {
 	private collapseComments = new ObservableValue(false)
 	private filter: MobxFilter
 	private groupByAge: IObservableValue<boolean>
-	private pipelineContext?: PipelineContext
 
 	constructor(props) {
 		super(props)
@@ -119,13 +112,6 @@ interface ViewerProps {
 		onCreate?.(getFilteredContextRegionSnippetTexts)
 	}
 
-	private pipelineContextDisposer = autorun(() => {
-		const {pipelineId} = this.props
-		if (!pipelineId) return
-		// this.pipelineContext = this.pipelineContext || new PipelineContextDemo(pipelineId)
-		this.pipelineContext = new PipelineContextCosmos(pipelineId)
-	})
-
 	@observable warnOldVersion = false
 	_warnOldVersion = autorun(() => {
 		const {logs} = this.props
@@ -136,8 +122,8 @@ interface ViewerProps {
 		const {hideBaseline, showAge} = this.props
 		if (!logs) return [] // Undef interpreted as loading.
 		const runs = [].concat(...logs.filter(log => log.version === '2.1.0').map(log => log.runs)) as Run[]
-		const {filter, groupByAge, pipelineContext} = this
-		const runStores = runs.map((run, i) => new RunStore(run, i, filter, groupByAge, pipelineContext, hideBaseline, showAge))
+		const {filter, groupByAge} = this
+		const runStores = runs.map((run, i) => new RunStore(run, i, filter, groupByAge, hideBaseline, showAge))
 		runStores.sort((a, b) => a.driverName.localeCompare(b.driverName)) // May not be required after introduction of runStoresSorted.
 		return runStores
 	}, { keepAlive: true })
@@ -148,8 +134,6 @@ interface ViewerProps {
 	}
 
 	render() {
-		const {pipelineContext} = this
-
 		const {hideBaseline, hideLevel, showSuppression, showAge, successMessage} = this.props
 
 		// Computed values fail to cache if called from onRenderNearElement() for unknown reasons. Thus call them in advance.
@@ -222,23 +206,13 @@ interface ViewerProps {
 			<SurfaceContext.Provider value={{ background: SurfaceBackground.neutral }}>
 				<Page>
 					<div className="swcShim"></div>
-					<FilterBar filter={this.filter} groupByAge={this.groupByAge.get()} hideBaseline={hideBaseline} hideLevel={hideLevel} showDiscussion={!!pipelineContext} showSuppression={showSuppression} showAge={showAge} />
+					<FilterBar filter={this.filter} groupByAge={this.groupByAge.get()} hideBaseline={hideBaseline} hideLevel={hideLevel} showSuppression={showSuppression} showAge={showAge} />
 					{this.warnOldVersion && <MessageCard
 						severity={MessageCardSeverity.Warning}
 						onDismiss={() => this.warnOldVersion = false}>
 						Pre-SARIF-2.1 logs have been omitted. Use the Artifacts explorer to access all files.
 					</MessageCard>}
-					{pipelineContext
-						? <Splitter className="swcSplitter bolt-page-grey"
-							collapsed={this.collapseComments} expandTooltip="Show comments"
-							onCollapsedChanged={collapsed => this.collapseComments.value = collapsed}
-							fixedElement={SplitterElementPosition.Far} initialFixedSize={500}
-							nearElementClassName="swcNearElement"
-							farElementClassName="swcFarElement"
-							onRenderNearElement={() => nearElement}
-							onRenderFarElement={() => <Discussion filterState={currentfilterState} user={this.props.user} context={pipelineContext} />}
-						/>
-						: nearElement}
+					{nearElement}
 				</Page>
 			</SurfaceContext.Provider>
 		</FilterKeywordContext.Provider>

@@ -32,15 +32,14 @@ export class MobxFilter extends Filter {
 	}
 }
 
-@observer export class FilterBar extends React.Component<{ filter: MobxFilter, readonly groupByAge: boolean, hideBaseline?:boolean, hideLevel?: boolean, showDiscussion?: boolean, showSuppression?: boolean, showAge?: boolean }> {
+@observer export class FilterBar extends React.Component<{ filter: MobxFilter, readonly groupByAge: boolean, hideBaseline?:boolean, hideLevel?: boolean, showSuppression?: boolean, showAge?: boolean }> {
 	private ms1 = new DropdownMultiSelection()
 	private ms2 = new DropdownMultiSelection()
-	private msDiscussion = new DropdownMultiSelection()
 	private msSuppression = new DropdownMultiSelection()
 	private msAge = new DropdownMultiSelection()
 	
 	render() {
-		const {filter, groupByAge, hideBaseline, hideLevel, showDiscussion, showSuppression, showAge} = this.props
+		const {filter, groupByAge, hideBaseline, hideLevel, showSuppression, showAge} = this.props
 		return <AzFilterBar filter={filter}>
 			<KeywordFilterBarItem filterItemKey="Keywords" placeholder="Filter by keyword" />
 			{!hideBaseline && <AzDropdownFilterBarItem
@@ -56,13 +55,6 @@ export class MobxFilter extends Filter {
 				showPlaceholderAsLabel
 				items={['Error', 'Warning', 'Note', 'None'].map(text => ({ id: text.toLowerCase(), text }))}
 				selection={this.ms2}
-				 />}
-			{showDiscussion && <AzDropdownFilterBarItem
-				filterItemKey="Discussion"
-				placeholder="Discussion Status"
-				showPlaceholderAsLabel
-				items={['Open', 'Closed'].map(text => ({ id: text, text }))}
-				selection={this.msDiscussion}
 				 />}
 			{showSuppression && <AzDropdownFilterBarItem
 				filterItemKey="Suppression"

@@ -53,7 +53,6 @@ const readAsText = file => new Promise<string>((resolve, reject) => {
 					Level: { value: ['error', 'warning'] },
 				}}
 				successMessage="No validated credentials detected."
-				pipelineId={this.discussionId}
 			/>
 			<Shield onDrop={this.loadFile} />
 		</>

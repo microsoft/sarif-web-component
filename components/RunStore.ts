@@ -5,7 +5,6 @@ import {observable, autorun, computed, IObservableValue} from 'mobx'
 import {Run, Result, Artifact} from 'sarif'
 
 import {MobxFilter} from './FilterBar'
-import {PipelineContext} from './PipelineContext'
 import {tryOr} from './try'
 import {Rule, ResultOrRuleOrMore} from './Viewer.Types'
 
@@ -35,7 +34,7 @@ export class RunStore {
 	@observable sortColumnIndex = 1
 	@observable sortOrder = SortOrder.ascending
 
-	constructor(readonly run: Run, readonly logIndex, readonly filter: MobxFilter, readonly groupByAge?: IObservableValue<boolean>, readonly pipeline?: PipelineContext, readonly hideBaseline?: boolean, readonly showAge?: boolean) {
+	constructor(readonly run: Run, readonly logIndex, readonly filter: MobxFilter, readonly groupByAge?: IObservableValue<boolean>, readonly hideBaseline?: boolean, readonly showAge?: boolean) {
 		const {driver} = run.tool
 		this.driverName = run.properties && run.properties['logFileName'] || driver.name.replace(/^Microsoft.CodeAnalysis.Sarif.PatternMatcher$/, 'CredScan on Push')
 
