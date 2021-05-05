@@ -35,7 +35,22 @@ export default [{
 				]
 			}
 		],
+		versionControlProvenance: [
+			{
+				repositoryUri: "https://dev.azure.com/Office/Office/_git/Office",
+				revisionId: "da79c32c5a0dd2d08b1f411a6a2a1f752e215e73",
+				branch: "master"
+			}
+		],
 		results: [
+			// versionControlProvenance
+			{
+				ruleId: 'RULE01',
+				message: { text: 'a) Version Control Provenance.' },
+				locations: [{
+					physicalLocation: { artifactLocation: { uri: '/folder/file1.txt', uriBaseId: "SCAN_ROOT", } },
+				}],
+			},
 			// { // Bare minimum
 			//     message: {},
 			// },
