@@ -31,6 +31,7 @@ import { SurfaceBackground, SurfaceContext } from 'azure-devops-ui/Surface'
 import { IFilterState } from 'azure-devops-ui/Utilities/Filter'
 import { ZeroData } from 'azure-devops-ui/ZeroData'
 import { ObservableValue } from 'azure-devops-ui/Core/Observable'
+import { PipelineContextCosmos } from './PipelineContextCosmos'
 
 interface ViewerProps {
 	logs?: Log[]
@@ -121,7 +122,8 @@ interface ViewerProps {
 	private pipelineContextDisposer = autorun(() => {
 		const {pipelineId} = this.props
 		if (!pipelineId) return
-		this.pipelineContext = new PipelineContextDemo(pipelineId)
+		// this.pipelineContext = this.pipelineContext || new PipelineContextDemo(pipelineId)
+		this.pipelineContext = new PipelineContextCosmos(pipelineId)
 	})
 
 	@observable warnOldVersion = false
@@ -215,7 +217,7 @@ interface ViewerProps {
 					<RunCard runStore={run} index={index} runCount={runStoresSorted.length} />
 				</div>)
 		})() as JSX.Element
-		
+
 		return <FilterKeywordContext.Provider value={filterKeywords ?? ''}>
 			<SurfaceContext.Provider value={{ background: SurfaceBackground.neutral }}>
 				<Page>
@@ -230,11 +232,11 @@ interface ViewerProps {
 						? <Splitter className="swcSplitter bolt-page-grey"
 							collapsed={this.collapseComments} expandTooltip="Show comments"
 							onCollapsedChanged={collapsed => this.collapseComments.value = collapsed}
-							fixedElement={SplitterElementPosition.Far} initialFixedSize={450}
+							fixedElement={SplitterElementPosition.Far} initialFixedSize={500}
 							nearElementClassName="swcNearElement"
 							farElementClassName="swcFarElement"
 							onRenderNearElement={() => nearElement}
-							onRenderFarElement={() => <Discussion filterState={currentfilterState} user={this.props.user} />}
+							onRenderFarElement={() => <Discussion filterState={currentfilterState} user={this.props.user} context={pipelineContext} />}
 						/>
 						: nearElement}
 				</Page>

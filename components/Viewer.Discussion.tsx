@@ -8,7 +8,7 @@ import * as React from 'react'
 import { Component } from 'react'
 
 import { Hi } from './Hi'
-import { Comment } from './PipelineContext'
+import { Comment, PipelineContext } from './PipelineContext'
 import { isMatch } from './RunStore'
 import { MobxDropdown } from './Viewer.Comments'
 
@@ -22,6 +22,7 @@ import { Link } from 'azure-devops-ui/Link'
 import { TextField } from 'azure-devops-ui/TextField'
 import { VssPersona } from 'azure-devops-ui/VssPersona'
 import { IFilterState } from 'azure-devops-ui/Utilities/Filter'
+import { Icon, IconSize } from 'azure-devops-ui/Icon'
 
 const statuses = ['Open', 'Closed']
 
@@ -35,10 +36,10 @@ const dispositions = [
 	'Discussion'
 ]
 
-class DiscussionItem {
+export class DiscussionItem {
 	public disposition = dispositions[0]
-	@observable public comments = [] as Comment[]
-	constructor(readonly keywords: string, public status: string, comments: Comment[]) {
+	@observable public comments = [] as Comment[] // @observable needed for direct observers of DiscussionItem, even if the parent being deepObserved. Class instances are not deepObserved.
+	constructor(readonly keywords: string = '', public status: string, comments: Comment[]) {
 		this.comments = comments
 	}
 }
@@ -62,7 +63,10 @@ const store = {
 }
 
 const discussionHeader = (discussion: DiscussionItem) => <div className="swcDiscussionHeader flex-row flex-center">
-	<span className="flex-grow"><Hi>{discussion.keywords}</Hi></span>
+	<span className="flex-grow flex-row flex-center">
+		<Icon iconName="Filter" size={IconSize.medium} className="swcDiscussionHeaderFilterIcon" />
+		<Hi>{discussion.keywords || 'All Results'}</Hi>
+	</span>
 	<MobxDropdown items={statuses} width={200}
 		selection={discussion.status}
 		onSelect={item => discussion.status = item} />
@@ -71,14 +75,14 @@ const discussionHeader = (discussion: DiscussionItem) => <div className="swcDisc
 		onSelect={item => discussion.disposition = item} />
 </div>
 
-@observer export class Discussion extends Component<{ filterState: IFilterState, user?: string }> {
+@observer export class Discussion extends Component<{ filterState: IFilterState, user?: string, context: PipelineContext }> {
 	@observable selectedDiscussion = null as DiscussionItem
 
 	@computed get filteredDiscussions() {
-		const {filterState} = this.props
+		const {filterState, context} = this.props
 		const keywords = filterState.Keywords?.value.toLowerCase().split(/\s+/).filter(part => part) ?? []
 		const statuses = filterState.Discussion?.value ?? []
-		return store.discussions.filter(thread => {
+		return context.discussions.filter(thread => {
 			const isStatusMatch = !statuses.length || statuses.includes(thread.status)
 			const isKeywordMatch = isMatch((thread.keywords || '').toLowerCase(), keywords)
 			return isStatusMatch && isKeywordMatch
@@ -87,36 +91,42 @@ const discussionHeader = (discussion: DiscussionItem) => <div className="swcDisc
 
 	@computed get hasExactKeywordMatch() {
 		let keywords = this.props.filterState.Keywords?.value
-		if (!keywords) return true
+		if (keywords == undefined) keywords = ''
 		keywords = keywords.toLowerCase()
 		return this.filteredDiscussions.some(discussion => discussion.keywords.toLowerCase() == keywords)
 	}
 
 	render() {
+		const {context} = this.props
 		const keywords = this.props.filterState.Keywords?.value
 		const discussion = this.selectedDiscussion
 		const backButtonProps = discussion && { onClick: () => this.selectedDiscussion = null }
 		return <div className="page-content page-content-top flex-grow flex-column">
 			<CustomCard className="bolt-card-with-header flex-grow">
-				<Header title="Discussion" backButtonProps={backButtonProps} />
+				<Header title="Discussions" backButtonProps={backButtonProps} />
 				<CardContent className="swcDiscussionPane">
 					{!discussion
 						? <>
-							{!this.hasExactKeywordMatch && <div style={{ marginBottom: 16 }}>
-								<div style={{ marginBottom: 8 }}>{keywords}</div>
-								<div><Button text="Start new discussion"
-									onClick={() => {
-										const newDiscussion = new DiscussionItem(keywords, statuses[0], [])
-										store.discussions.push(newDiscussion)
-										this.selectedDiscussion = newDiscussion
-									}} /></div>
+							{!this.hasExactKeywordMatch && <div className="swcDiscussionItem">
+								<div className="swcDiscussionHeader flex-grow flex-row flex-center">
+									<span className="flex-grow flex-row flex-center">
+										<Icon iconName="Filter" size={IconSize.medium} className="swcDiscussionHeaderFilterIcon" />
+										<Hi>{keywords || 'All Results'}</Hi>
+									</span>
+									<Button text="Start new discussion"
+										onClick={() => {
+											const newDiscussion = new DiscussionItem(keywords, statuses[0], [])
+											context.discussions.push(newDiscussion)
+											this.selectedDiscussion = newDiscussion
+										}} />
+								</div>
 							</div>}
 							{this.filteredDiscussions.map(discussion => <div
 									key={discussion.keywords}
 									className="swcDiscussionItem"
 									onClick={e => this.selectedDiscussion = discussion}>
 									{discussionHeader(discussion)}
-									<div className="text-ellipsis">
+									<div className="secondary-text text-ellipsis">
 										{discussion.comments?.length
 											? discussion.comments[0].text
 											: '(No text)'}
@@ -139,7 +149,9 @@ const discussionHeader = (discussion: DiscussionItem) => <div className="swcDisc
 	render() {
 		const {discussion} = this.props
 		return <>
-			{discussionHeader(discussion)}
+			<div style={{ marginTop: 6, marginBottom: 6 }}>{/* Manually align with main screen */}
+				{discussionHeader(discussion)}
+			</div>
 			{discussion.comments.slice(0, this.showAll ? undefined : this.limit).map((comment, i) => {
 				const {who, when, text} = comment
 				return <div className="swcCommentRowContent flex-row flex-start" key={i}>
@@ -149,13 +161,13 @@ const discussionHeader = (discussion: DiscussionItem) => <div className="swcDisc
 							<div className="primary-text text-ellipsis swcCommentPerson">{who}</div>
 							<div className="secondary-text"><Ago date={new Date(when)} /></div>
 						</div>
-						<div className="secondary-text">{text}</div>
+						<div className="secondary-text" style={{ lineHeight: 1.5 }}>{text}</div>
 					</div>
 				</div>
 			})}
 			{discussion.comments.length > this.limit && !this.showAll &&
 				<Link className="swcDiscussionShowAll" onClick={() => this.showAll = true}>View more comments</Link>}
-			<div className="flex-row">
+			<div className="flex-row" style={{ marginTop: 8 }}>
 				<VssPersona size="small" />
 				<FormItem error={this.newCommentError} className="flex-grow">
 					<TextField

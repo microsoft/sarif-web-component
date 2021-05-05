@@ -1,6 +1,6 @@
 import "./index.scss"
 import autobind from 'autobind-decorator'
-import {observable} from "mobx"
+import {observable, runInAction} from "mobx"
 import {observer} from "mobx-react"
 import * as React from 'react'
 import { Log } from 'sarif'
@@ -69,7 +69,34 @@ const readAsText = file => new Promise<string>((resolve, reject) => {
 }
 
 @observer export class Discuss extends React.Component {
+	@observable sampleName = 'discuss.html'
+	@observable.ref sample = demoLog
+	@autobind async loadFile(file) {
+		if (!file) return
+		if (!file.name.match(/.(json|sarif)$/i)) {
+			alert('File name must end with ".json" or ".sarif"')
+			return
+		}
+		const text = await readAsText(file)
+		runInAction(() => {
+			this.sampleName = file.name
+			this.sample = JSON.parse(text)
+		})
+	}
 	render() {
-		return <Viewer logs={[demoLog]} pipelineId={'anyId'} />
+		return <>
+			<div className="demoHeader">
+				<span>SARIF Viewer</span>
+				<span style={{ flexGrow: 1 }}></span>
+				<input ref="inputFile" type="file" multiple={false} accept="*.sarif" style={{ display: 'none' }}
+					onChange={async e => {
+						e.persist()
+						this.loadFile(Array.from(e.target.files)[0])
+					}} />
+				<input type="button" value="Open..." onClick={() => (this.refs.inputFile as any).click() } />&nbsp;
+			</div>
+			<Viewer logs={[this.sample]} pipelineId={this.sampleName} />
+			<Shield onDrop={this.loadFile} />
+		</>
 	}
 }
