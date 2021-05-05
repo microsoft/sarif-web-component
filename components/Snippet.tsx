@@ -86,7 +86,7 @@ export const foo = 1
 				}
 				return <code className="lineNumber">{lineNos}</code>
 			})}
-			<code className={tryOr(() => ploc.artifactLocation.uri.match(/\.(\w+)$/)[1])} ref={code => {
+			<code className={`v-scroll-auto ${tryOr(() => ploc.artifactLocation.uri.match(/\.(\w+)$/)[1])}`} ref={code => {
 				if (!code) return
 				try {
 					hljs.highlightBlock(code)
