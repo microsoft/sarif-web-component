@@ -33,8 +33,8 @@ const readAsText = file => new Promise<string>((resolve, reject) => {
 		const text = await readAsText(file)
 
 		// Use the following lines to cache the dropped log (in localstorage) between refreshes.
-		// localStorage.setItem('logName', file.name)
-		// localStorage.setItem('log', text)
+		localStorage.setItem('logName', file.name)
+		localStorage.setItem('log', text)
 
 		runInAction(() => {
 			this.discussionId = file.name
