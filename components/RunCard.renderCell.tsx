@@ -11,7 +11,6 @@ import {Hi} from './Hi'
 import {tryOr, tryLink} from './try'
 import {Rule, More, ResultOrRuleOrMore} from './Viewer.Types'
 import {Snippet} from './Snippet'
-import {TooltipSpan} from './TooltipSpan'
 
 import {css} from 'azure-devops-ui/Util'
 import {Link} from 'azure-devops-ui/Link'
@@ -21,18 +20,10 @@ import {PillSize, Pill} from 'azure-devops-ui/Pill'
 import {ISimpleTableCell, TableCell} from 'azure-devops-ui/Table'
 import {ExpandableTreeCell, ITreeColumn} from 'azure-devops-ui/TreeEx'
 import {ITreeItemEx, ITreeItem} from 'azure-devops-ui/Utilities/TreeItemProvider'
-import {Tooltip} from 'azure-devops-ui/TooltipEx'
 import {Icon, IconSize} from 'azure-devops-ui/Icon'
+import { renderPathCell } from './RunCard.renderPathCell'
 
 const colspan = 99 // No easy way to parameterize this, however extra does not hurt, so using an arbitrarily large value.
-
-function isValidURL(url: string) {
-	try {
-		return !!new URL(url)
-	} catch (error) {
-		return false
-	}
-}
 
 export function renderCell<T extends ISimpleTableCell>(
 	rowIndex: number,
@@ -95,7 +86,6 @@ export function renderCell<T extends ISimpleTableCell>(
 			note: Statuses.Information,
 			error: Statuses.Failed,
 		}[result.level] || Statuses.Warning
-		const rowClasses = 'bolt-table-two-line-cell-item flex-row scroll-hidden'
 		return columnIndex === 0
 			// ExpandableTreeCell (td div.bolt-table-cell-content.flex-row.flex-center TreeExpand children)
 			// calls SimpleTableCell - adds an extra div
@@ -103,117 +93,7 @@ export function renderCell<T extends ISimpleTableCell>(
 			? ExpandableTreeCell({ // As close to Table#TwoLineTableCell (which calls TableCell) as possible.
 				children: <>
 					<Status {...status} className="bolt-table-two-line-cell-icon flex-noshrink bolt-table-status-icon" size={StatusSize.m} ariaLabel={result.level || 'warning'} />
-					{(() => {
-						const ploc = result.locations?.[0]?.physicalLocation
-						const artLoc = ploc?.artifactLocation
-							?? result.analysisTarget
-						const runArt = result.run.artifacts?.[artLoc?.index ?? -1]
-						const uri = artLoc?.description?.text
-							?? runArt?.description?.text
-							?? artLoc?.uri
-							?? runArt?.location?.uri // Commonly a relative URI.
-						const [path, fileName] = (() => {
-							if (!uri) return ['—']
-							const index = uri.lastIndexOf('/')
-							return index >= 0
-								? [uri.slice(0, index), uri.slice(index + 1)]
-								: [uri]
-						})()
-						const uriWithEllipsis = fileName
-							? <span className="midEllipsis">
-								<span><Hi>{path}</Hi></span>
-								<span><Hi>/{fileName}</Hi></span>
-							</span>
-							: <Hi>{uri ?? '—'}</Hi>
-
-						function getHostname(url: string | undefined): string | undefined {
-							if (!url) return undefined
-							try {
-								return new URL(url).hostname
-							} catch (_) {
-								return undefined
-							}
-						}
-						
-						const href = artLoc?.properties?.['href']
-						const runArtContentsText = runArt?.contents?.text
-						const repositoryUri = result.run.versionControlProvenance?.[0]?.repositoryUri
-						const hostname = getHostname(repositoryUri)
-						const repoUriBase = artLoc?.uriBaseId // Only presence matters, not value.
-							&& (hostname?.endsWith('azure.com') || hostname?.endsWith('visualstudio.com')) // We currently only support Azure DevOps.
-							&& repositoryUri
-							|| ''
-						const repoUri = uri && repoUriBase && `${repoUriBase}?path=${encodeURIComponent(uri)}` || uri
-						const getHref = () => {
-							if (uri?.endsWith('.dll')) return undefined
-							if (href) return href
-							if (runArtContentsText) return '#'
-							if (!isValidURL(repoUri)) return undefined
-							return repoUri
-						}
-
-						const region = ploc?.region
-						const onClick = event => {
-							if (href) return // TODO: Test precedence.
-							if (!runArtContentsText) return
-							event.preventDefault()
-							event.stopPropagation()
-
-							const line = region?.startLine ?? 1
-							const col = region?.startColumn ?? 1
-							const length = (region?.endColumn ?? 1) - col
-							const [_, pre, hi, post] = new RegExp(`((?:.*?\\n){${line - 1}}.{${col - 1}})(.{${length}})((?:.|\\n)*)`, 's').exec(runArtContentsText)
-
-							const escape = unsafe => unsafe
-								.replace(/&/g, "&amp;")
-								.replace(/</g, "&lt;")
-								.replace(/>/g, "&gt;")
-								.replace(/"/g, "&quot;")
-								.replace(/'/g, "&#039;");
-
-							const {document} = window.open()
-							document.title = fileName
-							document.body.innerHTML = `<pre>${escape(pre)}<mark>${escape(hi)}</mark>${escape(post)}</pre>`
-							setTimeout(() => document.body.querySelector('mark').scrollIntoView({ block: 'center' }))
-						}
-
-						const text = runArt?.description?.text ?? uri
-
-						return tryOr(
-							() => <div className="flex-column scroll-hidden">
-								<div className={rowClasses}>
-									<div className="fontsize font-size swcWidth100">{/* Constraining width to 100% to play well with the Tooltip. */}
-										<Tooltip overflowOnly={true}>
-											<pre style={{ margin: 0 }}><code><Hi>{result.locations[0].logicalLocations[0].fullyQualifiedName}</Hi></code></pre>
-										</Tooltip>
-									</div>
-								</div>
-								{tryOr(() => {
-									if (!text) throw undefined
-									return <div className={rowClasses}>
-										<TooltipSpan overflowOnly={true} text={text} className="swcWordBreakUnset">
-											{tryLink(
-												getHref,
-												uriWithEllipsis,
-												'fontSize font-size secondary-text swcColorUnset swcWidth100' /* Override .bolt-list-cell */,
-												onClick)}
-										</TooltipSpan>
-									</div>
-								})}
-							</div>,
-							() => {
-								return <div className="flex-row scroll-hidden">{/* From Advanced table demo. */}
-									<TooltipSpan text={href ?? uri} disabled={uri === fileName}>
-										{tryLink(
-											getHref,
-											uriWithEllipsis,
-											'swcColorUnset',
-											onClick)}
-									</TooltipSpan>
-								</div>
-							}
-						)
-					})()}
+					{renderPathCell(result)}
 				</>,
 				...commonProps,
 			})
