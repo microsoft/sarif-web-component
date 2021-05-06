@@ -17,8 +17,6 @@ import {Hi} from './Hi'
 import {PhysicalLocation} from 'sarif'
 import {tryOr} from './try'
 
-export const foo = 1
-
 @observer export class Snippet extends React.Component<{ ploc?: PhysicalLocation, style?: React.CSSProperties }> {
 	static contextType = FilterKeywordContext
 	@observable showAll = false
