@@ -17,6 +17,30 @@ function isValidURL(url: string) {
 	}
 }
 
+interface SimpleRegion {
+	startLine?: number
+	startColumn?: number
+	endColumn?: number
+}
+function openInNewTab(fileName: string, text: string, region: SimpleRegion | undefined): void {
+	const line = region?.startLine ?? 1
+	const col = region?.startColumn ?? 1
+	const length = (region?.endColumn ?? 1) - col
+	const [_, pre, hi, post] = new RegExp(`((?:.*?\\n){${line - 1}}.{${col - 1}})(.{${length}})((?:.|\\n)*)`, 's').exec(text)
+
+	const escape = unsafe => unsafe
+		.replace(/&/g, "&amp;")
+		.replace(/</g, "&lt;")
+		.replace(/>/g, "&gt;")
+		.replace(/"/g, "&quot;")
+		.replace(/'/g, "&#039;");
+
+	const {document} = window.open()
+	document.title = fileName
+	document.body.innerHTML = `<pre>${escape(pre)}<mark>${escape(hi)}</mark>${escape(post)}</pre>`
+	setTimeout(() => document.body.querySelector('mark').scrollIntoView({ block: 'center' }))
+}
+
 export function renderPathCell(result: Result) {
 	const ploc = result.locations?.[0]?.physicalLocation
 	const artLoc = ploc?.artifactLocation
@@ -76,23 +100,7 @@ export function renderPathCell(result: Result) {
 		if (!runArtContentsText) return
 		event.preventDefault()
 		event.stopPropagation()
-
-		const line = region?.startLine ?? 1
-		const col = region?.startColumn ?? 1
-		const length = (region?.endColumn ?? 1) - col
-		const [_, pre, hi, post] = new RegExp(`((?:.*?\\n){${line - 1}}.{${col - 1}})(.{${length}})((?:.|\\n)*)`, 's').exec(runArtContentsText)
-
-		const escape = unsafe => unsafe
-			.replace(/&/g, "&amp;")
-			.replace(/</g, "&lt;")
-			.replace(/>/g, "&gt;")
-			.replace(/"/g, "&quot;")
-			.replace(/'/g, "&#039;");
-
-		const {document} = window.open()
-		document.title = fileName
-		document.body.innerHTML = `<pre>${escape(pre)}<mark>${escape(hi)}</mark>${escape(post)}</pre>`
-		setTimeout(() => document.body.querySelector('mark').scrollIntoView({ block: 'center' }))
+		openInNewTab(fileName, runArtContentsText, region)
 	}
 
 	const rowClasses = 'bolt-table-two-line-cell-item flex-row scroll-hidden'
