@@ -92,7 +92,6 @@ export function renderPathCell(result: Result) {
 	}
 
 	const rowClasses = 'bolt-table-two-line-cell-item flex-row scroll-hidden'
-	const text = runArt?.description?.text ?? uri
 
 	return tryOr(
 		() => <div className="flex-column scroll-hidden">
@@ -104,9 +103,9 @@ export function renderPathCell(result: Result) {
 				</div>
 			</div>
 			{tryOr(() => {
-				if (!text) throw undefined
+				if (!uri) throw undefined
 				return <div className={rowClasses}>
-					<TooltipSpan overflowOnly={true} text={text} className="swcWordBreakUnset">
+					<TooltipSpan overflowOnly={true} text={uri} className="swcWordBreakUnset">
 						{tryLink(
 							getHref,
 							uriWithEllipsis,
