@@ -19,6 +19,7 @@ import {tryOr} from './try'
 
 import { TooltipSpan } from './TooltipSpan'
 import { Location } from 'azure-devops-ui/Utilities/Position'
+import { ClipboardButton } from "azure-devops-ui/Clipboard"
 
 @observer export class Snippet extends React.Component<{ ploc?: PhysicalLocation, style?: React.CSSProperties }> {
 	static contextType = FilterKeywordContext
@@ -96,7 +97,7 @@ import { Location } from 'azure-devops-ui/Utilities/Position'
 					else pre.classList.remove('clipped')
 				}}>
 				{lineNumbers}
-				<code className={`v-scroll-auto ${tryOr(() => ploc.artifactLocation.uri.match(/\.(\w+)$/)[1])}`} ref={code => {
+				<code className={`flex-grow v-scroll-auto ${tryOr(() => ploc.artifactLocation.uri.match(/\.(\w+)$/)[1])}`} ref={code => {
 					if (!code) return
 					try {
 						hljs.highlightBlock(code)
@@ -105,6 +106,10 @@ import { Location } from 'azure-devops-ui/Utilities/Position'
 						console.log(code, e)
 					}
 				}}>{body}</code>
+				<ClipboardButton
+					className="flex-self-start margin-left-4 swcSnippetClipboard"
+					getContent={() => ploc.contextRegion?.snippet?.text ?? ploc.region?.snippet?.text ?? ''}
+				/>
 			</pre>
 		</TooltipSpan>
 	}

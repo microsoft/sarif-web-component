@@ -2,13 +2,16 @@
 // Licensed under the MIT License.
 
 .swcSnippet {
-	margin: 4px 8px 4px 0;
+	margin: 4px 0;
+	padding-right: 4px; // Override the 2px from _platformCommon.scss so the ClipboardButton looks right.
 	font-size: 12px;
 	overflow: hidden;
 	position: relative;
 	display: flex; // For line number column.
 
-	code { font-family: SFMono-Regular, monospace; } // Override UA default 'monospace'.
+	code {
+		font-family: SFMono-Regular, monospace;
+	} // Override UA default 'monospace'.
 
 	&.clipped {
 		&::before {
@@ -24,6 +27,14 @@
 
 	.swcRegion {
 		background-color: rgba(255, 230, 0, 0.5);
+	}
+
+	.swcSnippetClipboard {
+		display: none;
+	}
+
+	&:hover > .swcSnippetClipboard {
+		display: unset;
 	}
 }
 
