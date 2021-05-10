@@ -32,10 +32,6 @@
 	width: 100%;
 }
 
-.swcWordBreakUnset .bolt-tooltip-content {
-	word-break: unset; // Fix: Tooltip is normally set to break-all and it was wrapping the last letter.
-}
-
 .swcRowRule {
 	display: flex;
 	flex-direction: row;

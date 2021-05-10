@@ -105,7 +105,7 @@ export function renderPathCell(result: Result) {
 			{tryOr(() => {
 				if (!uri) throw undefined
 				return <div className={rowClasses}>
-					<TooltipSpan overflowOnly={true} text={uri} className="swcWordBreakUnset">
+					<TooltipSpan overflowOnly={true} text={uri}>
 						{tryLink(
 							getHref,
 							uriWithEllipsis,
