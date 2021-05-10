@@ -109,6 +109,7 @@ export function renderPathCell(result: Result) {
 			{tryOr(() => {
 				if (!uri) throw undefined
 				return <div className={rowClasses}>
+					{/* TODO: Enable tooltip if a) inner !== href, or b) inner === href and inner is clipped (aka overflowing) */}
 					<TooltipSpan overflowOnly={true} text={href ?? uri}>
 						{tryLink(
 							getHref,
