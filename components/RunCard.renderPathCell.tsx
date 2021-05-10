@@ -62,7 +62,7 @@ export function renderPathCell(result: Result) {
 		if (uri?.endsWith('.dll')) return undefined
 		if (href) return href
 		if (runArtContentsText) return '#'
-		if (!isValidURL(repoUri)) return undefined
+		if (!isValidURL(repoUri)) return undefined // uri as artDesc case takes this code path.
 		return repoUri
 	}
 
