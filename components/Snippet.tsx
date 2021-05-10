@@ -17,13 +17,15 @@ import {Hi} from './Hi'
 import {PhysicalLocation} from 'sarif'
 import {tryOr} from './try'
 
-import { TooltipSpan } from './TooltipSpan'
-import { Location } from 'azure-devops-ui/Utilities/Position'
+import { Button } from 'azure-devops-ui/Button'
 import { ClipboardButton } from "azure-devops-ui/Clipboard"
+import { CustomDialog } from 'azure-devops-ui/Dialog'
+import { ContentSize } from 'azure-devops-ui/Callout'
 
 @observer export class Snippet extends React.Component<{ ploc?: PhysicalLocation, style?: React.CSSProperties }> {
 	static contextType = FilterKeywordContext
 	@observable showAll = false
+	@observable fullScreen = false
 
 	render () {
 		const {ploc} = this.props
@@ -69,25 +71,35 @@ import { ClipboardButton } from "azure-devops-ui/Clipboard"
 
 		if (term) body = <Hi>{body}</Hi>
 
-		const lineNumbers = tryOr(() => {
-			const region = ploc.contextRegion || ploc.region
-			if (!region.startLine || !region.endLine) return undefined // Don't take up left margin space if there's nothing to show.
-			let lineNos = ''
-			for (let i = region.startLine; i <= region.endLine; i++) {
-				lineNos += `${i}\n`
-			}
-			return <code className="lineNumber">{lineNos}</code>
-		})
+		const lineNumbersAndCode = <>
+			{tryOr(() => {
+				const region = ploc.contextRegion || ploc.region
+				if (!region.startLine || !region.endLine) return undefined // Don't take up left margin space if there's nothing to show.
+				let lineNos = ''
+				for (let i = region.startLine; i <= region.endLine; i++) {
+					lineNos += `${i}\n`
+				}
+				return <code className="lineNumber">{lineNos}</code>
+			})}
+			<code
+				className={`hljs flex-grow ${ploc.artifactLocation?.uri?.match(/\.(\w+)$/)?.[1] ?? ''}`}
+				style={{}}
+				ref={code => {
+					if (!code) return
+					try {
+						hljs.highlightBlock(code)
+					} catch(e) {
+						// Commonly throws if the language is not loaded. Will add telemetry here to track.
+						console.log(code, e)
+					}
+				}}>
+				{body}
+			</code>
+		</>
 
 		// title={JSON.stringify(ploc, null, '  ')}
-		return <TooltipSpan
-			renderContent={() => <pre className="swcSnippet">
-				{lineNumbers}
-				<code>{body}</code>
-			</pre>}
-			anchorOrigin={{ horizontal: Location.start, vertical: Location.end }}
-			tooltipOrigin={{ horizontal: Location.center, vertical: Location.start }}>
-			<pre className="swcSnippet"
+		return <>
+			<pre className="swcSnippet swcSnippetInline"
 				style={{ ...this.props.style, maxHeight: this.showAll ? undefined : 108 } as any} // 108px is a 6-line snippet which is very common.
 				key={Date.now()} onClick={() => this.showAll = !this.showAll}
 				ref={pre => {
@@ -96,22 +108,31 @@ import { ClipboardButton } from "azure-devops-ui/Clipboard"
 					if (isClipped) pre.classList.add('clipped')
 					else pre.classList.remove('clipped')
 				}}>
-				{lineNumbers}
-				<code className={`flex-grow v-scroll-auto ${tryOr(() => ploc.artifactLocation.uri.match(/\.(\w+)$/)[1])}`} ref={code => {
-					if (!code) return
-					try {
-						hljs.highlightBlock(code)
-					} catch(e) {
-						// Commonly throws if the language is not loaded. Will add telemetry here to track.
-						console.log(code, e)
-					}
-				}}>{body}</code>
+				{lineNumbersAndCode}
+				<div className="bolt-clipboard-button flex-self-start margin-left-4 swcHoverButton">{/* Borrowing the bolt-clipboard-button style. */}
+					<Button
+						ariaLabel="Full screen"
+						iconProps={{ iconName: 'FullScreen' }}
+						onClick={e => {
+							e.stopPropagation() // Prevent showAll
+							this.fullScreen = true
+						}}
+						tooltipProps={{ text: 'Full screen' }}
+					/>
+				</div>
 				<ClipboardButton
-					className="flex-self-start margin-left-4 swcSnippetClipboard"
+					className="flex-self-start margin-left-4 swcHoverButton"
 					getContent={() => ploc.contextRegion?.snippet?.text ?? ploc.region?.snippet?.text ?? ''}
 				/>
 			</pre>
-		</TooltipSpan>
+			{this.fullScreen && <CustomDialog onDismiss={() => this.fullScreen = false} modal={true} contentSize={ContentSize.ExtraLarge}>
+				<div className="scroll-auto">
+					<pre className="margin-horizontal-8 margin-vertical-16 swcSnippet swcSnippetFullScreen">
+						{lineNumbersAndCode}
+					</pre>
+				</div>
+			</CustomDialog>}
+		</>
 	}
 }
 

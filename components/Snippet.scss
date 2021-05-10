@@ -2,12 +2,19 @@
 // Licensed under the MIT License.
 
 .swcSnippet {
-	margin: 4px 0;
-	padding-right: 4px; // Override the 2px from _platformCommon.scss so the ClipboardButton looks right.
 	font-size: 12px;
-	overflow: hidden;
-	position: relative;
 	display: flex; // For line number column.
+
+	&.swcSnippetInline {
+		margin: 4px 0; // override user agent
+		padding-right: 4px; // Override the 2px from _platformCommon.scss so the ClipboardButton looks right.
+		overflow: hidden;
+		position: relative; // For gradient
+	}
+
+	&.swcSnippetFullScreen {
+		background-color: transparent; // Override the _platformCommon.scss grey for <pre>.
+	}
 
 	code {
 		font-family: SFMono-Regular, monospace;
@@ -29,11 +36,11 @@
 		background-color: rgba(255, 230, 0, 0.5);
 	}
 
-	.swcSnippetClipboard {
+	.swcHoverButton {
 		display: none;
 	}
 
-	&:hover > .swcSnippetClipboard {
+	&:hover > .swcHoverButton {
 		display: unset;
 	}
 }
@@ -47,7 +54,14 @@ code.lineNumber {
 .swcSnippet .hljs {
 	color: inherit;
 	display: initial;
-	overflow-x: initial;
 	padding: initial;
 	background: initial;
+}
+
+.swcSnippet.swcSnippetInline .hljs {
+	overflow-x: hidden; // For inline, if we overflow auto, then the hover buttons will get pushed off screen.
+}
+
+.swcSnippet.swcSnippetFullScreen .hljs {
+	overflow-x: auto; // For full screen, if we overflow hidden, then the parent panel won't scroll.
 }
