@@ -49,7 +49,11 @@ export function renderPathCell(result: Result) {
 		}
 	}
 	
+	// Example of href scenario:
+	// uri  = src\Prototypes\README.md
+	// href = https://org.visualstudio.com/project/_git/repo?path=%2Fsrc%2FPrototypes%2FREADME.md&_a=preview
 	const href = artLoc?.properties?.['href']
+
 	const runArtContentsText = runArt?.contents?.text
 	const repositoryUri = result.run.versionControlProvenance?.[0]?.repositoryUri
 	const hostname = getHostname(repositoryUri)
@@ -105,7 +109,7 @@ export function renderPathCell(result: Result) {
 			{tryOr(() => {
 				if (!uri) throw undefined
 				return <div className={rowClasses}>
-					<TooltipSpan overflowOnly={true} text={uri}>
+					<TooltipSpan overflowOnly={true} text={href ?? uri}>
 						{tryLink(
 							getHref,
 							uriWithEllipsis,
