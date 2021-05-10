@@ -117,7 +117,7 @@ export function renderPathCell(result: Result) {
 		</div>,
 		() => {
 			return <div className="flex-row scroll-hidden">{/* From Advanced table demo. */}
-				<TooltipSpan text={href ?? uri} disabled={uri === fileName}>
+				<TooltipSpan text={href ?? uri}>
 					{tryLink(
 						getHref,
 						uriWithEllipsis,
