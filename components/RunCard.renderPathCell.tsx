@@ -22,6 +22,7 @@ interface SimpleRegion {
 	startColumn?: number
 	endColumn?: number
 }
+
 function openInNewTab(fileName: string, text: string, region: SimpleRegion | undefined): void {
 	const line = region?.startLine ?? 1
 	const col = region?.startColumn ?? 1
@@ -39,6 +40,26 @@ function openInNewTab(fileName: string, text: string, region: SimpleRegion | und
 	document.title = fileName
 	document.body.innerHTML = `<pre>${escape(pre)}<mark>${escape(hi)}</mark>${escape(post)}</pre>`
 	setTimeout(() => document.body.querySelector('mark').scrollIntoView({ block: 'center' }))
+}
+
+function getRepoUri(uri: string | undefined, uriBaseId: string | undefined, repositoryUri: string | undefined): string | undefined {
+	if (!uri) return undefined
+
+	function getHostname(url: string | undefined): string | undefined {
+		if (!url) return undefined
+		try {
+			return new URL(url).hostname
+		} catch (_) {
+			return undefined
+		}
+	}
+	const hostname = getHostname(repositoryUri)
+	const repoUriBase = uriBaseId // Only presence matters, not value.
+		&& (hostname?.endsWith('azure.com') || hostname?.endsWith('visualstudio.com')) // We currently only support Azure DevOps.
+		&& repositoryUri
+	if (!repoUriBase) return undefined
+
+	return `${repoUriBase}?path=${encodeURIComponent(uri)}`
 }
 
 export function renderPathCell(result: Result) {
@@ -63,15 +84,6 @@ export function renderPathCell(result: Result) {
 			<span><Hi>/{fileName}</Hi></span>
 		</span>
 		: <Hi>{uri ?? '—'}</Hi>
-
-	function getHostname(url: string | undefined): string | undefined {
-		if (!url) return undefined
-		try {
-			return new URL(url).hostname
-		} catch (_) {
-			return undefined
-		}
-	}
 	
 	// Example of href scenario:
 	// uri  = src\Prototypes\README.md
@@ -79,13 +91,8 @@ export function renderPathCell(result: Result) {
 	const href = artLoc?.properties?.['href']
 
 	const runArtContentsText = runArt?.contents?.text
-	const repositoryUri = result.run.versionControlProvenance?.[0]?.repositoryUri
-	const hostname = getHostname(repositoryUri)
-	const repoUriBase = artLoc?.uriBaseId // Only presence matters, not value.
-		&& (hostname?.endsWith('azure.com') || hostname?.endsWith('visualstudio.com')) // We currently only support Azure DevOps.
-		&& repositoryUri
-		|| ''
-	const repoUri = uri && repoUriBase && `${repoUriBase}?path=${encodeURIComponent(uri)}` || uri
+	const repoUri = getRepoUri(uri, artLoc?.uriBaseId, result.run.versionControlProvenance?.[0]?.repositoryUri) ?? uri
+
 	const getHref = () => {
 		if (uri?.endsWith('.dll')) return undefined
 		if (href) return href
