@@ -109,6 +109,10 @@ import { ContentSize } from 'azure-devops-ui/Callout'
 					else pre.classList.remove('clipped')
 				}}>
 				{lineNumbersAndCode}
+				<ClipboardButton
+					className="flex-self-start margin-left-4 swcHoverButton"
+					getContent={() => ploc.contextRegion?.snippet?.text ?? ploc.region?.snippet?.text ?? ''}
+				/>
 				<div className="bolt-clipboard-button flex-self-start margin-left-4 swcHoverButton">{/* Borrowing the bolt-clipboard-button style. */}
 					<Button
 						ariaLabel="Full screen"
@@ -120,10 +124,6 @@ import { ContentSize } from 'azure-devops-ui/Callout'
 						tooltipProps={{ text: 'Full screen' }}
 					/>
 				</div>
-				<ClipboardButton
-					className="flex-self-start margin-left-4 swcHoverButton"
-					getContent={() => ploc.contextRegion?.snippet?.text ?? ploc.region?.snippet?.text ?? ''}
-				/>
 			</pre>
 			{this.fullScreen && <CustomDialog onDismiss={() => this.fullScreen = false} modal={true} contentSize={ContentSize.ExtraLarge}>
 				<div className="scroll-auto">
