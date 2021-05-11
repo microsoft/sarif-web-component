@@ -22,13 +22,13 @@ import { ClipboardButton } from "azure-devops-ui/Clipboard"
 import { CustomDialog } from 'azure-devops-ui/Dialog'
 import { ContentSize } from 'azure-devops-ui/Callout'
 
-@observer export class Snippet extends React.Component<{ ploc?: PhysicalLocation, style?: React.CSSProperties }> {
+@observer export class Snippet extends React.Component<{ ploc?: PhysicalLocation, style?: React.CSSProperties, action?: () => void }> {
 	static contextType = FilterKeywordContext
 	@observable showAll = false
 	@observable fullScreen = false
 
 	render () {
-		const {ploc} = this.props
+		const {ploc, action} = this.props
 		if (!ploc) return null
 
 		let term = this.context
@@ -97,6 +97,19 @@ import { ContentSize } from 'azure-devops-ui/Callout'
 			</code>
 		</>
 
+		const HoverButton = (props: { iconName: string, text: string, onClick: () => void }) =>
+			<div className="bolt-clipboard-button flex-self-start margin-left-4 swcHoverButton">{/* Borrowing the bolt-clipboard-button style. */}
+				<Button
+					ariaLabel={props.text}
+					iconProps={{ iconName: props.iconName }}
+					onClick={e => {
+						e.stopPropagation() // Prevent showAll
+						props.onClick()
+					}}
+					tooltipProps={{ text: props.text }}
+				/>
+			</div>
+
 		// title={JSON.stringify(ploc, null, '  ')}
 		return <>
 			<pre className="swcSnippet swcSnippetInline"
@@ -113,17 +126,8 @@ import { ContentSize } from 'azure-devops-ui/Callout'
 					className="flex-self-start margin-left-4 swcHoverButton"
 					getContent={() => ploc.contextRegion?.snippet?.text ?? ploc.region?.snippet?.text ?? ''}
 				/>
-				<div className="bolt-clipboard-button flex-self-start margin-left-4 swcHoverButton">{/* Borrowing the bolt-clipboard-button style. */}
-					<Button
-						ariaLabel="Full screen"
-						iconProps={{ iconName: 'FullScreen' }}
-						onClick={e => {
-							e.stopPropagation() // Prevent showAll
-							this.fullScreen = true
-						}}
-						tooltipProps={{ text: 'Full screen' }}
-					/>
-				</div>
+				<HoverButton iconName="NavigateExternalInline" text="View this Secret Hash in a new Tab" onClick={() => action?.()} />
+				<HoverButton iconName="FullScreen" text="Full screen" onClick={() => this.fullScreen = true} />
 			</pre>
 			{this.fullScreen && <CustomDialog onDismiss={() => this.fullScreen = false} modal={true} contentSize={ContentSize.ExtraLarge}>
 				<div className="scroll-auto">
