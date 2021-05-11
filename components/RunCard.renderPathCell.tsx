@@ -135,16 +135,14 @@ export function renderPathCell(result: Result) {
 				</div>
 			})}
 		</div>,
-		() => {
-			return <div className="flex-row scroll-hidden">{/* From Advanced table demo. */}
-				<TooltipSpan text={href ?? uri}>
-					{tryLink(
-						getHref,
-						uriWithEllipsis,
-						'swcColorUnset',
-						onClick)}
-				</TooltipSpan>
-			</div>
-		}
+		() => <div className="flex-row scroll-hidden">{/* From Advanced table demo. */}
+			<TooltipSpan overflowOnly={true} text={href ?? uri}>
+				{tryLink(
+					getHref,
+					uriWithEllipsis,
+					'swcColorUnset',
+					onClick)}
+			</TooltipSpan>
+		</div>
 	)
 }
