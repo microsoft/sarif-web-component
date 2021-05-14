@@ -64,13 +64,17 @@ function getRepoUri(uri: string | undefined, uriBaseId: string | undefined, repo
 
 export function renderPathCell(result: Result) {
 	const ploc = result.locations?.[0]?.physicalLocation
-	const artLoc = ploc?.artifactLocation
+	const resArtLoc
+	    =  ploc?.artifactLocation
 		?? result.analysisTarget
-	const runArt = result.run.artifacts?.[artLoc?.index ?? -1]
-	const uri = artLoc?.description?.text
-		?? runArt?.description?.text
-		?? artLoc?.uri
-		?? runArt?.location?.uri // Commonly a relative URI.
+	const runArt = result.run.artifacts?.[resArtLoc?.index ?? -1]
+	const runArtLoc = runArt?.location
+	const uri
+	    =  resArtLoc?.description?.text
+		?? runArtLoc?.description?.text // vs runArt?.description?.text?
+		?? resArtLoc?.uri
+		?? runArtLoc?.uri // Commonly a relative URI.
+
 	const [path, fileName] = (() => {
 		if (!uri) return ['—']
 		const index = uri.lastIndexOf('/')
@@ -88,10 +92,10 @@ export function renderPathCell(result: Result) {
 	// Example of href scenario:
 	// uri  = src\Prototypes\README.md
 	// href = https://org.visualstudio.com/project/_git/repo?path=%2Fsrc%2FPrototypes%2FREADME.md&_a=preview
-	const href = artLoc?.properties?.['href']
+	const href = resArtLoc?.properties?.['href']
 
 	const runArtContentsText = runArt?.contents?.text
-	const repoUri = getRepoUri(uri, artLoc?.uriBaseId, result.run.versionControlProvenance?.[0]?.repositoryUri) ?? uri
+	const repoUri = getRepoUri(uri, resArtLoc?.uriBaseId, result.run.versionControlProvenance?.[0]?.repositoryUri) ?? uri
 
 	const getHref = () => {
 		if (uri?.endsWith('.dll')) return undefined
