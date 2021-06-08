@@ -6,6 +6,10 @@ module.exports = {
 	entry: {
 		'dist': './components/Viewer.tsx',
 	},
+	optimization: {
+		// Blocking Snowpack import thus disabling `minimize`.
+		minimize: false,
+	},
 	output: {
 		path: __dirname,
 		filename: '[name]/index.js',
