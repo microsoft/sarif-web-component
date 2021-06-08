@@ -23,5 +23,5 @@ module.exports = {
 		maxAssetSize: 820 * 1024,
 		maxEntrypointSize: 820 * 1024,
 	},
-	stats: 'minimal',
+	stats: 'minimal', // If left on will disrupt `webpack --profile`.
 }
