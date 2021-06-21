@@ -8,3 +8,6 @@ dist
 resources
 !resources/sample.ts
 *.txt
+
+# A place to store local/private packages
+packages
