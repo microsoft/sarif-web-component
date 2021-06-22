@@ -10,3 +10,6 @@ resources
 
 # A place to store local/private packages
 packages
+
+# A place to keep personal notes, etc
+ignore
