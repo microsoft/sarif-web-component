@@ -1,6 +1,6 @@
 {
 	"compilerOptions": {
-		"outDir": "./dist/",
+		"outDir": "dist", // './' prefix not neccesary
 		"declaration": true,
 		"sourceMap": true,
 		"noImplicitAny": false,
@@ -12,6 +12,7 @@
 		"experimentalDecorators": true
 	},
 	"exclude": [
-		"./dist/", // To avoid error: Cannot write file '/dist/index.d.ts' because it would be overwritten by multiple input files.
+		"dist", // Avoids error: Cannot write file '/dist/components/FilterBar.d.ts' because it would overwrite input file.
+		"index.tsx", // For webpack-dev-server only. Prevent index.d.ts being generated to /dist.
 	]
 }
