@@ -3,10 +3,12 @@
 
 node_modules
 package-lock.json
-dist
 resources
 !resources/sample.ts
 *.txt
+
+# Star to allow names like "dist-2106"
+dist*
 
 # A place to store local/private packages
 packages
