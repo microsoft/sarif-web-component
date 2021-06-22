@@ -53,5 +53,5 @@
 		"react-dom": "^16.8.6"
 	},
 	"main": "dist/index.js",
-	"types": "index.d.ts"
+	"types": "dist/components/Viewer.d.ts"
 }
