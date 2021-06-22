@@ -1,9 +1,0 @@
-/components
-/resources
-index.html
-babel.config.js
-jest.config.js
-webpack.config.js
-webpack.config.*.js
-tsconfig.json
-index.ts
