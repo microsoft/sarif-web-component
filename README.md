@@ -34,6 +34,15 @@ npm publish
 For a scoped non-paid accounts (such as for personal testing), publish would require: `npm publish --access public`.
 For a dry-run publish: `npm publish --dry-run`. Careful: the typo `--dryrun` results in a real publish.
 
+## Bundle Size Analysis
+In `webpack.config.common.js` temporarily disable `stats: 'minimal'`.
+
+```
+npx webpack --profile --json > stats.json
+npx webpack-bundle-analyzer stats.json
+rm stats.json
+```
+
 ## Contributing
 
 This project welcomes contributions and suggestions.  Most contributions require you to agree to a
