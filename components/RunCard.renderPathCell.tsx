@@ -62,6 +62,9 @@ function getRepoUri(uri: string | undefined, uriBaseId: string | undefined, repo
 	return `${repoUriBase}?path=${encodeURIComponent(uri)}`
 }
 
+// TODO:
+// Unify runArt vs resultArt.
+// Distinguish uri and text.
 export function renderPathCell(result: Result) {
 	const ploc = result.locations?.[0]?.physicalLocation
 	const resArtLoc
@@ -70,7 +73,7 @@ export function renderPathCell(result: Result) {
 	const runArt = result.run.artifacts?.[resArtLoc?.index ?? -1]
 	const runArtLoc = runArt?.location
 	const uri
-	    =  resArtLoc?.description?.text
+		=  resArtLoc?.description?.text
 		?? runArtLoc?.description?.text // vs runArt?.description?.text?
 		?? resArtLoc?.uri
 		?? runArtLoc?.uri // Commonly a relative URI.
@@ -82,7 +85,7 @@ export function renderPathCell(result: Result) {
 			? [uri.slice(0, index), uri.slice(index + 1)]
 			: [uri]
 	})()
-	const uriWithEllipsis = fileName
+	const uriWithEllipsis = fileName // This is what ultimately gets displayed
 		? <span className="midEllipsis">
 			<span><Hi>{path}</Hi></span>
 			<span><Hi>/{fileName}</Hi></span>
@@ -111,7 +114,7 @@ export function renderPathCell(result: Result) {
 		if (!runArtContentsText) return
 		event.preventDefault()
 		event.stopPropagation()
-		openInNewTab(fileName, runArtContentsText, region)
+		openInNewTab(fileName, runArtContentsText, region) // BUG: if uri is "aaa", then fileName will be empty
 	}
 
 	const rowClasses = 'bolt-table-two-line-cell-item flex-row scroll-hidden'
