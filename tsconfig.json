@@ -10,5 +10,8 @@
 		"jsx": "react",
 		"downlevelIteration": true,
 		"experimentalDecorators": true
-	}
+	},
+	"exclude": [
+		"./dist/", // To avoid error: Cannot write file '/dist/index.d.ts' because it would be overwritten by multiple input files.
+	]
 }
