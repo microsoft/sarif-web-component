@@ -87,7 +87,7 @@ import { ContentSize } from 'azure-devops-ui/Callout'
 				ref={code => {
 					if (!code) return
 					try {
-						hljs.highlightBlock(code)
+						hljs.highlightElement(code)
 					} catch(e) {
 						// Commonly throws if the language is not loaded. Will add telemetry here to track.
 						console.log(code, e)
