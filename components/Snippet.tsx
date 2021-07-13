@@ -74,9 +74,10 @@ import { ContentSize } from 'azure-devops-ui/Callout'
 		const lineNumbersAndCode = <>
 			{tryOr(() => {
 				const region = ploc.contextRegion || ploc.region
-				if (!region.startLine || !region.endLine) return undefined // Don't take up left margin space if there's nothing to show.
+				if (!region.startLine) return undefined // Don't take up left margin space if there's nothing to show.
+				const endLine = region.endLine ?? region.startLine
 				let lineNos = ''
-				for (let i = region.startLine; i <= region.endLine; i++) {
+				for (let i = region.startLine; i <= endLine; i++) {
 					lineNos += `${i}\n`
 				}
 				return <code className="lineNumber">{lineNos}</code>
