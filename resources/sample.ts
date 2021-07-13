@@ -166,6 +166,7 @@ export default [{
 						},
 						contextRegion: {
 							snippet: { text: 'aaa\nRegion snippet text only.\nbbb' },
+							startLine: 99, // Required.
 						},
 					}
 				}]
