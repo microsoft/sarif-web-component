@@ -125,8 +125,9 @@ import { ContentSize } from 'azure-devops-ui/Callout'
 				{lineNumbersAndCode}
 				<ClipboardButton
 					className="flex-self-start margin-left-4 swcHoverButton"
-					getContent={() => ploc.contextRegion?.snippet?.text ?? ploc.region?.snippet?.text ?? ''}
-					showCopiedTooltip={true}
+					getContent={() => ploc.region?.snippet?.text ?? ''}
+					showCopiedTooltip={'Copied snippet!'}
+					tooltipProps={{ text: 'Copy snippet' }}
 				/>
 				<HoverButton iconName="NavigateExternalInline" text="View this Secret Hash in a new Tab" onClick={() => action?.()} />
 				<HoverButton iconName="FullScreen" text="Full screen" onClick={() => this.fullScreen = true} />
@@ -135,6 +136,11 @@ import { ContentSize } from 'azure-devops-ui/Callout'
 				<div className="scroll-auto">
 					<pre className="margin-horizontal-8 margin-vertical-16 swcSnippet swcSnippetFullScreen">
 						{lineNumbersAndCode}
+						<ClipboardButton
+							className="flex-self-start margin-left-4 swcHoverButton"
+							getContent={() => ploc.contextRegion?.snippet?.text ?? ploc.region?.snippet?.text ?? ''}
+							showCopiedTooltip={true}
+						/>
 					</pre>
 				</div>
 			</CustomDialog>}
