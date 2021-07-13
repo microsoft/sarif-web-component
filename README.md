@@ -34,6 +34,14 @@ npm publish
 For a scoped non-paid accounts (such as for personal testing), publish would require: `npm publish --access public`.
 For a dry-run publish: `npm publish --dry-run`. Careful: the typo `--dryrun` results in a real publish.
 
+## Publishing (Local/Private)
+As needed, run `git pull` and `npm install`. Then...
+```
+npx webpack --config ./webpack.config.npm.js
+npm pack
+```
+Our convention is to move/keep the tarballs in the `packages` directory.
+
 ## Bundle Size Analysis
 In `webpack.config.common.js` temporarily disable `stats: 'minimal'`.
 
