@@ -126,6 +126,7 @@ import { ContentSize } from 'azure-devops-ui/Callout'
 				<ClipboardButton
 					className="flex-self-start margin-left-4 swcHoverButton"
 					getContent={() => ploc.contextRegion?.snippet?.text ?? ploc.region?.snippet?.text ?? ''}
+					showCopiedTooltip={true}
 				/>
 				<HoverButton iconName="NavigateExternalInline" text="View this Secret Hash in a new Tab" onClick={() => action?.()} />
 				<HoverButton iconName="FullScreen" text="Full screen" onClick={() => this.fullScreen = true} />
