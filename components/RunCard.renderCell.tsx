@@ -114,7 +114,10 @@ export function renderCell<T extends ISimpleTableCell>(
 									</div> // Div to cancel out containers display flex row.
 									: <Hi>{renderMessageWithEmbeddedLinks(result, formattedMessage)}</Hi> || ''}
 								{tryOr(() => <SnippetActionContext.Consumer>
-									{onSnippetAction => <Snippet ploc={result.locations[0].physicalLocation} action={() => onSnippetAction?.(result)} />}
+									{onSnippetAction => {
+										// Optional chaining required here as the Context Consumer bypasses the tryOr
+										return <Snippet ploc={result.locations?.[0]?.physicalLocation} action={() => onSnippetAction?.(result)} />
+									}}
 								</SnippetActionContext.Consumer>)}
 							</>
 						case 'Rule':
