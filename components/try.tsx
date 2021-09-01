@@ -21,8 +21,7 @@ export const tryLink = (fHref: () => string, inner: string | JSX.Element, classN
 }
 
 export function tryOr<T = any>(...functions) {
-	for (const i in functions) {		
-		const func = functions[i]
+	for (const func of functions) {		
 		if (typeof func !== 'function') return func as T // A non-function constant value.
 		try {
 			const value = func()
