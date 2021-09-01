@@ -61,7 +61,7 @@ import { ContentSize } from 'azure-devops-ui/Callout'
 				if (startLine === undefined) return undefined // tryOr fallthrough.
 
 				startColumn = Math.max(0, startColumn - 1 - minLeadingWhitespace)
-				endLine -= contextRegion.startLine
+				endLine -= contextRegion.startLine ?? 0
 				endColumn = Math.max(0, endColumn - minLeadingWhitespace)
 
 				// Insert start stop markers.
