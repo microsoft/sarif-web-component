@@ -30,12 +30,15 @@ import { ContentSize } from 'azure-devops-ui/Callout'
 	render () {
 		const {ploc, action} = this.props
 		if (!ploc) return null
+		if (!ploc.region) return null
 
 		let term = this.context
 
 		let body = tryOr(
 			() => {
 				const {region, contextRegion} = ploc
+				if (!contextRegion) return undefined // tryOr fallthrough.
+
 				const crst = contextRegion.snippet.text
 
 				// Search/Filter hilighting is active so bypass snippet highlighting and return plain text.
@@ -49,8 +52,14 @@ import { ContentSize } from 'azure-devops-ui/Callout'
 				)
 				lines = lines.map(line => line.slice(minLeadingWhitespace))
 
+
+				// startLine is 1-based per SARIF spec
 				let {startLine, startColumn = 0, endLine = startLine, endColumn = Number.MAX_SAFE_INTEGER} = region // Artibrary large value.
-				startLine -= contextRegion.startLine
+
+				// "3.30.5 startLine property - When a region object represents a text region specified by line/column properties, it SHALL contain a property..."
+				// If startLine is undefined, then it not line/column-specified and likely offset/length-specified. The later is not currently supported.
+				if (startLine === undefined) return undefined // tryOr fallthrough.
+
 				startColumn = Math.max(0, startColumn - 1 - minLeadingWhitespace)
 				endLine -= contextRegion.startLine
 				endColumn = Math.max(0, endColumn - minLeadingWhitespace)
@@ -67,7 +76,7 @@ import { ContentSize } from 'azure-devops-ui/Callout'
 			},
 			() => ploc.region.snippet.text, // No need to un-indent as these infrequently include leading whitespace.
 		)
-		if (!body) return null
+		if (!body) return null // May no longer be needed.
 
 		if (term) body = <Hi>{body}</Hi>
 
