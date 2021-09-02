@@ -53,25 +53,37 @@ import { ContentSize } from 'azure-devops-ui/Callout'
 				)
 				lines = lines.map(line => line.slice(minLeadingWhitespace))
 
+				// Per 3.30.2 SARIF line and columns are 1-based.
+				let {startLine, startColumn = 1, endLine = startLine, endColumn = Number.MAX_SAFE_INTEGER} = region
 
-				// startLine is 1-based per SARIF spec
-				let {startLine, startColumn = 0, endLine = startLine, endColumn = Number.MAX_SAFE_INTEGER} = region // Artibrary large value.
-
-				// "3.30.5 startLine property - When a region object represents a text region specified by line/column properties, it SHALL contain a property..."
+				// "3.30.5 startLine property - When a region object represents a text region specified by line/column properties, it SHALL contain .. startLine..."
 				// If startLine is undefined, then it not line/column-specified and likely offset/length-specified. The later is not currently supported.
 				if (startLine === undefined) return undefined // tryOr fallthrough.
 
-				startLine -= contextRegion.startLine ?? 0
-				startColumn = Math.max(0, startColumn - 1 - minLeadingWhitespace) // startColumn is 1-based, string.slice() is 0-based, thus the -1 adjustment.
-				endLine -= contextRegion.startLine ?? 0
-				endColumn = Math.max(0, endColumn - minLeadingWhitespace)
+				// Convert region to 0-based for ease of calculations.
+				startLine -= 1
+				startColumn -= 1
+				endLine -= 1
+				endColumn -= 1
+
+				// Same comments from above apply to the contextRegion.
+				let {startLine: crStartLine = 1, startColumn: crStartColumn = 1 } = contextRegion
+				crStartLine -= 1
+				crStartColumn -= 1
+
+				// Map region from document coordinates to contextRegion coordinates.
+				startLine -= crStartLine
+				startColumn = Math.max(0, startColumn - crStartColumn - minLeadingWhitespace)
+				endLine -= crStartLine
+				endColumn = Math.max(0, endColumn - crStartColumn - minLeadingWhitespace)
 
 				// Insert start stop markers.
 				const marker = '\u200B'
-				lines[startLine]
-					= lines[startLine].slice(0, startColumn) + marker + lines[startLine].slice(startColumn)
+				// Endline marker must be inserted first. Otherwise if startLine=endLine, the marker char will make the slice off by one.
 				lines[endLine]
 					= lines[endLine].slice(0, endColumn) + marker + lines[endLine].slice(endColumn)
+				lines[startLine]
+					= lines[startLine].slice(0, startColumn) + marker + lines[startLine].slice(startColumn)
 
 				const [pre, hi, post] = lines.join('\n').split(marker)
 				return <>{pre}<span className="swcRegion">{hi}</span>{post}</>
@@ -197,10 +209,10 @@ export class SnippetTest extends React.Component {
 				artifactLocation: { uri: 'folder/file.txt' },
 				region: {
 					snippet: { text: 'Content region.' },
-					charOffset: 13
+					charOffset: 13 // charOffset currently ignored by snippet rendering.
 				},
 				contextRegion: {
-					snippet: { text: 'Surrounding. Content region. Surrounding.' },
+					snippet: { text: 'Surrounding. Content region. Surrounding. Currently not rendered if no startLine.' },
 				}
 			}} />
 
@@ -218,8 +230,8 @@ export class SnippetTest extends React.Component {
 					startColumn: 1,
 					endLine: 108,
 					endColumn: 91,
-					charOffset: 5693,
-					charLength: 157,
+					charOffset: 5693, // charOffset currently ignored by snippet rendering.
+					charLength: 157, // charLength currently ignored by snippet rendering.
 					snippet: {
 						text: "\r\n        private readonly static Region s_Interior_Characters = \r\n            new Region() { Snippet = new ArtifactContent() { Text = INTERIOR_CHARACTERS },"
 					},
@@ -250,9 +262,80 @@ export class SnippetTest extends React.Component {
 			<Snippet ploc={{
 				artifactLocation: { uri: 'folder/file1.txt' },
 				region: {
-					snippet: { text: 'Line 1\nLine 2\nLine 3\nLine 4\nLine 5\nLine 6\nLine 7\nLine 8' },
+					snippet: { text: 'Line 1\nLine 2\nLine 3\nLine 4\nLine 5\nLine 6\nLine 7 (Last line before fold) \nLine 8\nLine 9\nLine 10' },
 				},
 			}} />
+
+			<Snippet ploc={{
+				artifactLocation: { uri: 'folder/file1.txt' },
+				contextRegion: {
+					snippet: { text: '    Normalize indent: Typical\n    All lines have a least a 4 space indent\n\n    Except for empty lines (like above)\n    highlighted\n        Some lines have 8 spaces' },
+				},
+				region: {
+					startLine: 4,
+					startColumn: 5,
+					snippet: {
+						text: 'highlighted'
+					},
+				},
+			}} />
+
+			<Snippet ploc={{
+				artifactLocation: { uri: 'folder/file1.txt' },
+				region: {
+					snippet: { text: '    Normalize indent: Currently does not apply if no context region (but maybe it should)' },
+				},
+			}} />
+
+			<Snippet ploc={{
+				artifactLocation: {
+					uri: "https://github.com/Microsoft/sarif-sdk/blob/jeff/src/Sarif/Visitors/SarifCurrentToVersionOneVisitor.cs",
+					index: 0,
+				},
+				contextRegion: {
+					startLine: 100, // endLine defaults to startLine
+					startColumn: 1, // 1-based
+					snippet: {
+						text: "aaabbbaaa"
+					},
+				},
+				region: {
+					startLine: 100, // endLine defaults to startLine
+					startColumn: 4, // 1-based
+					endColumn: 7, // 1-based
+					snippet: {
+						text: "bbb"
+					},
+				},
+			}} />
+
+			<Snippet ploc={{
+				"artifactLocation": {
+					"uri": "https://dev.azure.com/org/_workitems/edit/12345"
+				},
+				"region": {
+					"startLine": 122,
+					"startColumn": 875,
+					"endLine": 122,
+					"endColumn": 895,
+					"charOffset": 9478, // charOffset currently ignored by snippet rendering.
+					"charLength": 20, // charLength currently ignored by snippet rendering.
+					"snippet": {
+						"text": "789</span></div><div"
+					}
+				},
+				"contextRegion": {
+					"startLine": 122,
+					"startColumn": 747,
+					"endLine": 122,
+					"endColumn": 1023,
+					"charOffset": 9350, // charOffset currently ignored by snippet rendering.
+					"charLength": 276, // charLength currently ignored by snippet rendering.
+					"snippet": {
+						"text": "le=\\\"box-sizing:border-box;\\\"><span style=\\\"box-sizing:border-box;\\\">1. Sign into Houston POS with username 123456 and password 789</span></div><div style=\\\"box-sizing:border-box;\\\"><span style=\\\"box-sizing:border-box;\\\">2. Do an exchange for item 0001</span></div><div style="
+					}
+				}
+			}} />	
 		</div>
 	}
 }
