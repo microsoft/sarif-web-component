@@ -61,7 +61,7 @@ import { ContentSize } from 'azure-devops-ui/Callout'
 				if (startLine === undefined) return undefined // tryOr fallthrough.
 
 				startLine -= contextRegion.startLine ?? 0
-				startColumn = Math.max(0, startColumn - 1 - minLeadingWhitespace)
+				startColumn = Math.max(0, startColumn - 1 - minLeadingWhitespace) // startColumn is 1-based, string.slice() is 0-based, thus the -1 adjustment.
 				endLine -= contextRegion.startLine ?? 0
 				endColumn = Math.max(0, endColumn - minLeadingWhitespace)
 
