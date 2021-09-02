@@ -69,15 +69,6 @@ interface ViewerProps {
 	successMessage?: string
 
 	/**
-	 * Callback upon Viewer creation/construction/instantiation namely to facilitate upward data flow.
-	 * 
-	 * Currenly only used for `getFilteredContextRegionSnippetTexts()`. This allows the caller to get a list of
-	 * `contextRegion`s or `region`s (fallback). Specifically the snippet text within these regions.
-	 * Namely used when the caller wants to export these snippets to another app.
-	 */
-	onCreate?: (getFilteredContextRegionSnippetTexts: () => string[]) => void
-
-	/**
 	 * The is a custom button on the top-right of every snippet. Clicking that will call this.
 	 */
 	onSnippetAction?: (result: Result) => void
@@ -90,32 +81,9 @@ interface ViewerProps {
 
 	constructor(props) {
 		super(props)
-		const {defaultFilterState, filterState, showAge, onCreate} = this.props
+		const {defaultFilterState, filterState, showAge} = this.props
 		this.filter = new MobxFilter(defaultFilterState, filterState)
 		this.groupByAge = observable.box(showAge)
-
-		const getFilteredContextRegionSnippetTexts = () => {
-			const {logs} = this.props
-			const foo = this.runStores(logs).map(store => {
-				const groups = store.groupByAge.get()
-					? store.agesFiltered
-					: store.rulesFiltered
-
-				const texts = []
-				groups.forEach(group => {
-					group.childItemsAll.forEach(item => {
-						const result = item.data as Result // Ideally ITreeItem would support more specific typing.
-						const phyLoc = result.locations?.[0]?.physicalLocation
-						const region = phyLoc?.contextRegion ?? phyLoc?.region
-						const text = region?.snippet?.text
-						if (text) texts.push(text)
-					})
-				})
-				return texts
-			})
-			return foo.reduce((acc, cur, i) => { acc.push(...cur); return acc }, [])
-		}
-		onCreate?.(getFilteredContextRegionSnippetTexts)
 	}
 
 	@observable warnOldVersion = false
