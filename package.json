@@ -10,7 +10,8 @@
 	},
 	"scripts": {
 		"start": "webpack-dev-server --mode development",
-		"test": "jest --watchAll",
+		"test": "jest",
+		"test:watch": "jest --watchAll",
 		"npm": "webpack --config ./webpack.config.npm.js",
 		"docs": "webpack --config ./webpack.config.docs.js"
 	},
