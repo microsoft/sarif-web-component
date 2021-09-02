@@ -60,6 +60,7 @@ import { ContentSize } from 'azure-devops-ui/Callout'
 				// If startLine is undefined, then it not line/column-specified and likely offset/length-specified. The later is not currently supported.
 				if (startLine === undefined) return undefined // tryOr fallthrough.
 
+				startLine -= contextRegion.startLine ?? 0
 				startColumn = Math.max(0, startColumn - 1 - minLeadingWhitespace)
 				endLine -= contextRegion.startLine ?? 0
 				endColumn = Math.max(0, endColumn - minLeadingWhitespace)
