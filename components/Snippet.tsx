@@ -44,7 +44,8 @@ import { ContentSize } from 'azure-devops-ui/Callout'
 				// Search/Filter hilighting is active so bypass snippet highlighting and return plain text.
 				if (term) return crst
 
-				let lines = crst.split('\n')
+				// Carriage returns (\n) causing hljs colorization off-by-one errors, thus stripping them here.
+				let lines = crst.replace(/\r/g, '').split('\n')
 				const minLeadingWhitespace = Math.min(
 					...lines
 					.filter(line => line.trimLeft().length) // Blank lines often have indent 0, so throwing these out.
