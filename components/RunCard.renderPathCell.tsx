@@ -143,7 +143,9 @@ export function renderPathCell(result: Result) {
 			})}
 		</div>,
 		() => <div className="flex-row scroll-hidden">{/* From Advanced table demo. */}
-			<TooltipSpan overflowOnly={true} text={href ?? uri}>
+			{/* Since we don't know when the ellipsis text is in effect, thus TooltipSpan.overflowOnly=false/default */}
+			{/* Consider overflowOnly=false for the other branch above. */}
+			<TooltipSpan text={href ?? uri}>
 				{tryLink(
 					getHref,
 					uriWithEllipsis,
