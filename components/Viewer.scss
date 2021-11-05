@@ -24,6 +24,10 @@
 		position: sticky;
 		z-index: 2; // Focused inputs/buttons are z=1.
 		top: 29px; // 3px less than .svShim height so the shadow overlaps neatly.
+
+		// `azure-devops-ui@1` defaulted to 0, now `azure-devops-ui@2` defaults this to 1, thus overriding.
+		// This prevents the filter bar from squishing when there is (or is more than) a full page of results.
+		flex-shrink: 0;
 	}
 
 	// Nested under .bolt-page for artificial precedence.
