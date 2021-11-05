@@ -17,18 +17,12 @@ import {Hi} from './Hi'
 import {PhysicalLocation} from 'sarif'
 import {tryOr} from './try'
 
-import { Button } from 'azure-devops-ui/Button'
-import { ClipboardButton } from "azure-devops-ui/Clipboard"
-import { CustomDialog } from 'azure-devops-ui/Dialog'
-import { ContentSize } from 'azure-devops-ui/Callout'
-
-@observer export class Snippet extends React.Component<{ ploc?: PhysicalLocation, style?: React.CSSProperties, action?: () => void }> {
+@observer export class Snippet extends React.Component<{ ploc?: PhysicalLocation, style?: React.CSSProperties }> {
 	static contextType = FilterKeywordContext
 	@observable showAll = false
-	@observable fullScreen = false
 
 	render () {
-		const {ploc, action} = this.props
+		const {ploc} = this.props
 		if (!ploc) return null
 		if (!ploc.region) return null
 
@@ -121,22 +115,9 @@ import { ContentSize } from 'azure-devops-ui/Callout'
 			</code>
 		</>
 
-		const HoverButton = (props: { iconName: string, text: string, onClick: () => void }) =>
-			<div className="bolt-clipboard-button flex-self-start margin-left-4 swcHoverButton">{/* Borrowing the bolt-clipboard-button style. */}
-				<Button
-					ariaLabel={props.text}
-					iconProps={{ iconName: props.iconName }}
-					onClick={e => {
-						e.stopPropagation() // Prevent showAll
-						props.onClick()
-					}}
-					tooltipProps={{ text: props.text }}
-				/>
-			</div>
-
 		// title={JSON.stringify(ploc, null, '  ')}
 		return <>
-			<pre className="swcSnippet swcSnippetInline"
+			<pre className="swcSnippet"
 				style={{ ...this.props.style, maxHeight: this.showAll ? undefined : 108 } as any} // 108px is a 6-line snippet which is very common.
 				key={Date.now()} onClick={() => this.showAll = !this.showAll}
 				ref={pre => {
@@ -146,27 +127,7 @@ import { ContentSize } from 'azure-devops-ui/Callout'
 					else pre.classList.remove('clipped')
 				}}>
 				{lineNumbersAndCode}
-				<ClipboardButton
-					className="flex-self-start margin-left-4 swcHoverButton"
-					getContent={() => ploc.region?.snippet?.text ?? ''}
-					showCopiedTooltip={'Copied snippet!'}
-					tooltipProps={{ text: 'Copy snippet' }}
-				/>
-				<HoverButton iconName="NavigateExternalInline" text="View this Secret Hash in a new Tab" onClick={() => action?.()} />
-				<HoverButton iconName="FullScreen" text="Full screen" onClick={() => this.fullScreen = true} />
 			</pre>
-			{this.fullScreen && <CustomDialog onDismiss={() => this.fullScreen = false} modal={true} contentSize={ContentSize.ExtraLarge}>
-				<div className="scroll-auto">
-					<pre className="margin-horizontal-8 margin-vertical-16 swcSnippet swcSnippetFullScreen">
-						{lineNumbersAndCode}
-						<ClipboardButton
-							className="flex-self-start margin-left-4 swcHoverButton"
-							getContent={() => ploc.contextRegion?.snippet?.text ?? ploc.region?.snippet?.text ?? ''}
-							showCopiedTooltip={true}
-						/>
-					</pre>
-				</div>
-			</CustomDialog>}
 		</>
 	}
 }

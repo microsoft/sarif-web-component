@@ -22,7 +22,6 @@ import {ExpandableTreeCell, ITreeColumn} from 'azure-devops-ui/TreeEx'
 import {ITreeItemEx, ITreeItem} from 'azure-devops-ui/Utilities/TreeItemProvider'
 import {Icon, IconSize} from 'azure-devops-ui/Icon'
 import { renderPathCell } from './RunCard.renderPathCell'
-import { SnippetActionContext } from './Viewer'
 
 const colspan = 99 // No easy way to parameterize this, however extra does not hurt, so using an arbitrarily large value.
 
@@ -113,12 +112,7 @@ export function renderCell<T extends ISimpleTableCell>(
 											renderers={{ link: ({href, children}) => <a href={href} target="_blank">{children}</a> }} />
 									</div> // Div to cancel out containers display flex row.
 									: <Hi>{renderMessageWithEmbeddedLinks(result, formattedMessage)}</Hi> || ''}
-								{tryOr(() => <SnippetActionContext.Consumer>
-									{onSnippetAction => {
-										// Optional chaining required here as the Context Consumer bypasses the tryOr
-										return <Snippet ploc={result.locations?.[0]?.physicalLocation} action={() => onSnippetAction?.(result)} />
-									}}
-								</SnippetActionContext.Consumer>)}
+								<Snippet ploc={result.locations?.[0]?.physicalLocation} />
 							</>
 						case 'Rule':
 							return <>

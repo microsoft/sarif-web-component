@@ -13,7 +13,6 @@ import './extension'
 
 // Contexts must come before renderCell or anything the uses this.
 export const FilterKeywordContext = React.createContext('')
-export const SnippetActionContext = React.createContext<(result: Result) => void>(undefined)
 
 import { FilterBar, MobxFilter, recommendedDefaultState } from './FilterBar'
 import { RunCard } from './RunCard'
@@ -67,11 +66,6 @@ interface ViewerProps {
 	 *   then the behavior is undefined. The current implementation will never communicate success.
 	 */
 	successMessage?: string
-
-	/**
-	 * The is a custom button on the top-right of every snippet. Clicking that will call this.
-	 */
-	onSnippetAction?: (result: Result) => void
 }
 
 @observer export class Viewer extends Component<ViewerProps> {
@@ -108,7 +102,7 @@ interface ViewerProps {
 	}
 
 	render() {
-		const {hideBaseline, hideLevel, showSuppression, showAge, successMessage, onSnippetAction} = this.props
+		const {hideBaseline, hideLevel, showSuppression, showAge, successMessage} = this.props
 
 		// Computed values fail to cache if called from onRenderNearElement() for unknown reasons. Thus call them in advance.
 		const currentfilterState = this.filter.getState()
@@ -177,20 +171,18 @@ interface ViewerProps {
 		})() as JSX.Element
 
 		return <FilterKeywordContext.Provider value={filterKeywords ?? ''}>
-			<SnippetActionContext.Provider value={onSnippetAction}>
-				<SurfaceContext.Provider value={{ background: SurfaceBackground.neutral }}>
-					<Page>
-						<div className="swcShim"></div>
-						<FilterBar filter={this.filter} groupByAge={this.groupByAge.get()} hideBaseline={hideBaseline} hideLevel={hideLevel} showSuppression={showSuppression} showAge={showAge} />
-						{this.warnOldVersion && <MessageCard
-							severity={MessageCardSeverity.Warning}
-							onDismiss={() => this.warnOldVersion = false}>
-							Pre-SARIF-2.1 logs have been omitted. Use the Artifacts explorer to access all files.
-						</MessageCard>}
-						{nearElement}
-					</Page>
-				</SurfaceContext.Provider>
-			</SnippetActionContext.Provider>
+			<SurfaceContext.Provider value={{ background: SurfaceBackground.neutral }}>
+				<Page>
+					<div className="swcShim"></div>
+					<FilterBar filter={this.filter} groupByAge={this.groupByAge.get()} hideBaseline={hideBaseline} hideLevel={hideLevel} showSuppression={showSuppression} showAge={showAge} />
+					{this.warnOldVersion && <MessageCard
+						severity={MessageCardSeverity.Warning}
+						onDismiss={() => this.warnOldVersion = false}>
+						Pre-SARIF-2.1 logs have been omitted. Use the Artifacts explorer to access all files.
+					</MessageCard>}
+					{nearElement}
+				</Page>
+			</SurfaceContext.Provider>
 		</FilterKeywordContext.Provider>
 	}
 }
