@@ -1,4 +1,6 @@
 
+[![npm version](https://img.shields.io/npm/v/@microsoft/sarif-web-component.svg?style=flat)](https://www.npmjs.com/package/@microsoft/sarif-web-component)
+
 # SARIF Web Component
 
 A React-based component for viewing [SARIF](http://sarifweb.azurewebsites.net/) files. [Try it out](https://microsoft.github.io/sarif-web-component/).
