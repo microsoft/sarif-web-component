@@ -111,7 +111,7 @@ export function renderCell<T extends ISimpleTableCell>(
 										<ReactMarkdown source={formattedMarkdown}
 											renderers={{ link: ({href, children}) => <a href={href} target="_blank">{children}</a> }} />
 									</div> // Div to cancel out containers display flex row.
-									: <Hi>{renderMessageWithEmbeddedLinks(result, formattedMessage)}</Hi> || ''}
+									: <span style={{ whiteSpace: 'pre-line' }}><Hi>{renderMessageWithEmbeddedLinks(result, formattedMessage)}</Hi></span> || ''}
 								<Snippet ploc={result.locations?.[0]?.physicalLocation} />
 							</>
 						case 'Rule':
