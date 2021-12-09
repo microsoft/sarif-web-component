@@ -42,7 +42,7 @@ function openInNewTab(fileName: string, text: string, region: SimpleRegion | und
 	setTimeout(() => document.body.querySelector('mark').scrollIntoView({ block: 'center' }))
 }
 
-function getRepoUri(uri: string | undefined, uriBaseId: string | undefined, repositoryUri: string | undefined): string | undefined {
+function getRepoUri(uri: string | undefined, repositoryUri: string | undefined): string | undefined {
 	if (!uri) return undefined
 
 	function getHostname(url: string | undefined): string | undefined {
@@ -54,12 +54,9 @@ function getRepoUri(uri: string | undefined, uriBaseId: string | undefined, repo
 		}
 	}
 	const hostname = getHostname(repositoryUri)
-	const repoUriBase = uriBaseId // Only presence matters, not value.
-		&& (hostname?.endsWith('azure.com') || hostname?.endsWith('visualstudio.com')) // We currently only support Azure DevOps.
-		&& repositoryUri
-	if (!repoUriBase) return undefined
+	if (!(hostname?.endsWith('azure.com') || hostname?.endsWith('visualstudio.com'))) return undefined // We currently only support Azure DevOps.
 
-	return `${repoUriBase}?path=${encodeURIComponent(uri)}`
+	return `${repositoryUri}?path=${encodeURIComponent(uri)}`
 }
 
 // TODO:
@@ -98,7 +95,7 @@ export function renderPathCell(result: Result) {
 	const href = resArtLoc?.properties?.['href']
 
 	const runArtContentsText = runArt?.contents?.text
-	const repoUri = getRepoUri(uri, resArtLoc?.uriBaseId, result.run.versionControlProvenance?.[0]?.repositoryUri) ?? uri
+	const repoUri = getRepoUri(uri, result.run.versionControlProvenance?.[0]?.repositoryUri) ?? uri
 
 	const getHref = () => {
 		if (uri?.endsWith('.dll')) return undefined
