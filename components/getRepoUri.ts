@@ -10,7 +10,6 @@ function getHostname(url: string | undefined): string | undefined {
 }
 
 // TODO: Account for URI joins (normalizing slashes).
-// TODO: Handle regions beyond `startLine`.
 export function getRepoUri(uri: string | undefined, run: Run, region?: Region | undefined): string | undefined {
 	if (!uri) return undefined
 
@@ -28,11 +27,15 @@ export function getRepoUri(uri: string | undefined, run: Run, region?: Region | 
 		let repoUri = revisionId
 			? `${repositoryUri}?path=${encodeURIComponent(uri)}&version=GC${revisionId}`
 			: `${repositoryUri}?path=${encodeURIComponent(uri)}`
-		if (region?.startLine) { // `startLine` is 1-based.
-			// All three params required just to highlight a single line.
+		if (region?.startLine) { // lines and columns are 1-based, so it is safe to to use simple truthy checks.
+			// First three params required even in the most basic case (highlight a single line).
+			// If there is no endColumn, we +1 the lineEnd to select the entire line.
 			repoUri += `&line=${region!.startLine}`
-			repoUri += `&lineEnd=${region!.startLine + 1}`
-			repoUri += `&lineStartColumn=1`
+			repoUri += `&lineEnd=${region!.endLine ?? (region!.startLine + (region!.endColumn ? 0 : 1))}`
+			repoUri += `&lineStartColumn=${region!.startColumn ?? 1}`
+			if (region?.endColumn) {
+				repoUri += `&lineEndColumn=${region!.endColumn}`
+			}
 		}
 		return repoUri
 	}
