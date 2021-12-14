@@ -168,8 +168,8 @@ function renderMessageWithEmbeddedLinks(result: Result, message: string) {
 					// Else `id` is a number
 					// TODO: search other location coolections
 					// RelatedLocations is typically [{ id: 1, ...}, { id: 2, ...}]
-					const location = result.relatedLocations?.find(location => location.id === +id)
-					return getRepoUri(location?.physicalLocation?.artifactLocation?.uri, result.run)
+					const physicalLocation = result.relatedLocations?.find(location => location.id === +id)?.physicalLocation
+					return getRepoUri(physicalLocation?.artifactLocation?.uri, result.run, physicalLocation?.region)
 				})()
 
 				return href
