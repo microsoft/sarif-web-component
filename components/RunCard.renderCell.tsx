@@ -22,6 +22,7 @@ import {ExpandableTreeCell, ITreeColumn} from 'azure-devops-ui/TreeEx'
 import {ITreeItemEx, ITreeItem} from 'azure-devops-ui/Utilities/TreeItemProvider'
 import {Icon, IconSize} from 'azure-devops-ui/Icon'
 import { renderPathCell } from './RunCard.renderPathCell'
+import { getRepoUri } from './getRepoUri'
 
 const colspan = 99 // No easy way to parameterize this, however extra does not hurt, so using an arbitrarily large value.
 
@@ -160,13 +161,20 @@ function renderMessageWithEmbeddedLinks(result: Result, message: string) {
 			.map((item, i) => {
 				if (i % 2 === 0) return item
 				const [_, text, id] = item.match(rxLink)
-				const href = isNaN(id as any)
-					? id
-					  // RelatedLocations is typically [{ id: 1, ...}, { id: 2, ...}]
-					  // Consider using [].find inside of assuming the index correlates to the id.
-					: result.relatedLocations[+id - 1].physicalLocation.artifactLocation.uri
-						+ tryOr(() => `#L${result.locations[0].physicalLocation.region.startLine}`, '')
-				return <a key={i} href={href} target="_blank">{text}</a>
+
+				const href = (() => {
+					if (isNaN(id as any)) return id // `id` is a URI string
+
+					// Else `id` is a number
+					// TODO: search other location coolections
+					// RelatedLocations is typically [{ id: 1, ...}, { id: 2, ...}]
+					const location = result.relatedLocations?.find(location => location.id === +id)
+					return getRepoUri(location?.physicalLocation?.artifactLocation?.uri, result.run)
+				})()
+
+				return href
+					? <a key={i} href={href} target="_blank">{text}</a>
+					: text
 			})
 		: message
 }

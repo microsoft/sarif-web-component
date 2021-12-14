@@ -4,6 +4,7 @@
 import { Tooltip } from 'azure-devops-ui/TooltipEx'
 import * as React from 'react'
 import { Result } from 'sarif'
+import { getRepoUri } from './getRepoUri'
 import { Hi } from './Hi'
 import './RunCard.renderCell.scss'
 import { TooltipSpan } from './TooltipSpan'
@@ -42,23 +43,6 @@ function openInNewTab(fileName: string, text: string, region: SimpleRegion | und
 	setTimeout(() => document.body.querySelector('mark').scrollIntoView({ block: 'center' }))
 }
 
-function getRepoUri(uri: string | undefined, repositoryUri: string | undefined): string | undefined {
-	if (!uri) return undefined
-
-	function getHostname(url: string | undefined): string | undefined {
-		if (!url) return undefined
-		try {
-			return new URL(url).hostname
-		} catch (_) {
-			return undefined
-		}
-	}
-	const hostname = getHostname(repositoryUri)
-	if (!(hostname?.endsWith('azure.com') || hostname?.endsWith('visualstudio.com'))) return undefined // We currently only support Azure DevOps.
-
-	return `${repositoryUri}?path=${encodeURIComponent(uri)}`
-}
-
 // TODO:
 // Unify runArt vs resultArt.
 // Distinguish uri and text.
@@ -95,7 +79,7 @@ export function renderPathCell(result: Result) {
 	const href = resArtLoc?.properties?.['href']
 
 	const runArtContentsText = runArt?.contents?.text
-	const repoUri = getRepoUri(uri, result.run.versionControlProvenance?.[0]?.repositoryUri) ?? uri
+	const repoUri = getRepoUri(uri, result.run, ploc?.region) ?? uri
 
 	const getHref = () => {
 		if (uri?.endsWith('.dll')) return undefined
