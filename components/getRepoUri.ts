@@ -1,3 +1,4 @@
+import { join } from 'path-browserify'
 import { Region, Run } from 'sarif'
 
 function getHostname(url: string | undefined): string | undefined {
@@ -45,7 +46,7 @@ export function getRepoUri(uri: string | undefined, run: Run, region?: Region | 
 		// https://github.com/microsoft/sarif-web-component/blob/main/.gitignore
 		// https://github.com/microsoft/sarif-web-component/blob/d14c42f18766159a7ef6fbb8858ab5ad4f0b532a/.gitignore
 		// https://github.com/microsoft/sarif-web-component/blob/d14c42f18766159a7ef6fbb8858ab5ad4f0b532a/.gitignore#L1
-		let repoUri = `${repositoryUri}/blob/${revisionId ?? 'main'}${uri}`
+		let repoUri = join(`${repositoryUri}/blob/${revisionId ?? 'main'}`, uri)
 		if (region?.startLine) { // `startLine` is 1-based.
 			repoUri += `#L${region!.startLine}`
 		}

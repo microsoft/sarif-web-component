@@ -1,6 +1,6 @@
 {
 	"name": "@microsoft/sarif-web-component",
-	"version": "0.6.0-15",
+	"version": "0.6.0-16",
 	"author": "Microsoft",
 	"description": "Sarif Viewer",
 	"license": "MIT",
@@ -19,6 +19,7 @@
 		"@babel/preset-env": "^7.4.5",
 		"@types/enzyme": "3.10.8",
 		"@types/jest": "^24.0.13",
+		"@types/path-browserify": "^1.0.0",
 		"@types/react": "^16.8.18",
 		"@types/react-dom": "^16.8.4",
 		"@types/sarif": "^2.1.3",
@@ -49,6 +50,7 @@
 		"mobx": "^5.9.4",
 		"mobx-react": "^5.4.4",
 		"mobx-utils": "^5.5.5",
+		"path-browserify": "^0.0.1",
 		"react-linkify": "^1.0.0-alpha",
 		"react-markdown": "^4.0.8"
 	},
