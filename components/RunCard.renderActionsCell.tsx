@@ -15,7 +15,7 @@ function isValidURL(url: string) {
 	}
 }
 
-export function renderActionsCell(result: Result, actions: ResultAction[]) {
-    const actionsLinks = actions.map(action => <div><Link href="https://easyrhino-gh.github.io/" target="_blank">{action.linkText}</Link></div>);
+export function renderActionsCell(result: Result) {
+    const actionsLinks = result.actions.map(action => <div><Link href="https://easyrhino-gh.github.io/" target="_blank">{action.linkText}</Link></div>);
     return <div>{actionsLinks}</div>;
 }

@@ -31,8 +31,7 @@ export function renderCell<T extends ISimpleTableCell>(
 	rowIndex: number,
 	columnIndex: number,
 	treeColumn: ITreeColumn<T>,
-	treeItem: ITreeItemEx<T>,
-	actions: ResultAction[]): JSX.Element {
+	treeItem: ITreeItemEx<T>): JSX.Element {
 
 	const data = ObservableLike.getValue(treeItem.underlyingItem.data)
 	const commonProps = {
@@ -105,7 +104,7 @@ export function renderCell<T extends ISimpleTableCell>(
 					const rule = result._rule
 					switch (treeColumn.id) {
 						case 'Actions':
-							return <> {renderActionsCell(result, actions)} </>
+							return <> {renderActionsCell(result)} </>
 						case 'Details':
 							const messageFromRule = result._rule?.messageStrings?.[result.message.id ?? -1] ?? result.message;
 							const formattedMessage = format(messageFromRule.text || result.message?.text, result.message.arguments) ?? '';

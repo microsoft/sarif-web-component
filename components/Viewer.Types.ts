@@ -9,7 +9,8 @@ declare module 'sarif' {
 		run: Run
 		_rule: Rule // rule already used for ReportingDescriptorReference.
 		firstDetection?: Date
-		sla?: string
+		sla?: string,
+		actions: ResultAction[],
 	}
 }
 
@@ -24,12 +25,12 @@ export interface More {
 	onClick: any
 }
 
-export type ResultOrRuleOrMore = Result | Rule | More
-
-export type ResultAction = {
+export interface ResultAction {
 	linkText: string
 	linkUrlFormat: string
 }
+
+export type ResultOrRuleOrMore = Result | Rule | More
 
 declare module 'azure-devops-ui/Utilities/TreeItemProvider' {
 	interface ITreeItem<T> {
