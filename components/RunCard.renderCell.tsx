@@ -9,7 +9,7 @@ import {Result} from 'sarif'
 
 import {Hi} from './Hi'
 import {tryOr, tryLink} from './try'
-import {Rule, More, ResultOrRuleOrMore} from './Viewer.Types'
+import {Rule, More, ResultOrRuleOrMore, ResultAction} from './Viewer.Types'
 import {Snippet} from './Snippet'
 
 import {css} from 'azure-devops-ui/Util'
@@ -22,6 +22,7 @@ import {ExpandableTreeCell, ITreeColumn} from 'azure-devops-ui/TreeEx'
 import {ITreeItemEx, ITreeItem} from 'azure-devops-ui/Utilities/TreeItemProvider'
 import {Icon, IconSize} from 'azure-devops-ui/Icon'
 import { renderPathCell } from './RunCard.renderPathCell'
+import { renderActionsCell } from './RunCard.renderActionsCell'
 import { getRepoUri } from './getRepoUri'
 
 const colspan = 99 // No easy way to parameterize this, however extra does not hurt, so using an arbitrarily large value.
@@ -30,7 +31,8 @@ export function renderCell<T extends ISimpleTableCell>(
 	rowIndex: number,
 	columnIndex: number,
 	treeColumn: ITreeColumn<T>,
-	treeItem: ITreeItemEx<T>): JSX.Element {
+	treeItem: ITreeItemEx<T>,
+	actions: ResultAction[]): JSX.Element {
 
 	const data = ObservableLike.getValue(treeItem.underlyingItem.data)
 	const commonProps = {
@@ -102,6 +104,8 @@ export function renderCell<T extends ISimpleTableCell>(
 				children: (() => {
 					const rule = result._rule
 					switch (treeColumn.id) {
+						case 'Actions':
+							return <> {renderActionsCell(result, actions)} </>
 						case 'Details':
 							const messageFromRule = result._rule?.messageStrings?.[result.message.id ?? -1] ?? result.message;
 							const formattedMessage = format(messageFromRule.text || result.message?.text, result.message.arguments) ?? '';

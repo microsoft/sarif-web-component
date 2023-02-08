@@ -26,6 +26,11 @@ export interface More {
 
 export type ResultOrRuleOrMore = Result | Rule | More
 
+export type ResultAction = {
+	linkText: string
+	linkUrlFormat: string
+}
+
 declare module 'azure-devops-ui/Utilities/TreeItemProvider' {
 	interface ITreeItem<T> {
 		childItemsAll?: ITreeItem<T>[]

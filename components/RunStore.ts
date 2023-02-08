@@ -223,6 +223,9 @@ export class RunStore {
 				),
 				width: -3,
 			},
+			{
+				id: 'Actions',
+			}
 		]
 
 		if (this.showAge && this.groupByAge.get()) {
