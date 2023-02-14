@@ -10,6 +10,7 @@ import {Rule, ResultOrRuleOrMore} from './Viewer.Types'
 
 import {SortOrder} from 'azure-devops-ui/Table'
 import {ITreeItem} from 'azure-devops-ui/Utilities/TreeItemProvider'
+import { getRepoUri } from './getRepoUri'
 
 declare module 'sarif' {
     interface Run {
@@ -47,6 +48,18 @@ export class RunStore {
 
 			const rules = driver.rules || []
 			const rulesListed = new Map<string, Rule>(rules.map(rule => [rule.id, rule] as any)) // Unable to express [[string, RuleEx]].
+			
+			let url: URL
+			let pathnameParts: string[]
+			try	{
+				url = new URL(getRepoUri('-', run))
+				pathnameParts = url.pathname.split('/')
+				for (let i = 0; i < pathnameParts.length; i++) {
+					console.log(`[${i}] = ${pathnameParts[i]}`)
+				}
+			}
+			catch (TypeError) { }
+
 			run.results?.forEach(result => {
 				// Collate by Rule
 				const {ruleIndex} = result
@@ -60,6 +73,15 @@ export class RunStore {
 				}
 
 				const rule = run._rulesInUse.get(ruleId)
+
+				console.log(`Length: ${pathnameParts?.length}`)
+
+				// We should get a pathname like this: {organization}/{project}/_git/{repository}
+				if (pathnameParts?.length === 5) {
+					result.actions = [{ linkText: 'Fix in VS Code', linkUrlFormat: `vscode://devprod.vulnerability-extension/cg?repoName=${pathnameParts[4]}&title=${rule.id}&cgOrganizationName=${pathnameParts[1]}&source=scans` }]
+					// &cgProjectId=b32aa71e-8ed2-41b2-9d77-5bc261222004&&cgRepositoryMoniker=f79dcb7b-aef7-4f69-ab1e-38c70c9723be&&operationId=50121-7602357-eb486ec5-6fc7-4507-a12c-cb7fb5a2c461` }]
+				}
+
 				rule.results = rule.results || []
 				rule.results.push(result)
 
@@ -225,6 +247,9 @@ export class RunStore {
 			},
 			{
 				id: 'Actions',
+				filterString: (result: Result) => '',
+				sortString:   (result: Result) => '',
+				width: -2,
 			}
 		]
 

@@ -48,7 +48,6 @@ interface ViewerProps {
 	 */
 	defaultFilterState?: IFilterState
 
-	actions?: ResultAction[]
 	user?: string
 	hideBaseline?: boolean
 	hideLevel?: boolean
