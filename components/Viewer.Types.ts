@@ -27,7 +27,7 @@ export interface More {
 
 export interface ResultAction {
 	linkText: string
-	linkUrlFormat: string
+	linkUrl: string
 }
 
 export type ResultOrRuleOrMore = Result | Rule | More

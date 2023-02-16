@@ -216,7 +216,12 @@ export default [{
 				location: { uri: 'indexed/artifact/uri' },
 				description: { text: 'Some really long text for indexed/artifact/uri' },
 			},
-		]
+		],
+		properties: {
+			buildId: 123,
+			artifactName: 'drop_build_build_sdl_analysis',
+			filePath: '/build/antimalware/001/antimalware.sarif',
+		}
 	}],
 },
 {

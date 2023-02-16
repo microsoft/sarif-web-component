@@ -35,9 +35,12 @@ export class RunStore {
 	@observable sortColumnIndex = 1
 	@observable sortOrder = SortOrder.ascending
 
-	constructor(readonly run: Run, readonly logIndex, readonly filter: MobxFilter, readonly groupByAge?: IObservableValue<boolean>, readonly hideBaseline?: boolean, readonly showAge?: boolean) {
+	constructor(readonly run: Run, readonly logIndex, readonly filter: MobxFilter, readonly groupByAge?: IObservableValue<boolean>, readonly hideBaseline?: boolean, readonly showAge?: boolean, readonly showActions?: boolean) {
 		const {driver} = run.tool
 		this.driverName = run.properties && run.properties['logFileName'] || driver.name.replace(/^Microsoft.CodeAnalysis.Sarif.PatternMatcher$/, 'CredScan on Push')
+		const buildId = run.properties ? run.properties['buildId'] : 0
+		const artifactName = run.properties ? run.properties['artifactName'] : ''
+		const filePath = run.properties ? run.properties['filePath'] : ''
 
 		if (!run._augmented) {
 			run._rulesInUse = new Map<string, Rule>()
@@ -77,9 +80,18 @@ export class RunStore {
 				console.log(`Length: ${pathnameParts?.length}`)
 
 				// We should get a pathname like this: {organization}/{project}/_git/{repository}
-				if (pathnameParts?.length === 5) {
-					result.actions = [{ linkText: 'Fix in VS Code', linkUrlFormat: `vscode://devprod.vulnerability-extension/cg?repoName=${pathnameParts[4]}&title=${rule.id}&cgOrganizationName=${pathnameParts[1]}&source=scans` }]
-					// &cgProjectId=b32aa71e-8ed2-41b2-9d77-5bc261222004&&cgRepositoryMoniker=f79dcb7b-aef7-4f69-ab1e-38c70c9723be&&operationId=50121-7602357-eb486ec5-6fc7-4507-a12c-cb7fb5a2c461` }]
+				if (pathnameParts?.length === 5 && buildId && artifactName && filePath) {
+					result.actions = [{
+						linkText: 'Fix in VS Code',
+						linkUrl: `vscode://devprod.vulnerability-extension/import?
+							buildId=${buildId}&
+							artifactName=${artifactName}&
+							filePath=${filePath}&
+							organization=${pathnameParts[1]}&
+							project=${pathnameParts[2]}&
+							repoName=${pathnameParts[4]}&
+							source=scans`
+					}]
 				}
 
 				rule.results = rule.results || []
@@ -244,14 +256,17 @@ export class RunStore {
 					'\u2014', // Using escape as VS Packaging munges the char.
 				),
 				width: -3,
-			},
-			{
+			}			
+		]
+
+		if (this.showActions) {
+			columns.push({
 				id: 'Actions',
 				filterString: (result: Result) => '',
 				sortString:   (result: Result) => '',
 				width: -2,
-			}
-		]
+			})
+		}
 
 		if (this.showAge && this.groupByAge.get()) {
 			columns.push({
