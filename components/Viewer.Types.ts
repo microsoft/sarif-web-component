@@ -10,12 +10,12 @@ declare module 'sarif' {
 		_rule: Rule // rule already used for ReportingDescriptorReference.
 		firstDetection?: Date
 		sla?: string,
-		actions: ResultAction[],
+		actions: ActionProps[],
 	}
 }
 
 export interface Rule extends ReportingDescriptor {
-	isRule: boolean // Artifical marker to determine type.
+	isRule: boolean // Artificial marker to determine type.
 	results: Result[]
 	treeItem: ITreeItem<ResultOrRuleOrMore>
 	run: Run // For taxa.
@@ -25,9 +25,11 @@ export interface More {
 	onClick: any
 }
 
-export interface ResultAction {
-	linkText: string
+export interface ActionProps {
+	text: string
 	linkUrl: string
+	imagePath?: string
+	className?: string
 }
 
 export type ResultOrRuleOrMore = Result | Rule | More

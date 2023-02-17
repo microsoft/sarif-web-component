@@ -9,7 +9,7 @@ import {Result} from 'sarif'
 
 import {Hi} from './Hi'
 import {tryOr, tryLink} from './try'
-import {Rule, More, ResultOrRuleOrMore, ResultAction} from './Viewer.Types'
+import {Rule, More, ResultOrRuleOrMore} from './Viewer.Types'
 import {Snippet} from './Snippet'
 
 import {css} from 'azure-devops-ui/Util'

@@ -27,7 +27,6 @@ import { SurfaceBackground, SurfaceContext } from 'azure-devops-ui/Surface'
 import { IFilterState } from 'azure-devops-ui/Utilities/Filter'
 import { ZeroData } from 'azure-devops-ui/ZeroData'
 import { ObservableValue } from 'azure-devops-ui/Core/Observable'
-import { ResultAction } from './Viewer.Types'
 
 interface ViewerProps {
 	logs?: Log[]

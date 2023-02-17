@@ -79,10 +79,11 @@ export class RunStore {
 
 				console.log(`Length: ${pathnameParts?.length}`)
 
-				// We should get a pathname like this: {organization}/{project}/_git/{repository}
+				// We should get a pathname like this: /{organization}/{project}/_git/{repository}
+				//                indexes after split: 0        1          2       3        4
 				if (pathnameParts?.length === 5 && buildId && artifactName && filePath) {
-					result.actions = [{
-						linkText: 'Fix in VS Code',
+					const vsCodeAction = {
+						text: 'Fix in VS Code',
 						linkUrl: `vscode://devprod.vulnerability-extension/import?
 							buildId=${buildId}&
 							artifactName=${artifactName}&
@@ -90,8 +91,19 @@ export class RunStore {
 							organization=${pathnameParts[1]}&
 							project=${pathnameParts[2]}&
 							repoName=${pathnameParts[4]}&
-							source=scans`
-					}]
+							source=1esscans`,
+						imagePath: './assets/vscode-icon.png',
+						className: 'vscode-action'
+					}
+					const testAction = {
+						text: 'Test Action',
+						linkUrl: 'https://www.microsoft.com'
+					}
+
+					result.actions = [
+						vsCodeAction,
+						testAction
+					]
 				}
 
 				rule.results = rule.results || []
@@ -259,15 +271,6 @@ export class RunStore {
 			}			
 		]
 
-		if (this.showActions) {
-			columns.push({
-				id: 'Actions',
-				filterString: (result: Result) => '',
-				sortString:   (result: Result) => '',
-				width: -2,
-			})
-		}
-
 		if (this.showAge && this.groupByAge.get()) {
 			columns.push({
 				id: 'Rule',
@@ -300,6 +303,15 @@ export class RunStore {
 			sortString:   (result: Result) => result.message.text as string || '',
 			width: -5,
 		})
+
+		if (this.showActions) {
+			columns.push({
+				id: 'Actions',
+				filterString: (result: Result) => '',
+				sortString:   (result: Result) => '',
+				width: -2,
+			})
+		}
 
 		if (!this.hideBaseline) {
 			columns.push({

@@ -47,3 +47,32 @@
 		text-overflow: ellipsis;
 	}
 }
+
+.action {
+	display: flex;
+	flex-direction: column;
+	margin: 4px 0px;
+}
+
+.action .vss-ZeroData {
+	justify-content: left;
+	margin: 0;
+	min-height: 0;
+}
+
+.action .vss-ZeroDataItem {
+	align-items: center;
+	flex-direction: row;
+	gap: 0.4em;
+	white-space: nowrap;
+}
+
+.action .vss-ZeroDataItem--primary {
+	margin: 0;
+}
+
+.action .vss-ZeroDataItem--image {
+    height: 16px !important;
+    width: 16px;
+	margin: 0 !important;
+}
