@@ -14,6 +14,7 @@ import { getRepoUri } from './getRepoUri'
 
 declare module 'sarif' {
     interface Run {
+		_index: number,
 		_augmented: boolean
 		_rulesInUse: Map<string, Rule>
 		_agesInUse: Map<string, {
@@ -63,6 +64,8 @@ export class RunStore {
 			}
 			catch (TypeError) { }
 
+			let resultIndex = 0;
+
 			run.results?.forEach(result => {
 				// Collate by Rule
 				const {ruleIndex} = result
@@ -82,7 +85,7 @@ export class RunStore {
 				// We should get a pathname like this: /{organization}/{project}/_git/{repository}
 				//                indexes after split: 0        1          2       3        4
 				if (pathnameParts?.length === 5 && buildId && artifactName && filePath) {
-					const vsCodeAction = {
+					const fixInVsCodeAction = {
 						text: 'Fix in VS Code',
 						linkUrl: `vscode://devprod.vulnerability-extension/import?
 							buildId=${buildId}&
@@ -91,18 +94,15 @@ export class RunStore {
 							organization=${pathnameParts[1]}&
 							project=${pathnameParts[2]}&
 							repoName=${pathnameParts[4]}&
+							runIndex=${run._index}&
+							resultIndex=${++resultIndex}&
 							source=1esscans`,
 						imagePath: './assets/vscode-icon.png',
 						className: 'vscode-action'
 					}
-					const testAction = {
-						text: 'Test Action',
-						linkUrl: 'https://www.microsoft.com'
-					}
 
 					result.actions = [
-						vsCodeAction,
-						testAction
+						fixInVsCodeAction
 					]
 				}
 
