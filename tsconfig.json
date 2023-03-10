@@ -1,6 +1,6 @@
 {
 	"compilerOptions": {
-		"outDir": "dist", // './' prefix not neccesary
+		"outDir": "dist", // './' prefix not necessary
 		"declaration": true,
 		"sourceMap": true,
 		"noImplicitAny": false,

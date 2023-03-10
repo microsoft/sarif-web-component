@@ -80,8 +80,6 @@ export class RunStore {
 
 				const rule = run._rulesInUse.get(ruleId)
 
-				console.log(`Length: ${pathnameParts?.length}`)
-
 				// We should get a pathname like this: /{organization}/{project}/_git/{repository}
 				//                indexes after split: 0        1          2       3        4
 				if (pathnameParts?.length === 5 && buildId && artifactName && filePath) {

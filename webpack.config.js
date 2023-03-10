@@ -11,8 +11,8 @@ module.exports = {
 	},
 	devServer : {
 		publicPath: '/dist',
-		host: '0.0.0.0', // Necessary to server outside localhost
-		port: 8087,
+		//https: true,
+		//host: '0.0.0.0', // Necessary to server outside localhost
 		stats: 'none',
 	},
 }

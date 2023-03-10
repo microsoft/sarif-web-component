@@ -1,6 +1,6 @@
 module.exports = {
 	resolve: {
-		extensions: ['.js', '.ts', '.tsx'] // .js is neccesary for transitive imports
+		extensions: ['.js', '.ts', '.tsx'] // .js is necessary for transitive imports
 	},
 	module: {
 		rules: [
