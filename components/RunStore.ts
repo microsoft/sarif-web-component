@@ -58,9 +58,6 @@ export class RunStore {
 			try	{
 				url = new URL(getRepoUri('-', run))
 				pathnameParts = url.pathname.split('/')
-				for (let i = 0; i < pathnameParts.length; i++) {
-					console.log(`[${i}] = ${pathnameParts[i]}`)
-				}
 			}
 			catch (TypeError) { }
 
