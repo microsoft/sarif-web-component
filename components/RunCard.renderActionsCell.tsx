@@ -7,11 +7,19 @@ import { Result } from 'sarif'
 import './RunCard.renderCell.scss'
 import { ActionProps } from './Viewer.Types';
 
+const emptyPng = require('./assets/empty.png')
+const vsCodePng = require('./assets/vscode-icon.png')
+
+const images = {
+    empty: emptyPng,
+    vscode: vsCodePng,
+}
+
 function renderAction(props: ActionProps) {
-    const { text, linkUrl, imagePath, className } = props
+    const { text, linkUrl, imageName, className } = props
     return <ZeroData actionText={text}
                      actionHref={linkUrl}
-                     imagePath={imagePath ?? './assets/empty.png'}
+                     imagePath={images[imageName ?? 'empty']}
                      imageAltText={text}
                      className={className} />
 }

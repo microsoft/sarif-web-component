@@ -28,7 +28,7 @@ export interface More {
 export interface ActionProps {
 	text: string
 	linkUrl: string
-	imagePath?: string
+	imageName?: string
 	className?: string
 }
 

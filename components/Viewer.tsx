@@ -7,7 +7,7 @@ import { Component } from 'react'
 import { computed, observable, autorun, IObservableValue } from 'mobx'
 import { observer } from 'mobx-react'
 import { computedFn } from 'mobx-utils'
-import { Log, Result, Run } from 'sarif'
+import { Log, Run } from 'sarif'
 
 import './extension'
 
