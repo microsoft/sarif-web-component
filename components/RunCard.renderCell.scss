@@ -50,29 +50,18 @@
 
 .action {
 	display: flex;
-	flex-direction: column;
+}
+
+.action a {
+	display: flex;
+	flex-direction: row;
+	justify-content: center;
 	margin: 4px 0px;
 }
 
-.action .vss-ZeroData {
-	justify-content: left;
-	margin: 0;
-	min-height: 0;
-}
-
-.action .vss-ZeroDataItem {
-	align-items: center;
-	flex-direction: row;
-	gap: 0.4em;
-	white-space: nowrap;
-}
-
-.action .vss-ZeroDataItem--primary {
-	margin: 0;
-}
-
-.action .vss-ZeroDataItem--image {
-    height: 16px !important;
+.action img {
+    height: 16px;
     width: 16px;
-	margin: 0 !important;
+	margin: 0;
+	margin-right: 10px;
 }
