@@ -7,7 +7,7 @@ import { Component } from 'react'
 import { computed, observable, autorun, IObservableValue } from 'mobx'
 import { observer } from 'mobx-react'
 import { computedFn } from 'mobx-utils'
-import { Log, Result, Run } from 'sarif'
+import { Log, Run } from 'sarif'
 
 import './extension'
 
@@ -52,6 +52,7 @@ interface ViewerProps {
 	hideLevel?: boolean
 	showSuppression?: boolean // If true, also defaults to Unsuppressed.
 	showAge?: boolean // Enables age-related columns, group by age, and an age dropdown filter.
+	showActions?: boolean
 
 	/**
 	 * When there are zero errors¹, show this message instead of just "No Results".
@@ -87,11 +88,11 @@ interface ViewerProps {
 	})
 
 	private runStores = computedFn(logs => {
-		const {hideBaseline, showAge} = this.props
+		const {hideBaseline, showAge, showActions} = this.props
 		if (!logs) return [] // Undef interpreted as loading.
-		const runs = [].concat(...logs.filter(log => log.version === '2.1.0').map(log => log.runs)) as Run[]
+		const runs = [].concat(...logs.filter(log => log.version === '2.1.0').map(log => { log.runs.forEach((run, index) => { run._index = index }); return log.runs })) as Run[]
 		const {filter, groupByAge} = this
-		const runStores = runs.map((run, i) => new RunStore(run, i, filter, groupByAge, hideBaseline, showAge))
+		const runStores = runs.map((run, i) => new RunStore(run, i, filter, groupByAge, hideBaseline, showAge, showActions))
 		runStores.sort((a, b) => a.driverName.localeCompare(b.driverName)) // May not be required after introduction of runStoresSorted.
 		return runStores
 	}, { keepAlive: true })

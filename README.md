@@ -3,7 +3,7 @@
 
 # SARIF Web Component
 
-A React-based component for viewing [SARIF](http://sarifweb.azurewebsites.net/) files. [Try it out](https://microsoft.github.io/sarif-web-component/).
+A React-based component for viewing [SARIF](http://sarif.info) files. [Try it out](https://microsoft.github.io/sarif-web-component/).
 
 ## Usage
 

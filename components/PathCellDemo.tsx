@@ -13,6 +13,7 @@ export function* demoResults() {
 		message: {},
 		run: {} as any,
 		_rule: {} as any,
+		actions: {} as any
 	}
 
 	{ // fullyQualifiedName

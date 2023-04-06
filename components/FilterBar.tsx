@@ -32,7 +32,7 @@ export class MobxFilter extends Filter {
 	}
 }
 
-@observer export class FilterBar extends React.Component<{ filter: MobxFilter, readonly groupByAge: boolean, hideBaseline?:boolean, hideLevel?: boolean, showSuppression?: boolean, showAge?: boolean }> {
+@observer export class FilterBar extends React.Component<{ filter: MobxFilter, readonly groupByAge: boolean, hideBaseline?: boolean, hideLevel?: boolean, showSuppression?: boolean, showAge?: boolean }> {
 	private ms1 = new DropdownMultiSelection()
 	private ms2 = new DropdownMultiSelection()
 	private msSuppression = new DropdownMultiSelection()

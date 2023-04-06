@@ -10,9 +10,11 @@ import {Rule, ResultOrRuleOrMore} from './Viewer.Types'
 
 import {SortOrder} from 'azure-devops-ui/Table'
 import {ITreeItem} from 'azure-devops-ui/Utilities/TreeItemProvider'
+import { getRepoUri } from './getRepoUri'
 
 declare module 'sarif' {
     interface Run {
+		_index: number,
 		_augmented: boolean
 		_rulesInUse: Map<string, Rule>
 		_agesInUse: Map<string, {
@@ -34,9 +36,12 @@ export class RunStore {
 	@observable sortColumnIndex = 1
 	@observable sortOrder = SortOrder.ascending
 
-	constructor(readonly run: Run, readonly logIndex, readonly filter: MobxFilter, readonly groupByAge?: IObservableValue<boolean>, readonly hideBaseline?: boolean, readonly showAge?: boolean) {
+	constructor(readonly run: Run, readonly logIndex, readonly filter: MobxFilter, readonly groupByAge?: IObservableValue<boolean>, readonly hideBaseline?: boolean, readonly showAge?: boolean, readonly showActions?: boolean) {
 		const {driver} = run.tool
 		this.driverName = run.properties && run.properties['logFileName'] || driver.name.replace(/^Microsoft.CodeAnalysis.Sarif.PatternMatcher$/, 'CredScan on Push')
+		const buildId = run.properties ? run.properties['buildId'] : 0
+		const artifactName = run.properties ? run.properties['artifactName'] : ''
+		const filePath = run.properties ? run.properties['filePath'] : ''
 
 		if (!run._augmented) {
 			run._rulesInUse = new Map<string, Rule>()
@@ -47,6 +52,17 @@ export class RunStore {
 
 			const rules = driver.rules || []
 			const rulesListed = new Map<string, Rule>(rules.map(rule => [rule.id, rule] as any)) // Unable to express [[string, RuleEx]].
+			
+			let url: URL
+			let pathnameParts: string[]
+			try	{
+				url = new URL(getRepoUri('-', run))
+				pathnameParts = url.pathname.split('/')
+			}
+			catch (TypeError) { }
+
+			let resultIndex = 0;
+
 			run.results?.forEach(result => {
 				// Collate by Rule
 				const {ruleIndex} = result
@@ -60,6 +76,22 @@ export class RunStore {
 				}
 
 				const rule = run._rulesInUse.get(ruleId)
+
+				// We should get a pathname like this: /{organization}/{project}/_git/{repository}
+				//                indexes after split: 0        1          2       3        4
+				if (pathnameParts?.length === 5 && buildId && artifactName && filePath) {
+					const fixInVsCodeAction = {
+						text: 'Fix in VS Code',
+						linkUrl: `vscode://devprod.vulnerability-extension/import?buildId=${buildId}&artifactName=${artifactName}&filePath=${filePath}&organization=${pathnameParts[1]}&project=${pathnameParts[2]}&repoName=${pathnameParts[4]}&runIndex=${run._index}&resultIndex=${++resultIndex}&source=1esscans`,
+						imageName: 'vscode',
+						className: 'vscode-action'
+					}
+
+					result.actions = [
+						fixInVsCodeAction
+					]
+				}
+
 				rule.results = rule.results || []
 				rule.results.push(result)
 
@@ -222,7 +254,7 @@ export class RunStore {
 					'\u2014', // Using escape as VS Packaging munges the char.
 				),
 				width: -3,
-			},
+			}			
 		]
 
 		if (this.showAge && this.groupByAge.get()) {
@@ -257,6 +289,15 @@ export class RunStore {
 			sortString:   (result: Result) => result.message.text as string || '',
 			width: -5,
 		})
+
+		if (this.showActions) {
+			columns.push({
+				id: 'Actions',
+				filterString: (result: Result) => '',
+				sortString:   (result: Result) => '',
+				width: -2,
+			})
+		}
 
 		if (!this.hideBaseline) {
 			columns.push({

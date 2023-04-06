@@ -51,7 +51,7 @@ const readAsText = file => new Promise<string>((resolve, reject) => {
 					Suppression: { value: ['unsuppressed'] },
 					Baseline: { value: ['new'] },
 					Level: { value: ['error', 'warning'] },
-				}}
+				}} showActions={true}
 				successMessage="No validated credentials detected."
 			/>
 			<Shield onDrop={this.loadFile} />

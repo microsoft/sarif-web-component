@@ -47,3 +47,21 @@
 		text-overflow: ellipsis;
 	}
 }
+
+.action {
+	display: flex;
+}
+
+.action a {
+	display: flex;
+	flex-direction: row;
+	justify-content: center;
+	margin: 4px 0px;
+}
+
+.action img {
+    height: 16px;
+    width: 16px;
+	margin: 0;
+	margin-right: 10px;
+}

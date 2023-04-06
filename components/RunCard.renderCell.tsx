@@ -22,6 +22,7 @@ import {ExpandableTreeCell, ITreeColumn} from 'azure-devops-ui/TreeEx'
 import {ITreeItemEx, ITreeItem} from 'azure-devops-ui/Utilities/TreeItemProvider'
 import {Icon, IconSize} from 'azure-devops-ui/Icon'
 import { renderPathCell } from './RunCard.renderPathCell'
+import { renderActionsCell } from './RunCard.renderActionsCell'
 import { getRepoUri } from './getRepoUri'
 
 const colspan = 99 // No easy way to parameterize this, however extra does not hurt, so using an arbitrarily large value.
@@ -102,6 +103,8 @@ export function renderCell<T extends ISimpleTableCell>(
 				children: (() => {
 					const rule = result._rule
 					switch (treeColumn.id) {
+						case 'Actions':
+							return <> {renderActionsCell(result)} </>
 						case 'Details':
 							const messageFromRule = result._rule?.messageStrings?.[result.message.id ?? -1] ?? result.message;
 							const formattedMessage = format(messageFromRule.text || result.message?.text, result.message.arguments) ?? '';
