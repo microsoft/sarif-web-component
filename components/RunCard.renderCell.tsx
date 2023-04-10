@@ -169,7 +169,7 @@ function renderMessageWithEmbeddedLinks(result: Result, message: string) {
 					if (isNaN(id as any)) return id // `id` is a URI string
 
 					// Else `id` is a number
-					// TODO: search other location coolections
+					// TODO: search other location collections
 					// RelatedLocations is typically [{ id: 1, ...}, { id: 2, ...}]
 					const physicalLocation = result.relatedLocations?.find(location => location.id === +id)?.physicalLocation
 					return getRepoUri(physicalLocation?.artifactLocation?.uri, result.run, physicalLocation?.region)
