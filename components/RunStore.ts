@@ -6,11 +6,12 @@ import {Run, Result, Artifact} from 'sarif'
 
 import {MobxFilter} from './FilterBar'
 import {tryOr} from './try'
-import {Rule, ResultOrRuleOrMore} from './Viewer.Types'
+import {Rule, ResultOrRuleOrMore, RepositoryDetails} from './Viewer.Types'
 
 import {SortOrder} from 'azure-devops-ui/Table'
 import {ITreeItem} from 'azure-devops-ui/Utilities/TreeItemProvider'
 import { getRepoUri } from './getRepoUri'
+import { getRepositoryDetailsFromRemoteUrl, isRepositoryDetailsComplete } from './getRepositoryDetailsFromRemoteUrl'
 
 declare module 'sarif' {
     interface Run {
@@ -53,11 +54,11 @@ export class RunStore {
 			const rules = driver.rules || []
 			const rulesListed = new Map<string, Rule>(rules.map(rule => [rule.id, rule] as any)) // Unable to express [[string, RuleEx]].
 			
-			let url: URL
-			let pathnameParts: string[]
+			let url: string
+			let repoDetails: RepositoryDetails;
 			try	{
-				url = new URL(getRepoUri('-', run))
-				pathnameParts = url.pathname.split('/')
+				url = getRepoUri('-', run)
+				repoDetails = getRepositoryDetailsFromRemoteUrl(url)
 			}
 			catch (TypeError) { }
 
@@ -78,37 +79,17 @@ export class RunStore {
 				const rule = run._rulesInUse.get(ruleId)
 
 				// Try to build a 'Fix in VS Code' action
-				if (buildId && artifactName && filePath) {
-					let org: string;
-					let project: string;
-					let repoName: string;
-
-					if (url.hostname === 'dev.azure.com' && pathnameParts?.length === 5) {
-						// We should get a pathname like this: /{organization}/{project}/_git/{repository}
-						//                indexes after split: 0       1           2       3        4
-						org = pathnameParts[1];
-						project = pathnameParts[2];
-						repoName = pathnameParts[4];
-					} else if (url.hostname.endsWith('.visualstudio.com') && pathnameParts?.length === 4) {
-						// We should get a pathname like this: /{project}/_git/{repository}
-						//                indexes after split: 0    1       2        3
-						org = url.hostname.substring(0, url.hostname.indexOf('.'));
-						project = pathnameParts[1];
-						repoName = pathnameParts[3];
+				if (isRepositoryDetailsComplete(repoDetails) && buildId && artifactName && filePath) {
+					const fixInVsCodeAction = {
+						text: 'Fix in VS Code',
+						linkUrl: `vscode://devprod.vulnerability-extension/import?buildId=${buildId}&artifactName=${artifactName}&filePath=${filePath}&organization=${repoDetails.organizationName}&project=${repoDetails.projectName}&repoName=${repoDetails.repositoryName}&runIndex=${run._index}&resultIndex=${++resultIndex}&source=1esscans`,
+						imageName: 'vscode',
+						className: 'vscode-action'
 					}
 
-					if (org && project && repoName) {
-						const fixInVsCodeAction = {
-							text: 'Fix in VS Code',
-							linkUrl: `vscode://devprod.vulnerability-extension/import?buildId=${buildId}&artifactName=${artifactName}&filePath=${filePath}&organization=${org}&project=${project}&repoName=${repoName}&runIndex=${run._index}&resultIndex=${++resultIndex}&source=1esscans`,
-							imageName: 'vscode',
-							className: 'vscode-action'
-						}
-
-						result.actions = [
-							fixInVsCodeAction
-						]
-					}
+					result.actions = [
+						fixInVsCodeAction
+					]
 				}
 
 				rule.results = rule.results || []
