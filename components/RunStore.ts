@@ -77,19 +77,38 @@ export class RunStore {
 
 				const rule = run._rulesInUse.get(ruleId)
 
-				// We should get a pathname like this: /{organization}/{project}/_git/{repository}
-				//                indexes after split: 0        1          2       3        4
-				if (pathnameParts?.length === 5 && buildId && artifactName && filePath) {
-					const fixInVsCodeAction = {
-						text: 'Fix in VS Code',
-						linkUrl: `vscode://devprod.vulnerability-extension/import?buildId=${buildId}&artifactName=${artifactName}&filePath=${filePath}&organization=${pathnameParts[1]}&project=${pathnameParts[2]}&repoName=${pathnameParts[4]}&runIndex=${run._index}&resultIndex=${++resultIndex}&source=1esscans`,
-						imageName: 'vscode',
-						className: 'vscode-action'
+				// Try to build a 'Fix in VS Code' action
+				if (buildId && artifactName && filePath) {
+					let org: string;
+					let project: string;
+					let repoName: string;
+
+					if (url.hostname === 'dev.azure.com' && pathnameParts?.length === 5) {
+						// We should get a pathname like this: /{organization}/{project}/_git/{repository}
+						//                indexes after split: 0       1           2       3        4
+						org = pathnameParts[1];
+						project = pathnameParts[2];
+						repoName = pathnameParts[4];
+					} else if (url.hostname.endsWith('.visualstudio.com') && pathnameParts?.length === 4) {
+						// We should get a pathname like this: /{project}/_git/{repository}
+						//                indexes after split: 0    1       2        3
+						org = url.hostname.substring(0, url.hostname.indexOf('.'));
+						project = pathnameParts[1];
+						repoName = pathnameParts[3];
 					}
 
-					result.actions = [
-						fixInVsCodeAction
-					]
+					if (org && project && repoName) {
+						const fixInVsCodeAction = {
+							text: 'Fix in VS Code',
+							linkUrl: `vscode://devprod.vulnerability-extension/import?buildId=${buildId}&artifactName=${artifactName}&filePath=${filePath}&organization=${org}&project=${project}&repoName=${repoName}&runIndex=${run._index}&resultIndex=${++resultIndex}&source=1esscans`,
+							imageName: 'vscode',
+							className: 'vscode-action'
+						}
+
+						result.actions = [
+							fixInVsCodeAction
+						]
+					}
 				}
 
 				rule.results = rule.results || []
