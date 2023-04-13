@@ -32,6 +32,13 @@ export interface ActionProps {
 	className?: string
 }
 
+export interface RepositoryDetails {
+    organizationName?: string
+    projectName?: string
+    repositoryName?: string
+    errorMessage?: string
+}
+
 export type ResultOrRuleOrMore = Result | Rule | More
 
 declare module 'azure-devops-ui/Utilities/TreeItemProvider' {
