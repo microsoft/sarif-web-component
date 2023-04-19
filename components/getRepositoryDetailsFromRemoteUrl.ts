@@ -34,7 +34,7 @@ export function getRepositoryDetailsFromRemoteUrl(remoteUrl: string): Repository
         return {
             organizationName: parts[0].trim(),
             projectName: parts[1].trim(),
-            repositoryName: parts[3].trim()
+            repositoryName: parts[3].split('?')[0].trim()
         };
     } else if (remoteUrl.indexOf(VSOUrl) >= 0) {
         const part = remoteUrl.substring(remoteUrl.indexOf(VSOUrl) + VSOUrl.length);
@@ -53,7 +53,7 @@ export function getRepositoryDetailsFromRemoteUrl(remoteUrl: string): Repository
         return {
             organizationName: organizationName,
             projectName: parts[0].trim(),
-            repositoryName: parts[2].trim()
+            repositoryName: parts[2].split('?')[0].trim()
         };
     } else if (remoteUrl.indexOf(SSHAzureReposUrl) >= 0 || remoteUrl.indexOf(SSHVsoReposUrl) >= 0) {
         const urlFormat = remoteUrl.indexOf(SSHAzureReposUrl) >= 0 ? SSHAzureReposUrl : SSHVsoReposUrl;
@@ -66,7 +66,7 @@ export function getRepositoryDetailsFromRemoteUrl(remoteUrl: string): Repository
         return {
             organizationName: parts[0].trim(),
             projectName: parts[1].trim(),
-            repositoryName: parts[2].trim()
+            repositoryName: parts[2].split('?')[0].trim()
         };
     } else {
         return { errorMessage: notAzureRepoUrl };
