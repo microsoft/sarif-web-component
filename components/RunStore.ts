@@ -82,7 +82,7 @@ export class RunStore {
 				if (isRepositoryDetailsComplete(repoDetails) && buildId && artifactName && filePath) {
 					const fixInVsCodeAction = {
 						text: 'Fix in VS Code',
-						linkUrl: `vscode://devprod.vulnerability-extension/import?buildId=${buildId}&artifactName=${artifactName}&filePath=${filePath}&organization=${repoDetails.organizationName}&project=${repoDetails.projectName}&repoName=${repoDetails.repositoryName}&runIndex=${run._index}&resultIndex=${++resultIndex}&source=1esscans`,
+						linkUrl: `vscode://devprod.vulnerability-extension/import?buildId=${buildId}&artifactName=${artifactName}&filePath=${filePath}&organization=${repoDetails.organizationName}&project=${repoDetails.projectName}&repoName=${repoDetails.repositoryName}&runIndex=${run._index}&resultIndex=${resultIndex++}&source=1esscans`,
 						imageName: 'vscode',
 						className: 'vscode-action'
 					}
