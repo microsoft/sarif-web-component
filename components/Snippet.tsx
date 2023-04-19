@@ -35,7 +35,7 @@ import {tryOr} from './try'
 
 				const crst = contextRegion.snippet.text
 
-				// Search/Filter hilighting is active so bypass snippet highlighting and return plain text.
+				// Search/Filter highlighting is active so bypass snippet highlighting and return plain text.
 				if (term) return crst
 
 				// Carriage returns (\n) causing hljs colorization off-by-one errors, thus stripping them here.

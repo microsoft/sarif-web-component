@@ -9,7 +9,7 @@ export class Hi extends React.Component {
 	render() {
 		let children = this.props.children
 		if (!children) return null
-		if (typeof children !== 'string') return children // Gracefully (and sliently) fail if not a string.
+		if (typeof children !== 'string') return children // Gracefully (and silently) fail if not a string.
 
 		let term = this.context
 		if (!term || term.length <= 1) return children
