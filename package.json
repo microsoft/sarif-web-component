@@ -1,6 +1,6 @@
 {
 	"name": "@microsoft/sarif-web-component",
-	"version": "0.6.0-27",
+	"version": "0.6.0-28",
 	"author": "Microsoft",
 	"description": "SARIF Viewer",
 	"license": "MIT",
