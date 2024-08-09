@@ -1,18 +1,22 @@
 // Copyright (c) Microsoft Corporation. All rights reserved.
 // Licensed under the MIT License.
 
-import { Link } from 'azure-devops-ui/Link';
-import * as React from 'react'
-import { Result } from 'sarif'
 import './RunCard.renderCell.scss'
+
+import * as React from 'react'
+
 import { ActionProps } from './Viewer.Types';
+import { Link } from 'azure-devops-ui/Link';
+import { Result } from 'sarif'
 
 const emptyPng = require('./assets/empty.png')
 const vsCodePng = require('./assets/vscode-icon.png')
+const vsPng = require('./assets/vs-icon.png')
 
 const images = {
     empty: emptyPng,
     vscode: vsCodePng,
+    vs: vsPng
 }
 
 function renderAction(props: ActionProps) {
