@@ -1,17 +1,16 @@
 // Copyright (c) Microsoft Corporation. All rights reserved.
 // Licensed under the MIT License.
 
-import {observable, autorun, computed, IObservableValue} from 'mobx'
-import {Run, Result, Artifact} from 'sarif'
-
-import {MobxFilter} from './FilterBar'
-import {tryOr} from './try'
-import {Rule, ResultOrRuleOrMore, RepositoryDetails} from './Viewer.Types'
-
-import {SortOrder} from 'azure-devops-ui/Table'
-import {ITreeItem} from 'azure-devops-ui/Utilities/TreeItemProvider'
-import { getRepoUri } from './getRepoUri'
+import {Artifact, Result, Run} from 'sarif'
+import {IObservableValue, autorun, computed, observable} from 'mobx'
+import {RepositoryDetails, ResultOrRuleOrMore, Rule} from './Viewer.Types'
 import { getRepositoryDetailsFromRemoteUrl, isRepositoryDetailsComplete } from './getRepositoryDetailsFromRemoteUrl'
+
+import {ITreeItem} from 'azure-devops-ui/Utilities/TreeItemProvider'
+import {MobxFilter} from './FilterBar'
+import {SortOrder} from 'azure-devops-ui/Table'
+import { getRepoUri } from './getRepoUri'
+import {tryOr} from './try'
 
 declare module 'sarif' {
     interface Run {
@@ -82,13 +81,21 @@ export class RunStore {
 				if (isRepositoryDetailsComplete(repoDetails) && buildId && artifactName && filePath) {
 					const fixInVsCodeAction = {
 						text: 'Fix in VS Code',
-						linkUrl: `https://waveanalysis.microsoft.com/import?buildId=${buildId}&artifactName=${artifactName}&filePath=${filePath}&organization=${repoDetails.organizationName}&project=${repoDetails.projectName}&repoName=${repoDetails.repositoryName}&runIndex=${run._index}&resultIndex=${resultIndex++}&source=1esscans`,
+						linkUrl: `https://waveanalysis.microsoft.com/vscode/import?buildId=${buildId}&artifactName=${artifactName}&filePath=${filePath}&organization=${repoDetails.organizationName}&project=${repoDetails.projectName}&repoName=${repoDetails.repositoryName}&runIndex=${run._index}&resultIndex=${resultIndex++}&source=1esscans`,
 						imageName: 'vscode',
 						className: 'vscode-action'
 					}
 
+                    const fixInVsAction = {
+						text: 'Fix in Visual Studio',
+						linkUrl: `https://waveanalysis.microsoft.com/vs/import?buildId=${buildId}&artifactName=${artifactName}&filePath=${filePath}&organization=${repoDetails.organizationName}&project=${repoDetails.projectName}&repoName=${repoDetails.repositoryName}&runIndex=${run._index}&resultIndex=${resultIndex++}&source=1esscans`,
+						imageName: 'vs',
+						className: 'vs-action'
+					}
+
 					result.actions = [
-						fixInVsCodeAction
+						fixInVsCodeAction,
+                    	fixInVsAction
 					]
 				}
 
