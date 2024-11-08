@@ -95,7 +95,7 @@ export class RunStore {
 
 					result.actions = [
 						fixInVsCodeAction,
-                        fixInVsAction
+                    	fixInVsAction
 					]
 				}
 
