@@ -22,6 +22,6 @@ jobs:
       env:
         PYTHON: "/Library/Frameworks/Python.framework/Versions/2.7/bin/python2"
     - run: npx webpack --config ./webpack.config.npm.js
-    #- run: npm publish
+    - run: npm publish
       env:
         NODE_AUTH_TOKEN: ${{ secrets.NODE_AUTH_TOKEN }}
