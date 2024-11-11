@@ -10,10 +10,15 @@ jobs:
     - uses: actions/setup-node@v2
       with:
         node-version: '16'
-        check-latest: true
         registry-url: 'https://registry.npmjs.org'
+    # Dependency node-sass will not install without Python 2; need to install.
+    - name: Install Python 2
+      run: |
+        brew install python@2
+        echo 'export PATH="/usr/local/opt/python@2/bin:$PATH"' >> ~/.bash_profile
+        source ~/.bash_profile
     - run: npm install
     - run: npx webpack --config ./webpack.config.npm.js
-    - run: npm publish
+    #- run: npm publish
       env:
         NODE_AUTH_TOKEN: ${{ secrets.NODE_AUTH_TOKEN }}
