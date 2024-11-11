@@ -14,9 +14,9 @@ jobs:
     # Dependency node-sass will not install without Python 2; need to install.
     - name: Install Python 2
       run: |
-        brew install python@2
-        echo 'export PATH="/usr/local/opt/python@2/bin:$PATH"' >> ~/.bash_profile
-        source ~/.bash_profile
+        curl -O https://www.python.org/ftp/python/2.7.18/python-2.7.18-macosx10.9.pkg
+        sudo installer -pkg python-2.7.18-macosx10.9.pkg -target /
+        echo 'export PATH="/Library/Frameworks/Python.framework/Versions/2.7/bin:$PATH"' >> $GITHUB_ENV
     - run: npm install
     - run: npx webpack --config ./webpack.config.npm.js
     #- run: npm publish
