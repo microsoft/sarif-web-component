@@ -11,16 +11,7 @@ jobs:
       with:
         node-version: '16'
         registry-url: 'https://registry.npmjs.org'
-    # Dependency node-sass will not install without Python 2; need to install.
-    - name: Install Python 2
-      run: |
-        curl -O https://www.python.org/ftp/python/2.7.18/python-2.7.18-macosx10.9.pkg
-        sudo installer -pkg python-2.7.18-macosx10.9.pkg -target /
-        echo 'export PATH="/Library/Frameworks/Python.framework/Versions/2.7/bin:$PATH"' >> $GITHUB_ENV
-        echo 'export PYTHON="/Library/Frameworks/Python.framework/Versions/2.7/bin/python2"' >> $GITHUB_ENV
     - run: npm install
-      env:
-        PYTHON: "/Library/Frameworks/Python.framework/Versions/2.7/bin/python2"
     - run: npx webpack --config ./webpack.config.npm.js
     - run: npm publish
       env:

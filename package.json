@@ -30,7 +30,6 @@
 		"enzyme-adapter-react-16": "^1.15.6",
 		"identity-obj-proxy": "^3.0.0",
 		"jest": "^27.0.4",
-		"node-sass": "^6.0.0",
 		"react": "^16.8.6",
 		"react-dom": "^16.8.6",
 		"sass-loader": "^10.1.1",
@@ -52,7 +51,9 @@
 		"mobx-utils": "^5.5.5",
 		"react-linkify": "^1.0.0-alpha",
 		"react-markdown": "^4.0.8",
-		"uri-join": "^1.0.1"
+		"sass": "^1.80.6",
+		"uri-join": "^1.0.1",
+        "vss-web-extension-sdk": "^5.141.0"
 	},
 	"peerDependencies": {
 		"react": "^16.8.6",
