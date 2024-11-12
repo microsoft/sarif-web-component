@@ -52,7 +52,7 @@
 		"react-markdown": "^4.0.8",
 		"sass": "^1.80.6",
 		"uri-join": "^1.0.1",
-        "vss-web-extension-sdk": "^5.141.0"
+		"vss-web-extension-sdk": "^5.141.0"
 	},
 	"peerDependencies": {
 		"react": "^16.8.6",
